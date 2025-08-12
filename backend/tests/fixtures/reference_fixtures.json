@@ -1,0 +1,122 @@
+{
+  "created": "2025-08-12T09:57:25.059983",
+  "description": "Reference fixtures for Meridian Ephemeris validation",
+  "tolerance_requirements": {
+    "description": "Tolerance requirements for validation",
+    "angle_tolerance_arcsec": 3.0,
+    "distance_tolerance": 1e-06,
+    "speed_tolerance": 1e-06,
+    "validation_notes": [
+      "All angular measurements should be within 3 arcseconds of reference",
+      "Distance measurements should be within 1e-6 units",
+      "Speed measurements should be within 1e-6 units per day"
+    ]
+  },
+  "fixtures": {
+    "basic_positions": {
+      "description": "Known planetary positions for validation",
+      "test_cases": [
+        {
+          "name": "j2000_reference",
+          "julian_day": 2451545.0,
+          "datetime": "2000-01-01T12:00:00+00:00",
+          "location": {
+            "latitude": 0.0,
+            "longitude": 0.0
+          },
+          "expected_positions": {
+            "sun": {
+              "longitude": 280.0,
+              "tolerance": 5.0
+            },
+            "moon": {
+              "longitude": 218.0,
+              "tolerance": 10.0
+            },
+            "mercury": {
+              "longitude": 277.0,
+              "tolerance": 10.0
+            },
+            "venus": {
+              "longitude": 324.0,
+              "tolerance": 5.0
+            },
+            "mars": {
+              "longitude": 327.0,
+              "tolerance": 5.0
+            }
+          }
+        }
+      ]
+    },
+    "house_systems": {
+      "description": "House system test cases",
+      "test_cases": [
+        {
+          "name": "placidus_london",
+          "datetime": "2000-01-01T12:00:00",
+          "latitude": 51.5074,
+          "longitude": -0.1278,
+          "house_system": "Placidus",
+          "expected": {
+            "asc_range": [
+              260.0,
+              280.0
+            ],
+            "mc_range": [
+              170.0,
+              190.0
+            ]
+          }
+        }
+      ]
+    },
+    "edge_cases": {
+      "description": "Edge case scenarios for testing",
+      "test_cases": [
+        {
+          "name": "high_latitude_summer",
+          "description": "High latitude during summer solstice",
+          "datetime": "2000-06-21T12:00:00",
+          "latitude": 66.0,
+          "longitude": 0.0,
+          "expected_behavior": "Should calculate without error despite extreme latitude"
+        },
+        {
+          "name": "leap_year_date",
+          "description": "February 29 on leap year",
+          "datetime": "2000-02-29T12:00:00",
+          "latitude": 0.0,
+          "longitude": 0.0,
+          "expected_behavior": "Should handle leap year correctly"
+        },
+        {
+          "name": "coordinate_boundaries",
+          "description": "Test coordinate boundary values",
+          "test_coordinates": [
+            {
+              "lat": 90.0,
+              "lon": 0.0,
+              "name": "North Pole"
+            },
+            {
+              "lat": -90.0,
+              "lon": 0.0,
+              "name": "South Pole"
+            },
+            {
+              "lat": 0.0,
+              "lon": 180.0,
+              "name": "International Date Line"
+            },
+            {
+              "lat": 0.0,
+              "lon": -180.0,
+              "name": "International Date Line West"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

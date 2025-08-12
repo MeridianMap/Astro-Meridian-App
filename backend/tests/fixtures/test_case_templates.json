@@ -1,0 +1,94 @@
+{
+  "created": "2025-08-12T09:57:25.061232",
+  "description": "Test case templates for various scenarios",
+  "test_cases": [
+    {
+      "name": "basic_natal_chart",
+      "description": "Basic natal chart calculation",
+      "subject": {
+        "name": "Test Subject",
+        "datetime": "2000-01-01T12:00:00",
+        "latitude": 40.7128,
+        "longitude": -74.006,
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "name": "london_birth",
+      "description": "Birth in London, UK",
+      "subject": {
+        "name": "London Test",
+        "datetime": "1990-06-15T14:30:00",
+        "latitude": 51.5074,
+        "longitude": -0.1278,
+        "timezone": "Europe/London"
+      }
+    },
+    {
+      "name": "southern_hemisphere",
+      "description": "Southern hemisphere birth",
+      "subject": {
+        "name": "Sydney Test",
+        "datetime": "1985-12-25T18:00:00",
+        "latitude": -33.8688,
+        "longitude": 151.2093,
+        "timezone": "Australia/Sydney"
+      }
+    },
+    {
+      "name": "high_latitude",
+      "description": "High latitude birth (close to polar circle)",
+      "subject": {
+        "name": "Reykjavik Test",
+        "datetime": "2000-06-21T12:00:00",
+        "latitude": 64.1466,
+        "longitude": -21.9426,
+        "timezone": "Atlantic/Reykjavik"
+      }
+    },
+    {
+      "name": "leap_year",
+      "description": "Leap year birth",
+      "subject": {
+        "name": "Leap Year Test",
+        "datetime": "2000-02-29T12:00:00",
+        "latitude": 0.0,
+        "longitude": 0.0,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "name": "dst_transition",
+      "description": "Birth during DST transition",
+      "subject": {
+        "name": "DST Test",
+        "datetime": "2023-03-12T02:30:00",
+        "latitude": 40.7128,
+        "longitude": -74.006,
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "name": "j2000_epoch",
+      "description": "J2000.0 epoch for reference",
+      "subject": {
+        "name": "J2000 Reference",
+        "datetime": "2000-01-01T12:00:00",
+        "latitude": 0.0,
+        "longitude": 0.0,
+        "timezone": "UTC"
+      }
+    },
+    {
+      "name": "historical_date",
+      "description": "Historical date within ephemeris range",
+      "subject": {
+        "name": "Historical Test",
+        "datetime": "1900-01-01T12:00:00",
+        "latitude": 48.8566,
+        "longitude": 2.3522,
+        "timezone": "Europe/Paris"
+      }
+    }
+  ]
+}

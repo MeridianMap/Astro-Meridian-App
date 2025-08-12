@@ -1,0 +1,1210 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Meridian Ephemeris API",
+    "description": "\n    **Meridian Ephemeris Engine** - Professional Astrological Calculations\n    \n    A high-performance REST API for precise astrological chart calculations using the Swiss Ephemeris.\n    \n    ## Features\n    \n    - \ud83c\udfaf **Precise Calculations**: Swiss Ephemeris backend for astronomical accuracy\n    - \ud83c\udfd7\ufe0f **Flexible Input Formats**: Support for multiple coordinate, datetime, and timezone formats\n    - \ud83c\udfe0 **Multiple House Systems**: Placidus, Koch, Equal House, Whole Sign, and more\n    - \u26a1 **High Performance**: Parallel processing and intelligent caching\n    - \ud83d\udcca **Comprehensive Data**: Complete natal charts with planets, houses, angles, and aspects\n    - \ud83d\udd12 **Input Validation**: Robust validation with clear error messages\n    - \ud83d\udcd6 **OpenAPI Documentation**: Interactive API documentation and schema validation\n    \n    ## Supported Formats\n    \n    ### Coordinates\n    - **Decimal degrees**: `40.7128, -74.0060`\n    - **DMS strings**: `\"40\u00b042'46\\\"N\", \"74\u00b000'22\\\"W\"`\n    - **Component objects**: `{\"degrees\": 40, \"minutes\": 42, \"seconds\": 46, \"direction\": \"N\"}`\n    \n    ### DateTime\n    - **ISO 8601 strings**: `\"2000-01-01T12:00:00\"`, `\"2000-01-01T12:00:00-05:00\"`\n    - **Julian Day numbers**: `2451545.0`\n    - **Component objects**: `{\"year\": 2000, \"month\": 1, \"day\": 1, \"hour\": 12}`\n    \n    ### Timezones\n    - **IANA names**: `\"America/New_York\"`, `\"Europe/London\"`\n    - **UTC offsets**: `-5.0`, `+1.0`\n    - **Auto-detection**: Based on coordinates\n    \n    ## Usage Examples\n    \n    Calculate a natal chart with basic decimal coordinates:\n    ```json\n    {\n      \"subject\": {\n        \"name\": \"John Doe\",\n        \"datetime\": {\"iso_string\": \"1990-06-15T14:30:00\"},\n        \"latitude\": {\"decimal\": 40.7128},\n        \"longitude\": {\"decimal\": -74.0060},\n        \"timezone\": {\"name\": \"America/New_York\"}\n      }\n    }\n    ```\n    ",
+    "contact": {
+      "name": "Meridian Ephemeris Support",
+      "email": "support@meridianephemeris.com"
+    },
+    "license": {
+      "name": "MIT License",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/ephemeris/health": {
+      "get": {
+        "tags": [
+          "ephemeris"
+        ],
+        "summary": "Health Check",
+        "description": "Check the health status of the ephemeris service and verify ephemeris data availability.",
+        "operationId": "health_check_ephemeris_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Input validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Invalid input format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - Calculation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ephemeris/natal": {
+      "post": {
+        "tags": [
+          "ephemeris"
+        ],
+        "summary": "Calculate Natal Chart",
+        "description": "Calculate a complete natal chart for the given birth data.\n    \n    Supports multiple input formats:\n    - Coordinates: decimal degrees, DMS strings, or component objects\n    - DateTime: ISO strings, Julian Day numbers, or component objects  \n    - Timezone: IANA names, UTC offsets, or auto-detection from coordinates\n    \n    Returns comprehensive chart data including:\n    - Normalized subject birth data\n    - All planetary positions with zodiac and house information\n    - House system cusps and angles\n    - Major aspects with orbs and applying/separating status",
+        "operationId": "calculate_natal_chart_ephemeris_natal_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NatalChartRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful chart calculation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NatalChartResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Input validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Invalid input format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Chart calculation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ephemeris/schemas/natal-request": {
+      "get": {
+        "tags": [
+          "ephemeris"
+        ],
+        "summary": "Get Natal Chart Request Schema",
+        "description": "Get the JSON schema for natal chart request format with examples.",
+        "operationId": "get_natal_request_schema_ephemeris_schemas_natal_request_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Input validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Invalid input format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - Calculation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ephemeris/schemas/natal-response": {
+      "get": {
+        "tags": [
+          "ephemeris"
+        ],
+        "summary": "Get Natal Chart Response Schema",
+        "description": "Get the JSON schema for natal chart response format.",
+        "operationId": "get_natal_response_schema_ephemeris_schemas_natal_response_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Input validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Invalid input format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - Calculation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ephemeris/house-systems": {
+      "get": {
+        "tags": [
+          "ephemeris"
+        ],
+        "summary": "Get Supported House Systems",
+        "description": "Get list of supported house systems with their codes and names.",
+        "operationId": "get_supported_house_systems_ephemeris_house_systems_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Input validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Invalid input format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - Calculation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ephemeris/supported-objects": {
+      "get": {
+        "tags": [
+          "ephemeris"
+        ],
+        "summary": "Get Supported Celestial Objects",
+        "description": "Get list of celestial objects included in chart calculations.",
+        "operationId": "get_supported_objects_ephemeris_supported_objects_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Input validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Invalid input format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - Calculation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "root"
+        ],
+        "summary": "API Root",
+        "description": "Welcome endpoint with API information and links to documentation.",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Root  Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Global Health Check",
+        "description": "Basic health check for the entire API service.",
+        "operationId": "global_health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnglesResponse": {
+        "properties": {
+          "ascendant": {
+            "type": "number",
+            "title": "Ascendant",
+            "description": "Ascendant longitude in degrees"
+          },
+          "midheaven": {
+            "type": "number",
+            "title": "Midheaven",
+            "description": "Midheaven longitude in degrees"
+          },
+          "descendant": {
+            "type": "number",
+            "title": "Descendant",
+            "description": "Descendant longitude in degrees"
+          },
+          "imum_coeli": {
+            "type": "number",
+            "title": "Imum Coeli",
+            "description": "Imum Coeli longitude in degrees"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "ascendant",
+          "midheaven",
+          "descendant",
+          "imum_coeli"
+        ],
+        "title": "AnglesResponse",
+        "description": "Chart angles data in response."
+      },
+      "AspectResponse": {
+        "properties": {
+          "object1": {
+            "type": "string",
+            "title": "Object1",
+            "description": "First object name"
+          },
+          "object2": {
+            "type": "string",
+            "title": "Object2",
+            "description": "Second object name"
+          },
+          "aspect": {
+            "type": "string",
+            "title": "Aspect",
+            "description": "Aspect name"
+          },
+          "angle": {
+            "type": "number",
+            "title": "Angle",
+            "description": "Exact angle in degrees"
+          },
+          "orb": {
+            "type": "number",
+            "title": "Orb",
+            "description": "Orb from exact aspect"
+          },
+          "applying": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applying",
+            "description": "Whether aspect is applying"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "object1",
+          "object2",
+          "aspect",
+          "angle",
+          "orb"
+        ],
+        "title": "AspectResponse",
+        "description": "Aspect relationship data in response."
+      },
+      "ChartConfiguration": {
+        "properties": {
+          "house_system": {
+            "$ref": "#/components/schemas/HouseSystemEnum",
+            "description": "House system to use for calculations",
+            "default": "P"
+          },
+          "include_asteroids": {
+            "type": "boolean",
+            "title": "Include Asteroids",
+            "description": "Include major asteroids",
+            "default": true
+          },
+          "include_nodes": {
+            "type": "boolean",
+            "title": "Include Nodes",
+            "description": "Include lunar nodes",
+            "default": true
+          },
+          "include_lilith": {
+            "type": "boolean",
+            "title": "Include Lilith",
+            "description": "Include Lilith points",
+            "default": true
+          },
+          "parallel_processing": {
+            "type": "boolean",
+            "title": "Parallel Processing",
+            "description": "Use parallel processing for performance",
+            "default": true
+          },
+          "aspect_orbs": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aspect Orbs",
+            "description": "Custom aspect orb settings in degrees"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ChartConfiguration",
+        "description": "Configuration options for chart calculation."
+      },
+      "CoordinateInput": {
+        "properties": {
+          "decimal": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decimal",
+            "description": "Decimal degrees (-90 to 90 for lat, -180 to 180 for lon)"
+          },
+          "dms": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dms",
+            "description": "Degrees, minutes, seconds string (e.g., '40\u00b042'46\"N')"
+          },
+          "components": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Components",
+            "description": "Separate degree components with direction"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "CoordinateInput",
+        "description": "Flexible coordinate input supporting multiple formats.",
+        "examples": [
+          {
+            "decimal": 40.7128
+          },
+          {
+            "dms": "40\u00b042'46\"N"
+          },
+          {
+            "components": {
+              "degrees": 40,
+              "direction": "N",
+              "minutes": 42,
+              "seconds": 46
+            }
+          }
+        ]
+      },
+      "DateTimeInput": {
+        "properties": {
+          "iso_string": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iso String",
+            "description": "ISO 8601 datetime string"
+          },
+          "julian_day": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Julian Day",
+            "description": "Julian Day Number"
+          },
+          "components": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Components",
+            "description": "Separate datetime components"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "DateTimeInput",
+        "description": "Flexible datetime input supporting multiple formats.",
+        "examples": [
+          {
+            "iso_string": "2000-01-01T12:00:00"
+          },
+          {
+            "iso_string": "2000-01-01T12:00:00Z"
+          },
+          {
+            "julian_day": 2451545.0
+          },
+          {
+            "components": {
+              "day": 1,
+              "hour": 12,
+              "minute": 0,
+              "month": 1,
+              "second": 0,
+              "year": 2000
+            }
+          }
+        ]
+      },
+      "ErrorResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "description": "Always false for errors",
+            "default": false
+          },
+          "error": {
+            "type": "string",
+            "title": "Error",
+            "description": "Error type or category"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Human-readable error message"
+          },
+          "details": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details",
+            "description": "Additional error details"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "error",
+          "message"
+        ],
+        "title": "ErrorResponse",
+        "description": "Error response model."
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Service status"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "API version"
+          },
+          "ephemeris_available": {
+            "type": "boolean",
+            "title": "Ephemeris Available",
+            "description": "Whether ephemeris files are available"
+          },
+          "uptime": {
+            "type": "number",
+            "title": "Uptime",
+            "description": "Service uptime in seconds"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "version",
+          "ephemeris_available",
+          "uptime"
+        ],
+        "title": "HealthResponse",
+        "description": "Health check response."
+      },
+      "HouseSystemEnum": {
+        "type": "string",
+        "enum": [
+          "P",
+          "K",
+          "O",
+          "R",
+          "C",
+          "E",
+          "W"
+        ],
+        "title": "HouseSystemEnum",
+        "description": "Supported house systems."
+      },
+      "HousesResponse": {
+        "properties": {
+          "system": {
+            "type": "string",
+            "title": "System",
+            "description": "House system code"
+          },
+          "cusps": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Cusps",
+            "description": "House cusp longitudes in degrees"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "system",
+          "cusps"
+        ],
+        "title": "HousesResponse",
+        "description": "House system data in response."
+      },
+      "NatalChartRequest": {
+        "properties": {
+          "subject": {
+            "$ref": "#/components/schemas/SubjectRequest",
+            "description": "Subject birth data"
+          },
+          "configuration": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ChartConfiguration"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Chart calculation configuration",
+            "default": {
+              "house_system": "P",
+              "include_asteroids": true,
+              "include_nodes": true,
+              "include_lilith": true,
+              "parallel_processing": true
+            }
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "subject"
+        ],
+        "title": "NatalChartRequest",
+        "description": "Complete request for natal chart calculation.",
+        "example": {
+          "configuration": {
+            "house_system": "P",
+            "include_asteroids": true
+          },
+          "subject": {
+            "datetime": {
+              "iso_string": "1990-06-15T14:30:00"
+            },
+            "latitude": {
+              "decimal": 40.7128
+            },
+            "longitude": {
+              "decimal": -74.006
+            },
+            "name": "John Doe",
+            "timezone": {
+              "name": "America/New_York"
+            }
+          }
+        }
+      },
+      "NatalChartResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "description": "Whether calculation succeeded"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/SubjectResponse",
+            "description": "Normalized subject data"
+          },
+          "planets": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PlanetResponse"
+            },
+            "type": "object",
+            "title": "Planets",
+            "description": "Planet positions by name"
+          },
+          "houses": {
+            "$ref": "#/components/schemas/HousesResponse",
+            "description": "House system data"
+          },
+          "angles": {
+            "$ref": "#/components/schemas/AnglesResponse",
+            "description": "Chart angles"
+          },
+          "aspects": {
+            "items": {
+              "$ref": "#/components/schemas/AspectResponse"
+            },
+            "type": "array",
+            "title": "Aspects",
+            "description": "Aspect relationships"
+          },
+          "calculation_time": {
+            "type": "string",
+            "title": "Calculation Time",
+            "description": "When calculation was performed"
+          },
+          "chart_type": {
+            "type": "string",
+            "title": "Chart Type",
+            "description": "Type of chart",
+            "default": "natal"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "success",
+          "subject",
+          "planets",
+          "houses",
+          "angles",
+          "aspects",
+          "calculation_time"
+        ],
+        "title": "NatalChartResponse",
+        "description": "Complete natal chart response.",
+        "example": {
+          "calculation_time": "2024-01-01T12:00:00Z",
+          "planets": {
+            "Sun": {
+              "house_number": 10,
+              "longitude": 84.5,
+              "sign_name": "Gemini"
+            }
+          },
+          "subject": {
+            "datetime": "1990-06-15T14:30:00-04:00",
+            "latitude": 40.7128,
+            "longitude": -74.006,
+            "name": "John Doe"
+          },
+          "success": true
+        }
+      },
+      "PlanetResponse": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Planet name"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude",
+            "description": "Ecliptic longitude in degrees"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude",
+            "description": "Ecliptic latitude in degrees"
+          },
+          "distance": {
+            "type": "number",
+            "title": "Distance",
+            "description": "Distance from Earth"
+          },
+          "longitude_speed": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude Speed",
+            "description": "Longitude speed in degrees/day"
+          },
+          "sign_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sign Name",
+            "description": "Zodiac sign name"
+          },
+          "sign_longitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sign Longitude",
+            "description": "Longitude within sign"
+          },
+          "house_number": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "House Number",
+            "description": "House number (1-12)"
+          },
+          "element": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Element",
+            "description": "Element (Fire, Earth, Air, Water)"
+          },
+          "modality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Modality",
+            "description": "Modality (Cardinal, Fixed, Mutable)"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "name",
+          "longitude",
+          "latitude",
+          "distance"
+        ],
+        "title": "PlanetResponse",
+        "description": "Planet position data in response."
+      },
+      "SubjectRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "description": "Subject name or identifier"
+          },
+          "datetime": {
+            "$ref": "#/components/schemas/DateTimeInput",
+            "description": "Birth datetime in various formats"
+          },
+          "latitude": {
+            "$ref": "#/components/schemas/CoordinateInput",
+            "description": "Birth latitude"
+          },
+          "longitude": {
+            "$ref": "#/components/schemas/CoordinateInput",
+            "description": "Birth longitude"
+          },
+          "altitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Altitude",
+            "description": "Altitude in meters above sea level",
+            "default": 0.0
+          },
+          "timezone": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TimezoneInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Timezone information"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "datetime",
+          "latitude",
+          "longitude"
+        ],
+        "title": "SubjectRequest",
+        "description": "Request model for subject birth data.",
+        "example": {
+          "altitude": 100.0,
+          "datetime": {
+            "iso_string": "1990-06-15T14:30:00"
+          },
+          "latitude": {
+            "decimal": 40.7128
+          },
+          "longitude": {
+            "decimal": -74.006
+          },
+          "name": "John Doe",
+          "timezone": {
+            "name": "America/New_York"
+          }
+        }
+      },
+      "SubjectResponse": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Subject name"
+          },
+          "datetime": {
+            "type": "string",
+            "title": "Datetime",
+            "description": "ISO format datetime"
+          },
+          "julian_day": {
+            "type": "number",
+            "title": "Julian Day",
+            "description": "Julian Day Number"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude",
+            "description": "Latitude in decimal degrees"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude",
+            "description": "Longitude in decimal degrees"
+          },
+          "altitude": {
+            "type": "number",
+            "title": "Altitude",
+            "description": "Altitude in meters"
+          },
+          "timezone_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timezone Name",
+            "description": "Timezone name if available"
+          },
+          "utc_offset": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utc Offset",
+            "description": "UTC offset in hours"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "name",
+          "datetime",
+          "julian_day",
+          "latitude",
+          "longitude",
+          "altitude"
+        ],
+        "title": "SubjectResponse",
+        "description": "Normalized subject data in response."
+      },
+      "TimezoneInput": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "IANA timezone name (e.g., 'America/New_York')"
+          },
+          "utc_offset": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utc Offset",
+            "description": "UTC offset in hours (e.g., -5.0)"
+          },
+          "auto_detect": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auto Detect",
+            "description": "Auto-detect timezone from coordinates",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "TimezoneInput",
+        "description": "Flexible timezone input supporting multiple formats.",
+        "examples": [
+          {
+            "name": "America/New_York"
+          },
+          {
+            "utc_offset": -5.0
+          },
+          {
+            "auto_detect": true
+          }
+        ]
+      }
+    }
+  }
+}
