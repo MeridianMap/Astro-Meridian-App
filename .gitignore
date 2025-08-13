@@ -152,8 +152,132 @@ ehthumbs.db
 Thumbs.db
 
 # Swiss Ephemeris files
-*.se1
+# Previously ignored all *.se1 globally; this caused test assets to be ignored.
+# Use scoped rules below instead.
 
 # Temporary files
 *.tmp
 *.temp
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+.docker/
+
+# Redis
+redis-data/
+dump.rdb
+
+# Generated SDKs
+sdks/python/generated/
+sdks/typescript/generated/
+sdks/go/generated/
+
+# Documentation build artifacts
+site/
+docs-requirements.txt
+docs/_build/
+.cache/
+
+# Monitoring and metrics
+prometheus-data/
+grafana-data/
+*.prof
+
+# Performance and benchmarking
+benchmark-results/
+profile-output/
+.benchmarks/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Secrets and config
+.env.local
+.env.production
+secrets/
+config/local.yml
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Cache directories
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Swiss Ephemeris data
+ephemeris/*.se1
+ephemeris/sedeltat
+ephemeris/seleapsec.txt
+ephemeris/sefstars.txt
+
+# Reference projects and external programs (do not commit)
+reference/
+
+# Internal AI tooling/config (local)
+.claude/
+
+# Generated/OpenAPI (backend)
+backend/openapi.json
+
+# Jupyter Notebook outputs
+*.ipynb_checkpoints/
+.ipynb_checkpoints
+
+# FastAPI auto-generated
+openapi.json
+
+# Testing artifacts
+.coverage
+.tox/
+htmlcov/
+coverage.xml
+*.cover
+.hypothesis/
+test-results/
+
+# Logs
+*.log
+logs/
+log/
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Dependency directories
+node_modules/
+venv/
+.venv/
+env/
+
+# Package files
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# Generated documentation files (keep source, ignore generated)
+docs/api/endpoints.md
+docs/api/schemas.md
+docs/guides/installation.md
+docs/guides/authentication.md
+docs/guides/rate-limits.md
+docs/api/errors.md
+
+# Keep docs sources; ignore generated sites
+/site
+site/

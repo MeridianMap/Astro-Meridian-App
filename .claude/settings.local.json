@@ -73,7 +73,9 @@
       "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest tests/test_edge_cases.py::TestPerformanceEdgeCases::test_calculation_time_consistency --tb=short -v)",
       "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest tests/test_edge_cases.py::TestPerformanceEdgeCases::test_calculation_time_consistency --tb=no -q)",
       "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest tests/test_edge_cases.py::TestPerformanceEdgeCases::test_calculation_time_consistency -v -s)",
-      "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest --cov=app --cov-report=term --tb=no --quiet)"
+      "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest --cov=app --cov-report=term --tb=no --quiet)",
+      "Bash(if exist \"context and plans\" rmdir /s /q \"context and plans\")",
+      "Bash(rm:*)"
     ],
     "deny": []
   }

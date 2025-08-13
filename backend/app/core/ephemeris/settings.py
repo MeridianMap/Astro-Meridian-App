@@ -38,6 +38,15 @@ class EphemerisSettings:
         self.cache_size: int = 1000
         self.cache_ttl: int = 3600  # seconds
         
+        # Redis cache settings
+        self.enable_redis_cache: bool = True
+        self.redis_host: str = os.environ.get('REDIS_HOST', 'localhost')
+        self.redis_port: int = int(os.environ.get('REDIS_PORT', '6379'))
+        self.redis_db: int = int(os.environ.get('REDIS_DB', '0'))
+        self.redis_password: Optional[str] = os.environ.get('REDIS_PASSWORD')
+        self.redis_socket_timeout: float = 5.0
+        self.redis_max_connections: int = 10
+        
         # Coordinate systems
         self.coordinate_system: str = 'tropical'  # tropical or sidereal
         self.ayanamsa: int = swe.SIDM_FAGAN_BRADLEY

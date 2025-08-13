@@ -18,6 +18,7 @@ import uvicorn
 from .api.routes.ephemeris import router as ephemeris_router
 from .api.models.schemas import ErrorResponse
 from .core.ephemeris.settings import settings
+from .core.monitoring.metrics import setup_metrics_middleware, get_metrics, update_health_metrics
 
 
 # Configure logging
@@ -35,6 +36,28 @@ async def lifespan(app: FastAPI):
     logger.info("🚀 Starting Meridian Ephemeris API")
     logger.info(f"📊 Using ephemeris data path: {settings.ephemeris_path}")
     
+    # Initialize performance optimizations
+    try:
+        from .core.performance.optimizations import get_performance_optimizer
+        optimizer = get_performance_optimizer()
+        logger.info("⚡ Performance optimizer initialized")
+    except Exception as e:
+        logger.warning(f"⚠️  Performance optimizer initialization failed: {e}")
+    
+    # Initialize Redis cache
+    try:
+        from .core.ephemeris.classes.redis_cache import get_redis_cache, get_cache_warmer
+        redis_cache = get_redis_cache()
+        if redis_cache.enabled:
+            logger.info("🗄️  Redis cache initialized")
+            # Warm cache with common calculations
+            cache_warmer = get_cache_warmer()
+            # Note: Actual cache warming would be done in background
+        else:
+            logger.info("🗄️  Redis cache disabled, using in-memory cache only")
+    except Exception as e:
+        logger.warning(f"⚠️  Redis cache initialization failed: {e}")
+    
     # Validate ephemeris files on startup
     try:
         from .core.ephemeris.tools.ephemeris import validate_ephemeris_files
@@ -50,6 +73,19 @@ async def lifespan(app: FastAPI):
             
     except Exception as e:
         logger.error(f"❌ Failed to validate ephemeris files: {e}")
+    
+    # Initialize monitoring and metrics
+    try:
+        metrics = get_metrics()
+        metrics.set_app_info({
+            "version": "1.0.0",
+            "name": "meridian-ephemeris-api",
+            "environment": "production"
+        })
+        logger.info("📈 Metrics collection initialized")
+        update_health_metrics()
+    except Exception as e:
+        logger.warning(f"⚠️  Metrics initialization failed: {e}")
     
     yield
     
@@ -132,6 +168,9 @@ app.add_middleware(
 )
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+# Set up Prometheus metrics middleware
+setup_metrics_middleware(app)
 
 
 @app.middleware("http")
