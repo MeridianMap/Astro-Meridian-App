@@ -1,5 +1,7 @@
 # ACG (Astrocartography) Feature Master Context
 
+Agent execution model (Claude Code): claude-3.5-sonnet, temperature 0.1, tools enabled (filesystem/terminal), long timeout. Pin this file and PRPs/contracts/acg-api-contract.md in context; exclude reference/**.
+
 ## Module Location
 - All ACG (astrocartography) code will reside in `backend/app/core/acg/`
 - API endpoints will be under `/acg/` (e.g., `/acg/lines`)

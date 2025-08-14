@@ -312,8 +312,26 @@ def get_metrics() -> MeridianMetrics:
 def timed_calculation(calculation_type: str):
     """Decorator to time ephemeris calculations."""
     def decorator(func: Callable) -> Callable:
+        import asyncio
+        
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        async def async_wrapper(*args, **kwargs):
+            metrics = get_metrics()
+            start_time = time.time()
+            success = False
+            
+            try:
+                result = await func(*args, **kwargs)
+                success = True
+                return result
+            except Exception:
+                raise
+            finally:
+                duration = time.time() - start_time
+                metrics.record_calculation(calculation_type, duration, success)
+        
+        @functools.wraps(func)
+        def sync_wrapper(*args, **kwargs):
             metrics = get_metrics()
             start_time = time.time()
             success = False
@@ -328,7 +346,12 @@ def timed_calculation(calculation_type: str):
                 duration = time.time() - start_time
                 metrics.record_calculation(calculation_type, duration, success)
         
-        return wrapper
+        # Check if the function is async
+        if asyncio.iscoroutinefunction(func):
+            return async_wrapper
+        else:
+            return sync_wrapper
+            
     return decorator
 
 

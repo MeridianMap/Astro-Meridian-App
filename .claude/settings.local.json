@@ -75,8 +75,20 @@
       "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest tests/test_edge_cases.py::TestPerformanceEdgeCases::test_calculation_time_consistency -v -s)",
       "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest --cov=app --cov-report=term --tb=no --quiet)",
       "Bash(if exist \"context and plans\" rmdir /s /q \"context and plans\")",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -c \"from app.core.acg.acg_core import ACGCalculationEngine; engine = ACGCalculationEngine(); print(f''ACG Engine initialized with {len(engine.get_supported_bodies())} bodies'')\")",
+      "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -c \"from app.core.acg.acg_core import ACGCalculationEngine; engine = ACGCalculationEngine(); print(f''ACG Engine initialized with {len(engine.get_supported_bodies())} bodies'')\")",
+      "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -c \"from app.core.acg.acg_core import ACGCalculationEngine; engine = ACGCalculationEngine(); print(f''ACG Engine initialized with {len(engine.get_supported_bodies())} bodies'')\")",
+      "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -c \"from app.core.acg.acg_core import ACGCalculationEngine; engine = ACGCalculationEngine(); print(f''ACG Engine initialized with {len(engine.get_supported_bodies())} bodies'')\")",
+      "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -c \"from app.main import app; from fastapi.testclient import TestClient; client = TestClient(app); response = client.get(''/acg/health''); print(''ACG Health:'', response.status_code, response.json())\")",
+      "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest tests/core/acg/ -v)",
+      "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest tests/core/acg/ -v --tb=short)",
+      "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest tests/api/routes/test_acg.py -v --tb=short)",
+      "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest tests/api/routes/test_acg.py::TestACGAPIEndpoints::test_acg_lines_endpoint_success -v --tb=short -s)",
+      "Bash(grep:*)",
+      "Bash(PYTHONPATH=.:*)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "acceptEdits"
   }
 }

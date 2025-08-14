@@ -16,6 +16,7 @@ from fastapi.exceptions import RequestValidationError
 import uvicorn
 
 from .api.routes.ephemeris import router as ephemeris_router
+from .api.routes.acg import router as acg_router
 from .api.models.schemas import ErrorResponse
 from .core.ephemeris.settings import settings
 from .core.monitoring.metrics import setup_metrics_middleware, get_metrics, update_health_metrics
@@ -203,6 +204,7 @@ async def log_requests(request: Request, call_next):
 
 # Include routers
 app.include_router(ephemeris_router)
+app.include_router(acg_router)
 
 
 # Root endpoint
@@ -232,6 +234,14 @@ async def root():
         "endpoints": {
             "health": "/ephemeris/health",
             "natal_chart": "/ephemeris/natal",
+            "acg": {
+                "health": "/acg/health",
+                "lines": "/acg/lines",
+                "batch": "/acg/batch",
+                "animate": "/acg/animate",
+                "features": "/acg/features",
+                "schema": "/acg/schema"
+            },
             "schemas": {
                 "natal_request": "/ephemeris/schemas/natal-request",
                 "natal_response": "/ephemeris/schemas/natal-response"

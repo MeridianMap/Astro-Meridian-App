@@ -1,0 +1,15 @@
+Collecting shapely
+  Downloading shapely-2.1.1-cp310-cp310-win_amd64.whl (1.7 MB)
+     ---------------------------------------- 1.7/1.7 MB 6.8 MB/s eta 0:00:00
+Collecting orjson
+  Downloading orjson-3.11.2-cp310-cp310-win_amd64.whl (119 kB)
+     -------------------------------------- 119.7/119.7 kB 6.8 MB/s eta 0:00:00
+Collecting numba
+  Downloading numba-0.61.2-cp310-cp310-win_amd64.whl (2.8 MB)
+     ---------------------------------------- 2.8/2.8 MB 16.4 MB/s eta 0:00:00
+Requirement already satisfied: numpy>=1.21 in c:\users\jacks\onedrive\desktop\meridian\meridian dev\meridian ephemeris v1\venv\lib\site-packages (from shapely) (2.2.6)
+Collecting llvmlite<0.45,>=0.44.0dev0
+  Downloading llvmlite-0.44.0-cp310-cp310-win_amd64.whl (30.3 MB)
+     --------------------------------------- 30.3/30.3 MB 13.9 MB/s eta 0:00:00
+Installing collected packages: shapely, orjson, llvmlite, numba
+Successfully installed llvmlite-0.44.0 numba-0.61.2 orjson-3.11.2 shapely-2.1.1
