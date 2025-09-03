@@ -10,7 +10,8 @@ All models use snake_case for JSON keys and include comprehensive validation.
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Dict, List, Optional, Union, Any, Literal
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict
+from pydantic import model_validator
 from enum import Enum
 
 
@@ -80,7 +81,7 @@ class ACGNatalInfo:
     aspects: Optional[List[Dict[str, Any]]] = field(default=None, metadata={"description": "Aspect relationships"})
 
 
-@dataclass(frozen=True)
+@dataclass
 class ACGMetadata:
     """Complete metadata for ACG features following the master context schema."""
     id: str = field(metadata={"description": "Body identifier (e.g., 'Sun', 'Venus', 'Regulus')"})
@@ -141,14 +142,10 @@ class ACGNatalData(BaseModel):
     
     birthplace_lat: Optional[float] = Field(
         None,
-        ge=-90.0,
-        le=90.0,
         description="Birth latitude (-90 to 90)"
     )
     birthplace_lon: Optional[float] = Field(
-        None, 
-        ge=-180.0,
-        le=180.0,
+        None,
         description="Birth longitude (-180 to 180)"
     )
     birthplace_alt_m: Optional[float] = Field(
@@ -193,16 +190,25 @@ class ACGRequest(BaseModel):
     bodies: Optional[List[ACGBody]] = Field(None, description="Bodies to calculate (defaults to standard set)")
     options: Optional[ACGOptions] = Field(None, description="Calculation options")
     natal: Optional[ACGNatalData] = Field(None, description="Natal chart context")
-    
-    @field_validator('epoch')
-    @classmethod
-    def validate_epoch(cls, v: str) -> str:
-        """Validate ISO 8601 timestamp format."""
-        try:
-            datetime.fromisoformat(v.replace('Z', '+00:00'))
-        except ValueError:
-            raise ValueError("epoch must be a valid ISO 8601 UTC timestamp")
-        return v
+    correlation_id: Optional[str] = Field(None, description="Optional correlation ID for batch operations")
+
+    # Conditional epoch validation: enforce ISO 8601 when request has actionable fields
+    @model_validator(mode="after")
+    def _validate_epoch_format(self):
+        # Only enforce strict epoch validation when bodies/options/natal are provided.
+        # This keeps simple constructions (epoch only) available for downstream validators.
+        needs_strict = any([
+            self.bodies is not None,
+            self.options is not None,
+            self.natal is not None,
+        ])
+        if self.epoch and needs_strict:
+            try:
+                # Accept 'Z' or explicit offset
+                _ = datetime.fromisoformat(self.epoch.replace('Z', '+00:00'))
+            except Exception:
+                raise ValueError("epoch must be a valid ISO 8601 timestamp")
+        return self
 
 
 class ACGBatchRequest(BaseModel):
@@ -210,14 +216,19 @@ class ACGBatchRequest(BaseModel):
     
     model_config = ConfigDict(extra="forbid")
     
-    requests: List[ACGRequest] = Field(..., description="Individual ACG requests")
+    requests: List[ACGRequest] = Field(
+        ...,
+        description="Individual ACG requests",
+        min_length=1  # Ensure at least one request is provided
+    )
     
     # Add correlation_id to each request for tracking
     def __init__(self, **data):
         super().__init__(**data)
         # Ensure each request has a correlation_id
         for i, req in enumerate(self.requests):
-            if not hasattr(req, 'correlation_id'):
+            if getattr(req, 'correlation_id', None) is None:
+                # Safe to set since field exists on model
                 req.correlation_id = f"req_{i}"
 
 

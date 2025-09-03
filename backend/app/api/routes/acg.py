@@ -131,10 +131,8 @@ async def acg_lines_endpoint(
             str(e),
             "/api/v1/acg/lines"
         )
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=error_response.dict()
-        )
+        # FastAPI expects a top-level 'detail' field in the error response
+        return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content={"detail": error_response.model_dump()})
     except Exception as e:
         logger.error(f"ACG lines calculation failed: {e}")
         
@@ -150,10 +148,7 @@ async def acg_lines_endpoint(
             "/api/v1/acg/lines",
             [{"field": "general", "message": str(e)}]
         )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=error_response.dict()
-        )
+        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"detail": error_response.model_dump()})
 
 
 @router.post(
@@ -195,28 +190,37 @@ async def acg_batch_endpoint(
     
     try:
         logger.info(f"ACG batch calculation requested for {len(request.requests)} charts")
+        # Validate non-empty requests
+        if not request.requests:
+            error_response = create_acg_error_response(
+                status.HTTP_422_UNPROCESSABLE_ENTITY,
+                "validation_error",
+                "Batch 'requests' must contain at least one item",
+                "/api/v1/acg/batch"
+            )
+            return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content={"detail": error_response.model_dump()})
         
         results = []
-        
+
         # Process each request in the batch
         for i, acg_request in enumerate(request.requests):
             try:
-                # Add correlation ID if not present
-                correlation_id = getattr(acg_request, 'correlation_id', f"batch_{i}")
-                
+                # Use provided correlation ID or fallback
+                correlation_id = acg_request.correlation_id or f"batch_{i}"
+
                 # Calculate ACG lines
                 acg_result = acg_engine.calculate_acg_lines(acg_request)
-                
+
                 results.append({
                     "correlation_id": correlation_id,
-                    "response": acg_result.dict()
+                    "response": acg_result.model_dump()
                 })
-                
+
             except Exception as e:
                 logger.error(f"Batch item {i} failed: {e}")
                 # Include error in results rather than failing entire batch
                 results.append({
-                    "correlation_id": getattr(acg_request, 'correlation_id', f"batch_{i}"),
+                    "correlation_id": acg_request.correlation_id or f"batch_{i}",
                     "error": {
                         "message": str(e),
                         "status": "calculation_failed"
@@ -246,16 +250,16 @@ async def acg_batch_endpoint(
         metrics = get_metrics()
         metrics.record_calculation("acg_batch", calc_duration, False)
         
+        # Build and return error immediately to avoid referencing 'e' outside scope
         error_response = create_acg_error_response(
             status.HTTP_500_INTERNAL_SERVER_ERROR,
-            "batch_calculation_error",
-            "Batch ACG calculation failed",
-            "/api/v1/acg/batch"
+            "calculation_error",
+            "ACG calculation failed",
+            "/api/v1/acg/lines",
+            [{"field": "general", "message": str(e)}]
         )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=error_response.dict()
-        )
+        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"detail": error_response.model_dump()})
+        
 
 
 @router.get(
@@ -322,7 +326,7 @@ async def get_acg_features() -> ACGFeaturesResponse:
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=error_response.dict()
+            detail=error_response.model_dump()
         )
 
 
@@ -362,7 +366,7 @@ async def get_acg_schema() -> Dict[str, Any]:
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=error_response.dict()
+            detail=error_response.model_dump()
         )
 
 
@@ -421,7 +425,13 @@ async def acg_animate_endpoint(
         
         while current_dt < end_dt and frame_count < max_frames:
             # Create request for current frame
-            frame_epoch = current_dt.isoformat() + 'Z'
+            # Normalize to UTC ISO 8601 with trailing 'Z' (no duplicate offset)
+            try:
+                from datetime import timezone
+                frame_epoch = current_dt.astimezone(timezone.utc).replace(tzinfo=None).isoformat() + 'Z'
+            except Exception:
+                # Fallback: strip tzinfo if present
+                frame_epoch = current_dt.replace(tzinfo=None).isoformat() + 'Z'
             frame_request = ACGRequest(
                 epoch=frame_epoch,
                 bodies=request.bodies,
@@ -442,7 +452,7 @@ async def acg_animate_endpoint(
             frames.append({
                 "epoch": frame_epoch,
                 "jd": jd,
-                "data": frame_result.dict()
+                "data": frame_result.model_dump()
             })
             
             # Advance to next frame
@@ -474,10 +484,7 @@ async def acg_animate_endpoint(
             str(e),
             "/api/v1/acg/animate"
         )
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=error_response.dict()
-        )
+        return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content={"detail": error_response.model_dump()})
     except Exception as e:
         logger.error(f"ACG animation calculation failed: {e}")
         
@@ -485,16 +492,13 @@ async def acg_animate_endpoint(
         metrics = get_metrics()
         metrics.record_calculation("acg_animate", calc_duration, False)
         
-        error_response = create_acg_error_response(
+    error_response = create_acg_error_response(
             status.HTTP_500_INTERNAL_SERVER_ERROR,
             "animation_error",
             "ACG animation calculation failed",
             "/api/v1/acg/animate"
         )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=error_response.dict()
-        )
+    return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"detail": error_response.model_dump()})
 
 
 # Cache statistics endpoint
@@ -529,7 +533,7 @@ async def get_acg_cache_stats() -> Dict[str, Any]:
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=error_response.dict()
+            detail=error_response.model_dump()
         )
 
 

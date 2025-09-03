@@ -93,8 +93,8 @@ class ACGCacheManager:
                     {'id': body.id, 'type': body.type.value, 'number': body.number}
                     for body in (request.bodies or [])
                 ] if request.bodies else None,
-                'options': request.options.dict() if request.options else None,
-                'natal': request.natal.dict() if request.natal else None
+                'options': request.options.model_dump() if request.options else None,
+                'natal': request.natal.model_dump() if request.natal else None
             }
             
             # Sort for consistency
@@ -129,18 +129,18 @@ class ACGCacheManager:
         try:
             # Try Redis first
             if self.redis_cache.enabled:
-                cached_data = self.redis_cache.get("acg_results", request.dict())
+                cached_data = self.redis_cache.get("acg_results", request.model_dump())
                 if cached_data:
                     self.stats['hits'] += 1
                     self.logger.debug(f"ACG result cache hit (Redis): {cache_key}")
-                    return ACGResult.parse_obj(cached_data)
+                    return ACGResult.model_validate(cached_data)
             
             # Try memory cache
             cached_data = self.memory_cache.get(cache_key)
             if cached_data:
                 self.stats['hits'] += 1
                 self.logger.debug(f"ACG result cache hit (Memory): {cache_key}")
-                return ACGResult.parse_obj(cached_data)
+                return ACGResult.model_validate(cached_data)
             
             # Cache miss
             self.stats['misses'] += 1
@@ -173,11 +173,11 @@ class ACGCacheManager:
         ttl = ttl or self.default_ttl
         
         try:
-            result_data = result.dict()
+            result_data = result.model_dump()
             
             # Store in Redis
             if self.redis_cache.enabled:
-                self.redis_cache.set("acg_results", request.dict(), result_data, ttl=ttl)
+                self.redis_cache.set("acg_results", request.model_dump(), result_data, ttl=ttl)
                 self.logger.debug(f"ACG result cached to Redis: {cache_key}")
             
             # Store in memory cache

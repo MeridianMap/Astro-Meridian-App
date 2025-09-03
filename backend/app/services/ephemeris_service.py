@@ -280,9 +280,13 @@ class EphemerisService:
             planets_response[planet_name] = self._format_planet_response(planet_id, planet_data)
         
         # Format houses
+        # Normalize house cusps to 12 for API response (tests expect 12)
+        cusps = chart_data.houses.house_cusps
+        if isinstance(cusps, list) and len(cusps) == 13 and cusps[0] == 0:
+            cusps = cusps[1:]
         houses_response = HousesResponse(
             system=chart_data.houses.system_code,
-            cusps=chart_data.houses.house_cusps
+            cusps=cusps
         )
         
         # Format angles

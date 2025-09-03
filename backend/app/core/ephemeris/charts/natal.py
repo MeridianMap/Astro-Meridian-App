@@ -247,6 +247,19 @@ class NatalChart:
                 self.subject_data.longitude,
                 house_system=self.house_system
             )
+
+            # Normalize for chart exposure: charts should present exactly 12 cusps
+            # Low-level get_houses may return 13 (index 0 unused). Always trim to 12 here.
+            if hasattr(houses, 'house_cusps') and len(houses.house_cusps) == 13:
+                cusps = houses.house_cusps
+                houses = HouseSystem(
+                    house_cusps=cusps[1:],
+                    ascmc=houses.ascmc,
+                    system_code=houses.system_code,
+                    calculation_time=houses.calculation_time,
+                    latitude=houses.latitude,
+                    longitude=houses.longitude
+                )
             
             angles_dict = get_angles(
                 self.subject_data.julian_day,

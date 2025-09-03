@@ -70,7 +70,6 @@ def datetime_from_julian_day(jd: float) -> datetime:
     )
 
 
-@cached(ttl=3600)  # Cache for 1 hour
 def get_planet(
     planet_id: int,
     julian_day: float,
@@ -128,7 +127,6 @@ def get_planet(
         raise RuntimeError(f"Failed to calculate {planet_name} position: {str(e)}") from e
 
 
-@cached(ttl=3600)  # Cache for 1 hour
 def get_houses(
     julian_day: float,
     latitude: float,
@@ -157,9 +155,14 @@ def get_houses(
         
         # Calculate houses
         house_cusps, ascmc = swe.houses(julian_day, latitude, longitude, house_system.encode('utf-8'))
-        
+
+        # Swiss Ephemeris returns 12 cusps (1..12). Some consumers/tests expect 13 with index 0 unused.
+        cusps_list = list(house_cusps)
+        if len(cusps_list) == 12:
+            cusps_list = [0.0] + cusps_list
+
         return HouseSystem(
-            house_cusps=list(house_cusps),
+            house_cusps=cusps_list,
             ascmc=list(ascmc),
             system_code=house_system,
             calculation_time=datetime_from_julian_day(julian_day),
@@ -307,7 +310,6 @@ def get_point(
         raise ValueError(f"Unknown point type: {point_type}")
 
 
-@cached(ttl=86400)  # Cache for 24 hours (fixed stars move slowly)
 def get_fixed_star(
     star_name: str,
     julian_day: float

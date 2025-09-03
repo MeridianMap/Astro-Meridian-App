@@ -127,7 +127,7 @@ class TestExceptionHandlers:
         
         # Test with malformed JSON to trigger validation error first
         response = client.post("/ephemeris/natal", 
-                              data="{invalid json}",
+                              content="{invalid json}",
                               headers={"Content-Type": "application/json"})
         
         # This should trigger a validation error (422), not global handler

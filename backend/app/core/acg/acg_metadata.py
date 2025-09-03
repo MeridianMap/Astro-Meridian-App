@@ -252,11 +252,18 @@ class ACGMetadataManager:
                             result['errors'].append(f"Invalid coordinate {coord_field}: {coord_value}")
                             result['valid'] = False
             
-            # Calculate completeness score
-            total_fields = len(self.required_fields) + len(self.optional_fields)
-            present_fields = sum(1 for field in self.required_fields | self.optional_fields
-                               if hasattr(metadata, field) and getattr(metadata, field) is not None)
-            result['completeness_score'] = present_fields / total_fields
+            # Calculate completeness score with weighting:
+            # 80% weight on required fields, 20% on optional fields
+            required_total = len(self.required_fields)
+            optional_total = len(self.optional_fields)
+            required_present = sum(1 for field in self.required_fields
+                                   if hasattr(metadata, field) and getattr(metadata, field) is not None)
+            optional_present = sum(1 for field in self.optional_fields
+                                   if hasattr(metadata, field) and getattr(metadata, field) is not None)
+
+            req_score = (required_present / required_total) if required_total else 1.0
+            opt_score = (optional_present / optional_total) if optional_total else 1.0
+            result['completeness_score'] = 0.8 * req_score + 0.2 * opt_score
             
             # Add warnings for missing optional fields
             if result['completeness_score'] < 0.8:

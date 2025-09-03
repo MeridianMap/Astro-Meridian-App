@@ -27,10 +27,9 @@ except ImportError:
             return func
         return decorator
 
-from ..const import SwePlanets, SweObjects
+from ..const import SwePlanets
 from ..classes.serialize import PlanetPosition, HouseSystem
-from .ephemeris import julian_day_from_datetime
-from .position import calculate_houses
+from .ephemeris import julian_day_from_datetime, datetime_from_julian_day, get_houses
 
 
 @dataclass
@@ -169,18 +168,24 @@ class BatchCalculator:
         
         # Calculate houses
         try:
-            houses = calculate_houses(
-                julian_day, 
-                request.latitude, 
-                request.longitude, 
+            houses = get_houses(
+                julian_day,
+                request.latitude,
+                request.longitude,
                 request.house_system
             )
         except Exception:
-            # Fallback to default houses if calculation fails
+            # Fallback to a simple equal-house system with required shape
+            # Swiss Ephemeris returns 13 cusps (index 0 unused, 1..12 valid)
+            cusps = [0.0] + [i * 30.0 for i in range(1, 13)]
+            ascmc = [0.0, 90.0, 0.0, 0.0]  # ASC, MC, ARMC, Vertex (minimal)
             houses = HouseSystem(
-                system=request.house_system,
-                cusps=[i * 30.0 for i in range(12)],  # Equal houses fallback
-                angles={'ascendant': 0.0, 'midheaven': 90.0, 'descendant': 180.0, 'imum_coeli': 270.0}
+                house_cusps=cusps,
+                ascmc=ascmc,
+                system_code='E',  # Equal houses as a safe fallback
+                calculation_time=datetime_from_julian_day(julian_day),
+                latitude=request.latitude,
+                longitude=request.longitude
             )
         
         return {

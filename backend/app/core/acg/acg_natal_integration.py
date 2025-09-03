@@ -110,7 +110,7 @@ class ACGNatalIntegrator:
             # Create subject
             subject = Subject(
                 name="ACG Subject",
-                date_time=birth_dt.strftime("%Y-%m-%d %H:%M:%S"),
+                datetime=birth_dt.strftime("%Y-%m-%d %H:%M:%S"),
                 latitude=lat_str,
                 longitude=lon_str,
                 altitude=natal.birthplace_alt_m or 0.0

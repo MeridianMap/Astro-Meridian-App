@@ -226,13 +226,26 @@ class CacheDecorator:
             cache: Cache instance to use (creates new if None)
             ttl: TTL for cached results
         """
-        self.cache = cache or EphemerisCache()
+        # Important: don't use truthiness here because EphemerisCache defines __len__,
+        # which makes empty caches evaluate to False. Use explicit None check.
+        self.cache = cache if cache is not None else EphemerisCache()
         self.ttl = ttl
     
     def __call__(self, func):
         """Decorate function with caching."""
         def wrapper(*args, **kwargs):
-            return self.cache.cached_call(func, *args, ttl=self.ttl, **kwargs)
+            # Build a cache key consistent with EphemerisCache
+            key = self.cache._generate_key(func.__name__, *args, **kwargs)  # type: ignore[attr-defined]
+
+            # Try cache first
+            cached_value = self.cache.get(key)
+            if cached_value is not None:
+                return cached_value
+
+            # Compute and store
+            result = func(*args, **kwargs)
+            self.cache.put(key, result, ttl=self.ttl)
+            return result
         
         # Preserve function metadata
         wrapper.__name__ = func.__name__

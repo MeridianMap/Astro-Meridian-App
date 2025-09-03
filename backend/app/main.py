@@ -9,6 +9,7 @@ import time
 from contextlib import asynccontextmanager
 from typing import Dict, Any
 from fastapi import FastAPI, Request, Response, status
+from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
@@ -261,16 +262,30 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     """Handle Pydantic validation errors."""
     logger.warning(f"Validation error on {request.url.path}: {exc}")
     
+    # Build standardized error payload
+    details = {
+        "errors": [{"loc": list(error["loc"]), "msg": error["msg"], "type": error["type"]} for error in exc.errors()],
+        "body": str(exc.body) if getattr(exc, "body", None) else None
+    }
+    legacy = {
+        "success": False,
+        "error": "validation_error",
+        "message": "Request validation failed",
+        "details": details
+    }
+    # FastAPI-compatible top-level 'detail'
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content={
-            "success": False,
-            "error": "validation_error",
-            "message": "Request validation failed",
-            "details": {
-                "errors": [{"loc": list(error["loc"]), "msg": error["msg"], "type": error["type"]} for error in exc.errors()],
-                "body": str(exc.body) if exc.body else None
-            }
+            "detail": {
+                "timestamp": datetime.utcnow().isoformat() + 'Z',
+                "status": status.HTTP_422_UNPROCESSABLE_ENTITY,
+                "error": "validation_error",
+                "message": "Request validation failed",
+                "path": request.url.path,
+                "errors": details.get("errors", [])
+            },
+            **legacy
         }
     )
 
@@ -280,15 +295,21 @@ async def global_exception_handler(request: Request, exc: Exception):
     """Handle unexpected exceptions."""
     logger.error(f"Unhandled exception on {request.url.path}: {str(exc)}", exc_info=True)
     
+    payload = {
+        "timestamp": datetime.utcnow().isoformat() + 'Z',
+        "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+        "error": "internal_error",
+        "message": "An unexpected error occurred",
+        "path": request.url.path
+    }
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
+            "detail": payload,
             "success": False,
-            "error": "internal_error",
-            "message": "An unexpected error occurred",
-            "details": {
-                "type": "unhandled_exception"
-            }
+            "error": payload["error"],
+            "message": payload["message"],
+            "details": {"type": "unhandled_exception"}
         }
     )
 

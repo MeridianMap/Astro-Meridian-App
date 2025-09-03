@@ -736,6 +736,9 @@ class ACGCalculationEngine:
             return result
             
         except Exception as e:
+            # Allow validation errors to propagate for proper 422 handling at API layer
+            if isinstance(e, ValueError):
+                raise
             self.logger.error(f"ACG calculation failed: {e}")
             raise RuntimeError(f"ACG calculation failed: {e}")
     

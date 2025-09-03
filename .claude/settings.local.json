@@ -86,7 +86,8 @@
       "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest tests/api/routes/test_acg.py -v --tb=short)",
       "Bash(PYTHONPATH=. ../venv/Scripts/python.exe -m pytest tests/api/routes/test_acg.py::TestACGAPIEndpoints::test_acg_lines_endpoint_success -v --tb=short -s)",
       "Bash(grep:*)",
-      "Bash(PYTHONPATH=.:*)"
+      "Bash(PYTHONPATH=.:*)",
+      "Bash(cd:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

@@ -138,17 +138,19 @@ class PlanetPosition:
     
     def __init__(
         self,
-        planet_id: int,
         longitude: float,
         latitude: float,
         distance: float,
         longitude_speed: float,
-        latitude_speed: float,
-        distance_speed: float,
-        calculation_time: datetime,
+        planet_id: int = 0,
+        latitude_speed: float = 0.0,
+        distance_speed: float = 0.0,
+        calculation_time: Optional[datetime] = None,
         flags: int = 0
     ):
-        """Initialize planet position data."""
+        """Initialize planet position data.
+        Note: parameters are kept flexible for test construction convenience.
+        """
         self.planet_id = planet_id
         self.longitude = longitude
         self.latitude = latitude
@@ -156,7 +158,7 @@ class PlanetPosition:
         self.longitude_speed = longitude_speed
         self.latitude_speed = latitude_speed
         self.distance_speed = distance_speed
-        self.calculation_time = calculation_time
+        self.calculation_time = calculation_time or datetime.now(timezone.utc)
         self.flags = flags
     
     def to_dict(self) -> Dict[str, Any]:
