@@ -13,7 +13,7 @@ All functions use Swiss Ephemeris as the authoritative backend.
 
 import math
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union, Any
 from dataclasses import dataclass
 
 import swisseph as swe
@@ -127,6 +127,7 @@ def get_planet(
         raise RuntimeError(f"Failed to calculate {planet_name} position: {str(e)}") from e
 
 
+@cached(ttl=3600)  # Cache for 1 hour
 def get_houses(
     julian_day: float,
     latitude: float,
@@ -255,7 +256,20 @@ def get_point(
             'longitude': normalize_longitude(result.longitude + 180.0),
             'latitude': -result.latitude,
             'speed': result.longitude_speed,
-            'name': 'South Node'
+            'name': 'South Node (Mean)',
+            'is_retrograde': result.is_retrograde,
+            'motion_type': result.motion_type
+        }
+    
+    elif point_type in ['true_south_node', 'south_node_true']:
+        result = get_planet(SwePlanets.TRUE_NODE, julian_day)
+        return {
+            'longitude': normalize_longitude(result.longitude + 180.0),
+            'latitude': -result.latitude,
+            'speed': result.longitude_speed,
+            'name': 'South Node (True)',
+            'is_retrograde': result.is_retrograde,
+            'motion_type': result.motion_type
         }
     
     elif point_type in ['lilith', 'mean_lilith']:
@@ -457,3 +471,67 @@ def validate_ephemeris_files() -> Dict[str, bool]:
         validation_results['Fixed Stars'] = False
     
     return validation_results
+
+
+def analyze_retrograde_motion(
+    positions: Dict[str, Union[PlanetPosition, Dict[str, Any]]],
+    julian_day: Optional[float] = None
+) -> Dict[str, Any]:
+    """
+    Analyze retrograde motion patterns in calculated positions.
+    
+    Args:
+        positions: Dictionary of planet positions (PlanetPosition objects or dicts)
+        julian_day: Optional Julian Day for context
+    
+    Returns:
+        Dictionary with retrograde analysis results
+    """
+    retrograde_bodies = []
+    direct_bodies = []
+    stationary_bodies = []
+    
+    for name, position in positions.items():
+        # Handle both PlanetPosition objects and dictionaries
+        if isinstance(position, PlanetPosition):
+            speed = position.longitude_speed
+            is_retrograde = position.is_retrograde
+            longitude = position.longitude
+        elif isinstance(position, dict):
+            speed = position.get('longitude_speed', 0.0)
+            is_retrograde = position.get('is_retrograde', speed < 0.0)
+            longitude = position.get('longitude', 0.0)
+        else:
+            continue  # Skip invalid entries
+        
+        body_data = {
+            'name': name,
+            'longitude_speed': speed,
+            'longitude': longitude
+        }
+        
+        if is_retrograde:
+            retrograde_bodies.append(body_data)
+        elif speed == 0.0:
+            stationary_bodies.append(body_data)
+        else:
+            direct_bodies.append(body_data)
+    
+    total_bodies = len(retrograde_bodies) + len(direct_bodies) + len(stationary_bodies)
+    
+    analysis = {
+        'total_bodies': total_bodies,
+        'retrograde_count': len(retrograde_bodies),
+        'direct_count': len(direct_bodies),
+        'stationary_count': len(stationary_bodies),
+        'retrograde_percentage': (len(retrograde_bodies) / total_bodies * 100) if total_bodies > 0 else 0,
+        'retrograde_bodies': retrograde_bodies,
+        'direct_bodies': direct_bodies,
+        'stationary_bodies': stationary_bodies
+    }
+    
+    if julian_day:
+        analysis['julian_day'] = julian_day
+        analysis['calculation_date'] = datetime_from_julian_day(julian_day).isoformat()
+    
+    return analysis

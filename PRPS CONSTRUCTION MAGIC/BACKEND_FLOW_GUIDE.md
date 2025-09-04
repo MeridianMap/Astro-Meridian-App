@@ -65,7 +65,7 @@ API->Validator: epoch + natal base data
 API->ACGCore: compute planetary angular loci
 ACGCore->EphemerisCore: planetary positions (baseline + projections)
 ACGCore->Cache: store/retrieve result key
-ACGCore->API: line structures (per planet, line type)
+ACGCore->API: line structures (per planet, line type; designed for 3D globe/Three.js visualization)
 API->Client: JSON lines + metadata
 ```
 

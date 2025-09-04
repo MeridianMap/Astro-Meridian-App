@@ -21,7 +21,7 @@ Provide an installable, offline-capable, low-latency UI for Meridian Ephemeris (
 | State / Server Data | TanStack Query | Built-in caching, retries, de-dupe |
 | Global UI State | Zustand (or Context early) | Minimal boilerplate |
 | Routing | React Router v6 | Nested routes, code splitting |
-| Mapping | MapLibre GL | OSS alternative; custom line layers |
+| 3D Globe/Mapping | Three.js, three-geo, Geo-Three, MeshLine, signal-line | 3D globe, animated astrocartography lines |
 | Chart Rendering (fallback) | Canvas/SVG components | Simplify initial chart UI |
 | PWA | vite-plugin-pwa + Workbox | Auto SW generation, runtimeCaching |
 | Styling | Tailwind CSS | Rapid layout prototyping |
@@ -39,6 +39,7 @@ meridian-frontend/
       acg/
       batch/
       animation/
+      globe/          # Three.js globe and visualization logic
     hooks/
     pages/
     state/
@@ -54,10 +55,10 @@ meridian-frontend/
 Form → validate (client) → POST /ephemeris/natal → cache (react-query) → render components (planets table, houses) → offer export (JSON / PNG).
 
 ### ACG Lines
-Form (epoch, bodies, lines) → POST /acg/lines → map layer transform → offline line cache (IndexedDB) keyed by hash(params).
+Form (epoch, bodies, lines) → POST /acg/lines → convert lat/lon to 3D globe coordinates (Three.js) → render lines/animations → offline line cache (IndexedDB) keyed by hash(params).
 
 ### ACG Animation
-Request start/end/step → stream/iterate frames (consider chunked requests vs sequential) → maintain LRU frame store → playback controller.
+Request start/end/step → stream/iterate frames (consider chunked requests vs sequential) → convert to 3D globe coordinates → animate lines/frames on globe (Three.js) → maintain LRU frame store → playback controller.
 
 ## 6. Offline & Caching Strategy
 | Asset/Data Type | Strategy | TTL |
@@ -67,7 +68,7 @@ Request start/end/step → stream/iterate frames (consider chunked requests vs s
 | Natal chart POST results | Write-through cache (keyed by normalized input hash) | 12h |
 | ACG lines | NetworkFirst fallback cache | 24h |
 | Animation frames | Opportunistic prefetch + LRU in IndexedDB | Session |
-| Map tiles | StaleWhileRevalidate with cap | 7d |
+| Globe assets/tiles | StaleWhileRevalidate with cap | 7d |
 
 ## 7. Normalized Cache Key (Pseudo)
 ```
@@ -128,6 +129,7 @@ key = sha256(json.dumps({endpoint, version:1, payload:canonical_sort(payload)}, 
 - WebAssembly astro kernels (optional).
 - Theming system (user palettes / dark forced). 
 - GraphQL client support when backend added.
+- Advanced globe features: planetary animation, interactive 3D controls, custom shaders for lines.
 
 ---
 Status: Draft approved baseline for frontend kickoff.

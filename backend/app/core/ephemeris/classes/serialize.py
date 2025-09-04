@@ -134,7 +134,7 @@ class EphemerisData:
 
 
 class PlanetPosition:
-    """Represents a planet's calculated position."""
+    """Represents a planet's calculated position with motion analysis."""
     
     def __init__(
         self,
@@ -161,6 +161,25 @@ class PlanetPosition:
         self.calculation_time = calculation_time or datetime.now(timezone.utc)
         self.flags = flags
     
+    @property
+    def is_retrograde(self) -> bool:
+        """Detect retrograde motion based on longitude speed."""
+        if self.longitude_speed is None:
+            return False
+        return self.longitude_speed < 0.0
+    
+    @property
+    def motion_type(self) -> str:
+        """Determine the motion type of the celestial body."""
+        if self.longitude_speed is None:
+            return "unknown"
+        elif abs(self.longitude_speed) < 0.01:  # Nearly stationary
+            return "stationary"
+        elif self.longitude_speed < 0:
+            return "retrograde"
+        else:
+            return "direct"
+    
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary representation."""
         return {
@@ -171,6 +190,8 @@ class PlanetPosition:
             'longitude_speed': self.longitude_speed,
             'latitude_speed': self.latitude_speed,
             'distance_speed': self.distance_speed,
+            'is_retrograde': self.is_retrograde,
+            'motion_type': self.motion_type,
             'calculation_time': self.calculation_time,
             'flags': self.flags
         }

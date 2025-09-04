@@ -21,7 +21,7 @@ Single reference map of the system's technical architecture for humans and agent
 | Ephemeris Core | Planet/house/angle computations, coordinate & datetime utilities, batching, caching | `app/core/ephemeris/*` |
 | Charts | Domain orchestration for natal (and future transits/progressions) | `charts/natal.py`, `charts/subject.py` |
 | API Layer | Request validation, response formatting, error handling, performance headers | `app/api/routes/*.py`, `schemas.py` |
-| ACG (Astro*Carto*Graphy) | Line calculations, batch & animation, caching | `app/core/acg/*`, `app/api/routes/acg.py` |
+| ACG (Astro*Carto*Graphy) | Line calculations, batch & animation, caching; designed for 3D globe visualization (Three.js) | `app/core/acg/*`, `app/api/routes/acg.py` |
 | Caching | In‑memory LRU+TTL and (planned/partial) Redis | `classes/cache.py`, `classes/redis_cache.py` |
 | Performance & Monitoring | Benchmarks, metrics, optimization hooks | `performance/`, `monitoring/metrics.py`, tests/benchmarks |
 | Documentation | MkDocs site, OpenAPI & SDK generation | `docs/`, `scripts/generate-sdks.py` |
@@ -42,7 +42,7 @@ Single reference map of the system's technical architecture for humans and agent
 | SDKs | OpenAPI Generator (TS, Python, Go) | Regeneration script `generate-sdks.py` |
 | Tests | pytest, pytest-xdist, pytest-benchmark, coverage | Parallel + performance tracking |
 | Packaging | Docker / docker-compose | Local + prod parity |
-| Frontend (planned) | Vite + React TS + PWA | Not yet in main path; scaffolding pending |
+| Frontend (planned) | Vite + React TS + Three.js (3D Globe) + PWA | 3D globe/astrocartography with Three.js; scaffolding pending |
 | Load Testing | k6 / custom JS scripts | `load-testing/` |
 
 ## 5. Runtime Components
@@ -78,10 +78,10 @@ Client -> /ephemeris/batch
 ```
 Client -> /acg/lines or /acg/animate
   -> Input epoch & natal base validation
-  -> Generate planetary angular loci projected to Earth map
+  -> Generate planetary angular loci (for 3D globe visualization)
   -> Optional frame iteration (animate)
   -> Cache intermediate results (when enabled)
-  -> Return line sets / frame list
+  -> Return line sets / frame list (lat/lon for 3D globe)
 ```
 
 ### Caching Strategy
@@ -149,7 +149,8 @@ Client -> /acg/lines or /acg/animate
 | Transits/Progressions | New chart modules reusing core tools |
 | GraphQL API | Layer Strawberry schema over service layer |
 | Additional Celestial Objects | Extend const enumerations + ephemeris function wrappers |
-| PWA Frontend | React/Vite PWA consuming existing REST + future WebSocket streaming (optional) |
+| 3D Globe Visualization | Integrate Three.js (and related libs) for astrocartography lines/animation |
+| PWA Frontend | React/Vite PWA consuming existing REST + Three.js globe; future WebSocket streaming (optional) |
 | Push / Background Jobs | Add task runner (RQ/Celery/FastAPI background tasks) |
 
 ## 16. File & Module Quick Index (Selected)

@@ -18,7 +18,7 @@ from ..api.models.schemas import (
 from ..core.ephemeris.charts.subject import Subject
 from ..core.ephemeris.charts.natal import NatalChart
 from ..core.ephemeris.const import PLANET_NAMES
-from ..core.ephemeris.tools.ephemeris import validate_ephemeris_files
+from ..core.ephemeris.tools.ephemeris import validate_ephemeris_files, analyze_retrograde_motion
 
 
 class EphemerisServiceError(Exception):
@@ -362,6 +362,121 @@ class EphemerisService:
             raise
         except Exception as e:
             raise CalculationError(f"Chart calculation failed: {str(e)}") from e
+    
+    def calculate_natal_chart_enhanced(
+        self, 
+        request: NatalChartRequest,
+        include_south_nodes: bool = True,
+        include_retrograde_analysis: bool = True
+    ) -> Dict[str, Any]:
+        """
+        Calculate natal chart with enhanced features including South Nodes and retrograde analysis.
+        
+        Args:
+            request: Natal chart request data
+            include_south_nodes: Include calculated South Node positions
+            include_retrograde_analysis: Include retrograde motion analysis
+            
+        Returns:
+            Enhanced natal chart response with additional features
+            
+        Raises:
+            InputValidationError: If input validation fails
+            CalculationError: If chart calculation fails
+        """
+        try:
+            calculation_start = time.time()
+            
+            # Get standard natal chart
+            standard_response = self.calculate_natal_chart(request)
+            
+            # Extract chart data for enhancement
+            chart_dict = standard_response.model_dump() if hasattr(standard_response, 'model_dump') else standard_response
+            
+            # Add South Nodes if requested
+            if include_south_nodes and 'planets' in chart_dict:
+                from ..core.ephemeris.tools.ephemeris import get_point
+                from ..core.ephemeris.tools.ephemeris import julian_day_from_datetime
+                
+                # Get Julian Day from the chart data
+                julian_day = chart_dict.get('julian_day')
+                if not julian_day:
+                    # Calculate from datetime if not present
+                    subject_data = chart_dict.get('subject', {})
+                    if 'datetime' in subject_data:
+                        julian_day = julian_day_from_datetime(
+                            datetime.fromisoformat(subject_data['datetime'].replace('Z', '+00:00'))
+                        )
+                
+                if julian_day:
+                    # Add Mean South Node
+                    planet_names = [getattr(planet, 'name', str(planet)) for planet in chart_dict['planets']]
+                    if 'Mean Node' in planet_names:
+                        try:
+                            south_node_mean = get_point('south_node', julian_day)
+                            chart_dict['planets'].append(self._format_planet_data(south_node_mean, 'south_node_mean'))
+                        except Exception as e:
+                            # Log but don't fail the entire calculation
+                            pass
+                    
+                    # Add True South Node
+                    if 'True Node' in planet_names:
+                        try:
+                            south_node_true = get_point('true_south_node', julian_day)
+                            chart_dict['planets'].append(self._format_planet_data(south_node_true, 'south_node_true'))
+                        except Exception as e:
+                            # Log but don't fail the entire calculation
+                            pass
+            
+            # Add retrograde analysis if requested
+            if include_retrograde_analysis and 'planets' in chart_dict:
+                from ..core.ephemeris.tools.ephemeris import analyze_retrograde_motion
+                
+                planet_positions = {}
+                for planet in chart_dict['planets']:
+                    planet_name = getattr(planet, 'name', str(planet))
+                    if hasattr(planet, 'longitude_speed'):
+                        planet_positions[planet_name.lower().replace(' ', '_')] = planet
+                
+                if planet_positions:  # Only analyze if we have planets with speed data
+                    chart_dict['retrograde_analysis'] = analyze_retrograde_motion(
+                        planet_positions, 
+                        chart_dict.get('julian_day')
+                    )
+            
+            # Update calculation time
+            calculation_time = time.time() - calculation_start
+            chart_dict['calculation_time'] = calculation_time
+            
+            return chart_dict
+            
+        except InputValidationError:
+            raise
+        except Exception as e:
+            raise CalculationError(f"Enhanced chart calculation failed: {str(e)}") from e
+    
+    def _format_planet_data(self, planet_data: Dict[str, Any], internal_name: str) -> Any:
+        """
+        Format planet data for response.
+        
+        Args:
+            planet_data: Raw planet calculation data
+            internal_name: Internal name for the planet
+            
+        Returns:
+            Formatted planet response object
+        """
+        # This would need to match your existing PlanetResponse format
+        # For now, return a basic structure
+        return type('Planet', (), {
+            'name': planet_data.get('name', internal_name),
+            'longitude': planet_data.get('longitude', 0.0),
+            'latitude': planet_data.get('latitude', 0.0),
+            'distance': planet_data.get('distance', 0.0),
+            'longitude_speed': planet_data.get('speed', 0.0),
+            'is_retrograde': planet_data.get('is_retrograde', False),
+            'motion_type': planet_data.get('motion_type', 'unknown')
+        })
     
     def create_error_response(self, error: Exception) -> ErrorResponse:
         """

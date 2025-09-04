@@ -358,3 +358,169 @@ class TestIntegrationScenarios:
         from app.core.ephemeris.const import normalize_longitude
         result = normalize_longitude(longitude)
         assert abs(result - expected_normalized) < 0.001
+
+
+class TestRetrogradeAnalysis:
+    """Test retrograde motion analysis functionality."""
+    
+    def test_analyze_retrograde_motion_with_planet_positions(self):
+        """Test retrograde analysis with PlanetPosition objects."""
+        from app.core.ephemeris.tools.ephemeris import analyze_retrograde_motion
+        from app.core.ephemeris.classes.serialize import PlanetPosition
+        
+        positions = {
+            'mercury': PlanetPosition(
+                longitude=150.0, latitude=0.0, distance=0.4, 
+                longitude_speed=-1.2, planet_id=2  # Retrograde
+            ),
+            'venus': PlanetPosition(
+                longitude=200.0, latitude=0.0, distance=0.7,
+                longitude_speed=1.1, planet_id=3  # Direct
+            ),
+            'mars': PlanetPosition(
+                longitude=90.0, latitude=0.0, distance=1.5,
+                longitude_speed=0.0, planet_id=4  # Stationary
+            )
+        }
+        
+        result = analyze_retrograde_motion(positions)
+        
+        assert result['total_bodies'] == 3
+        assert result['retrograde_count'] == 1
+        assert result['direct_count'] == 1
+        assert result['stationary_count'] == 1
+        assert result['retrograde_percentage'] == 33.33333333333333
+        assert len(result['retrograde_bodies']) == 1
+        assert result['retrograde_bodies'][0]['name'] == 'mercury'
+    
+    def test_analyze_retrograde_motion_with_dict_positions(self):
+        """Test retrograde analysis with dictionary positions."""
+        from app.core.ephemeris.tools.ephemeris import analyze_retrograde_motion
+        
+        positions = {
+            'jupiter': {
+                'longitude': 45.0,
+                'longitude_speed': -0.08,  # Retrograde
+                'is_retrograde': True
+            },
+            'saturn': {
+                'longitude': 300.0,
+                'longitude_speed': 0.033,  # Direct
+                'is_retrograde': False
+            }
+        }
+        
+        result = analyze_retrograde_motion(positions, 2451545.0)
+        
+        assert result['total_bodies'] == 2
+        assert result['retrograde_count'] == 1
+        assert result['direct_count'] == 1
+        assert result['retrograde_percentage'] == 50.0
+        assert result['julian_day'] == 2451545.0
+        assert 'calculation_date' in result
+    
+    def test_analyze_retrograde_motion_empty_positions(self):
+        """Test retrograde analysis with empty positions."""
+        from app.core.ephemeris.tools.ephemeris import analyze_retrograde_motion
+        
+        result = analyze_retrograde_motion({})
+        
+        assert result['total_bodies'] == 0
+        assert result['retrograde_count'] == 0
+        assert result['retrograde_percentage'] == 0
+        assert result['retrograde_bodies'] == []
+
+
+class TestEnhancedSouthNode:
+    """Test enhanced South Node calculations."""
+    
+    @patch('app.core.ephemeris.tools.ephemeris.get_planet')
+    def test_get_point_true_south_node(self, mock_get_planet):
+        """Test True South Node calculation."""
+        # Mock True North Node position
+        mock_position = MagicMock()
+        mock_position.longitude = 126.2  # True node position
+        mock_position.latitude = -0.15
+        mock_position.longitude_speed = -0.055  # Nodes are retrograde
+        mock_position.is_retrograde = True
+        mock_position.motion_type = "retrograde"
+        mock_get_planet.return_value = mock_position
+        
+        result = get_point('true_south_node', 2451545.0)
+        
+        # True South Node should be 180° from True North Node
+        expected_longitude = (126.2 + 180.0) % 360.0
+        assert result['longitude'] == expected_longitude
+        assert result['latitude'] == 0.15  # Opposite latitude
+        assert result['name'] == 'South Node (True)'
+        assert result['is_retrograde'] == True
+        assert result['motion_type'] == 'retrograde'
+        mock_get_planet.assert_called_with(SwePlanets.TRUE_NODE, 2451545.0)
+    
+    @patch('app.core.ephemeris.tools.ephemeris.get_planet')
+    def test_south_node_calculations_include_motion_data(self, mock_get_planet):
+        """Test that South Node calculations include motion information."""
+        mock_position = MagicMock()
+        mock_position.longitude = 125.0
+        mock_position.latitude = 0.0
+        mock_position.longitude_speed = -0.053  # Typical node speed
+        mock_position.is_retrograde = True
+        mock_position.motion_type = "retrograde"
+        mock_get_planet.return_value = mock_position
+        
+        result = get_point('south_node', 2451545.0)
+        
+        # Verify enhanced fields are included
+        assert 'is_retrograde' in result
+        assert 'motion_type' in result
+        assert result['is_retrograde'] is True
+        assert result['motion_type'] == 'retrograde'
+        assert result['speed'] == -0.053  # Speed preserved
+
+
+class TestPlanetPositionEnhancements:
+    """Test enhancements to PlanetPosition class."""
+    
+    def test_planet_position_retrograde_detection(self):
+        """Test retrograde detection in PlanetPosition."""
+        from app.core.ephemeris.classes.serialize import PlanetPosition
+        
+        # Test retrograde planet
+        retrograde_planet = PlanetPosition(
+            longitude=180.0, latitude=0.0, distance=1.0,
+            longitude_speed=-0.5  # Negative speed
+        )
+        assert retrograde_planet.is_retrograde == True
+        assert retrograde_planet.motion_type == "retrograde"
+        
+        # Test direct planet
+        direct_planet = PlanetPosition(
+            longitude=90.0, latitude=0.0, distance=1.0,
+            longitude_speed=0.5  # Positive speed
+        )
+        assert direct_planet.is_retrograde == False
+        assert direct_planet.motion_type == "direct"
+        
+        # Test stationary planet
+        stationary_planet = PlanetPosition(
+            longitude=45.0, latitude=0.0, distance=1.0,
+            longitude_speed=0.0  # Zero speed
+        )
+        assert stationary_planet.is_retrograde == False
+        assert stationary_planet.motion_type == "stationary"
+    
+    def test_planet_position_to_dict_includes_motion(self):
+        """Test that to_dict includes motion information."""
+        from app.core.ephemeris.classes.serialize import PlanetPosition
+        
+        planet = PlanetPosition(
+            longitude=200.0, latitude=1.0, distance=0.8,
+            longitude_speed=-1.2, planet_id=2
+        )
+        
+        result = planet.to_dict()
+        
+        assert 'is_retrograde' in result
+        assert 'motion_type' in result
+        assert result['is_retrograde'] == True
+        assert result['motion_type'] == 'retrograde'

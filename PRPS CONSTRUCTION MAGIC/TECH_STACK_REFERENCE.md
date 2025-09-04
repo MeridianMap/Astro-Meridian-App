@@ -6,13 +6,14 @@ Canonical inventory of technologies, versions (where known), rationale, and repl
 | Layer | Tech | Version (current) | Rationale | Notes |
 |-------|------|-------------------|-----------|-------|
 | Backend | Python | 3.10.x | Ecosystem maturity, scientific libs | 3.11 speedups a future target |
-| Frontend (planned) | TypeScript | 5.x (assumed) | Type safety + large ecosystem | PWA via Vite |
+| Frontend (planned) | TypeScript, Three.js, three-geo, Geo-Three, MeshLine, signal-line | 5.x (assumed) | Type safety + large ecosystem; 3D globe/astrocartography | PWA via Vite + Three.js |
 | Infra scripts | Shell / PowerShell | N/A | Cross-platform ops | run_tests.ps1 for Windows dev |
 
 ## 2. Core Libraries
 | Category | Library | Purpose | Status |
 |----------|---------|---------|--------|
 | Web Framework | FastAPI | Async API | Stable |
+| 3D Globe/Mapping | Three.js, three-geo, Geo-Three, MeshLine, signal-line | 3D globe, animated lines | Core for ACG visualization |
 | Data Validation | Pydantic v2 | Schemas & settings | Migration cleanup needed (dict->model_dump) |
 | Astro Engine | pyswisseph (Swiss Ephemeris) | Planetary & house calcs | Gold standard |
 | Numerics | NumPy, Numba | Vectorization, performance | Used in batch paths |
