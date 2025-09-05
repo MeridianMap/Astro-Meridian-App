@@ -738,6 +738,61 @@ class BatchAspectCalculator:
         return results
 
 
+def get_traditional_orbs() -> OrbConfiguration:
+    """
+    Get traditional astrological orb configuration.
+    
+    Returns:
+        OrbConfiguration with traditional orb values
+    """
+    traditional_orbs = {
+        'conjunction': {
+            'sun': 10.0, 'moon': 10.0, 'mercury': 7.0, 'venus': 7.0, 'mars': 7.0,
+            'jupiter': 9.0, 'saturn': 9.0, 'uranus': 5.0, 'neptune': 5.0, 'pluto': 5.0,
+            'true_node': 5.0, 'chiron': 4.0, 'default': 6.0
+        },
+        'opposition': {
+            'sun': 10.0, 'moon': 10.0, 'mercury': 7.0, 'venus': 7.0, 'mars': 7.0,
+            'jupiter': 9.0, 'saturn': 9.0, 'uranus': 5.0, 'neptune': 5.0, 'pluto': 5.0,
+            'true_node': 5.0, 'chiron': 4.0, 'default': 6.0
+        },
+        'trine': {
+            'sun': 8.0, 'moon': 8.0, 'mercury': 6.0, 'venus': 6.0, 'mars': 6.0,
+            'jupiter': 8.0, 'saturn': 8.0, 'uranus': 4.0, 'neptune': 4.0, 'pluto': 4.0,
+            'true_node': 4.0, 'chiron': 3.0, 'default': 5.0
+        },
+        'square': {
+            'sun': 8.0, 'moon': 8.0, 'mercury': 6.0, 'venus': 6.0, 'mars': 6.0,
+            'jupiter': 8.0, 'saturn': 8.0, 'uranus': 4.0, 'neptune': 4.0, 'pluto': 4.0,
+            'true_node': 4.0, 'chiron': 3.0, 'default': 5.0
+        },
+        'sextile': {
+            'sun': 6.0, 'moon': 6.0, 'mercury': 4.0, 'venus': 4.0, 'mars': 4.0,
+            'jupiter': 6.0, 'saturn': 6.0, 'uranus': 3.0, 'neptune': 3.0, 'pluto': 3.0,
+            'true_node': 3.0, 'chiron': 2.0, 'default': 3.0
+        },
+        'semi_sextile': {
+            'default': 2.0
+        },
+        'quincunx': {
+            'default': 2.0
+        },
+        'semi_square': {
+            'default': 2.0
+        },
+        'sesquiquadrate': {
+            'default': 2.0
+        }
+    }
+    
+    return OrbConfiguration(
+        preset_name="Traditional",
+        aspect_orbs=traditional_orbs,
+        applying_factor=1.1,
+        separating_factor=0.9
+    )
+
+
 def calculate_aspect_strength(orb_used: float, max_orb: float) -> float:
     """
     Calculate aspect strength as percentage of exactness.

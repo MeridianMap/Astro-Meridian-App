@@ -94,25 +94,100 @@ class ACGCalculationEngine:
             {"id": "TrueNode", "type": ACGBodyType.NODE, "se_id": swe.TRUE_NODE, "number": 11},
             {"id": "MeanNode", "type": ACGBodyType.NODE, "se_id": swe.MEAN_NODE, "number": 10},
             
-            # Black Moon Lilith
-            {"id": "LilithMean", "type": ACGBodyType.POINT, "se_id": swe.MEAN_APOG, "number": 12},
-            {"id": "LilithOsc", "type": ACGBodyType.POINT, "se_id": swe.OSCU_APOG, "number": 13},
+            # Black Moon Lilith (150-mile radius, render AC/DC/IC/MC + aspect lines)
+            {"id": "LilithMean", "type": ACGBodyType.POINT, "se_id": swe.MEAN_APOG, "number": 12,
+             "influence_radius_miles": 150.0, "render_orb_only": False},
+            {"id": "LilithOsc", "type": ACGBodyType.POINT, "se_id": swe.OSCU_APOG, "number": 13,
+             "influence_radius_miles": 150.0, "render_orb_only": False},
             
-            # Major Asteroids
-            {"id": "Chiron", "type": ACGBodyType.ASTEROID, "se_id": swe.CHIRON, "number": 15},
-            {"id": "Ceres", "type": ACGBodyType.ASTEROID, "se_id": swe.CERES, "number": 17},
-            {"id": "Pallas", "type": ACGBodyType.ASTEROID, "se_id": swe.PALLAS, "number": 18},
-            {"id": "Juno", "type": ACGBodyType.ASTEROID, "se_id": swe.JUNO, "number": 19},
-            {"id": "Vesta", "type": ACGBodyType.ASTEROID, "se_id": swe.VESTA, "number": 20},
+            # Major Asteroids (150-mile radius, render AC/DC/IC/MC + aspect lines)
+            # NOTE: Asteroids require additional Swiss Ephemeris data files (seas_*.se1)
+            # Uncomment when asteroid ephemeris files are available:
+            # {"id": "Chiron", "type": ACGBodyType.ASTEROID, "se_id": swe.CHIRON, "number": 15,
+            #  "influence_radius_miles": 150.0, "render_orb_only": False},
+            # {"id": "Ceres", "type": ACGBodyType.ASTEROID, "se_id": swe.CERES, "number": 17,
+            #  "influence_radius_miles": 150.0, "render_orb_only": False},
+            # {"id": "Pallas", "type": ACGBodyType.ASTEROID, "se_id": swe.PALLAS, "number": 18,
+            #  "influence_radius_miles": 150.0, "render_orb_only": False},
+            # {"id": "Juno", "type": ACGBodyType.ASTEROID, "se_id": swe.JUNO, "number": 19,
+            #  "influence_radius_miles": 150.0, "render_orb_only": False},
+            # {"id": "Vesta", "type": ACGBodyType.ASTEROID, "se_id": swe.VESTA, "number": 20,
+            #  "influence_radius_miles": 150.0, "render_orb_only": False},
+            
+            # Extended Asteroids (completing your 7-asteroid set)
+            # NOTE: Requires Swiss Ephemeris asteroid files
+            # {"id": "Eros", "type": ACGBodyType.ASTEROID, "se_id": 433, "number": 433,
+            #  "influence_radius_miles": 150.0, "render_orb_only": False},
             
             # Dwarf Planets (using asteroid numbers for objects without SE constants)
-            {"id": "Eris", "type": ACGBodyType.DWARF, "se_id": 136199, "number": 136199},
+            # NOTE: Eris requires additional ephemeris files
+            # {"id": "Eris", "type": ACGBodyType.DWARF, "se_id": 136199, "number": 136199},
             
-            # Fixed Stars (examples - extensible)
-            {"id": "Regulus", "type": ACGBodyType.FIXED_STAR, "se_name": "Regulus"},
-            {"id": "Spica", "type": ACGBodyType.FIXED_STAR, "se_name": "Spica"},
-            {"id": "Aldebaran", "type": ACGBodyType.FIXED_STAR, "se_name": "Aldebaran"},
-            {"id": "Antares", "type": ACGBodyType.FIXED_STAR, "se_name": "Antares"},
+            # Foundation 24 Fixed Stars (100-mile radius, orbs only)
+            # NOTE: Fixed stars require sefstars.txt file from Swiss Ephemeris
+            # Download from: https://www.astro.com/swisseph/swephinfo_e.htm
+            # Uncomment when star catalog file is available:
+            
+            # {"id": "Regulus", "type": ACGBodyType.FIXED_STAR, "se_name": "Regulus",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Aldebaran", "type": ACGBodyType.FIXED_STAR, "se_name": "Aldebaran", 
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Antares", "type": ACGBodyType.FIXED_STAR, "se_name": "Antares",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Fomalhaut", "type": ACGBodyType.FIXED_STAR, "se_name": "Fomalhaut",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Spica", "type": ACGBodyType.FIXED_STAR, "se_name": "Spica",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Arcturus", "type": ACGBodyType.FIXED_STAR, "se_name": "Arcturus",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Sirius", "type": ACGBodyType.FIXED_STAR, "se_name": "Sirius",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Canopus", "type": ACGBodyType.FIXED_STAR, "se_name": "Canopus",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Vega", "type": ACGBodyType.FIXED_STAR, "se_name": "Vega",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Capella", "type": ACGBodyType.FIXED_STAR, "se_name": "Capella",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Betelgeuse", "type": ACGBodyType.FIXED_STAR, "se_name": "Betelgeuse",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Rigel", "type": ACGBodyType.FIXED_STAR, "se_name": "Rigel",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Altair", "type": ACGBodyType.FIXED_STAR, "se_name": "Altair",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Algol", "type": ACGBodyType.FIXED_STAR, "se_name": "Algol",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Procyon", "type": ACGBodyType.FIXED_STAR, "se_name": "Procyon",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Bellatrix", "type": ACGBodyType.FIXED_STAR, "se_name": "Bellatrix",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Deneb", "type": ACGBodyType.FIXED_STAR, "se_name": "Deneb",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Alcyone", "type": ACGBodyType.FIXED_STAR, "se_name": "Alcyone",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Achernar", "type": ACGBodyType.FIXED_STAR, "se_name": "Achernar",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Acrux", "type": ACGBodyType.FIXED_STAR, "se_name": "Acrux",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Alphecca", "type": ACGBodyType.FIXED_STAR, "se_name": "Alphecca",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Rasalhague", "type": ACGBodyType.FIXED_STAR, "se_name": "Rasalhague",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Denebola", "type": ACGBodyType.FIXED_STAR, "se_name": "Denebola",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+            # {"id": "Markab", "type": ACGBodyType.FIXED_STAR, "se_name": "Markab",
+            #  "influence_radius_miles": 100.0, "render_orb_only": True},
+             
+            # Extended 77 Fixed Stars (80-mile radius, orbs only) - Sample of additional stars
+            # {"id": "Alpheratz", "type": ACGBodyType.FIXED_STAR, "se_name": "Alpheratz",
+            #  "influence_radius_miles": 80.0, "render_orb_only": True},
+            # {"id": "Scheat", "type": ACGBodyType.FIXED_STAR, "se_name": "Scheat",
+            #  "influence_radius_miles": 80.0, "render_orb_only": True},
+            # {"id": "Pollux", "type": ACGBodyType.FIXED_STAR, "se_name": "Pollux",
+            #  "influence_radius_miles": 80.0, "render_orb_only": True},
+            # {"id": "Castor", "type": ACGBodyType.FIXED_STAR, "se_name": "Castor",
+            #  "influence_radius_miles": 80.0, "render_orb_only": True},
+            # {"id": "Hamal", "type": ACGBodyType.FIXED_STAR, "se_name": "Hamal",
+            #  "influence_radius_miles": 80.0, "render_orb_only": True},
         ]
     
     def get_supported_bodies(self) -> List[ACGBody]:
@@ -659,6 +734,9 @@ class ACGCalculationEngine:
             all_lines = []
             
             for body_data in body_data_list:
+                # Get body definition for rendering metadata
+                body_def = next((b for b in self.body_registry if b["id"] == body_data.body.id), {})
+                
                 # Base metadata for this body
                 metadata_base = {
                     'id': body_data.body.id,
@@ -674,37 +752,42 @@ class ACGCalculationEngine:
                     'flags': options.flags,
                     'se_version': get_swiss_ephemeris_version(),
                     'source': 'Meridian-ACG',
-                    'calculation_time_ms': body_data.calculation_time_ms
+                    'calculation_time_ms': body_data.calculation_time_ms,
+                    # Add rendering metadata from body definition
+                    'influence_radius_miles': body_def.get('influence_radius_miles', 0.0),
+                    'render_orb_only': body_def.get('render_orb_only', False)
                 }
                 
-                # Determine which line types to calculate
-                line_types = options.line_types if options.line_types else [
-                    ACGLineType.MC, ACGLineType.IC, ACGLineType.AC, ACGLineType.DC
-                ]
+                # Skip line calculations if body is orb-only (e.g., fixed stars)
+                if not body_def.get('render_orb_only', False):
+                    # Determine which line types to calculate
+                    line_types = options.line_types if options.line_types else [
+                        ACGLineType.MC, ACGLineType.IC, ACGLineType.AC, ACGLineType.DC
+                    ]
+                    
+                    # Calculate MC/IC lines
+                    if ACGLineType.MC in line_types or ACGLineType.IC in line_types:
+                        mc_ic_lines = self.calculate_mc_ic_lines(body_data, gmst_deg, metadata_base)
+                        all_lines.extend(mc_ic_lines)
+                    
+                    # Calculate AC/DC lines
+                    if ACGLineType.AC in line_types or ACGLineType.DC in line_types:
+                        ac_dc_lines = self.calculate_ac_dc_lines(body_data, gmst_deg, metadata_base)
+                        all_lines.extend(ac_dc_lines)
                 
-                # Calculate MC/IC lines
-                if ACGLineType.MC in line_types or ACGLineType.IC in line_types:
-                    mc_ic_lines = self.calculate_mc_ic_lines(body_data, gmst_deg, metadata_base)
-                    all_lines.extend(mc_ic_lines)
-                
-                # Calculate AC/DC lines
-                if ACGLineType.AC in line_types or ACGLineType.DC in line_types:
-                    ac_dc_lines = self.calculate_ac_dc_lines(body_data, gmst_deg, metadata_base)
-                    all_lines.extend(ac_dc_lines)
-                
-                # Calculate MC aspect lines
-                if options.aspects:
-                    aspect_degrees = [60, 90, 120, 240, 270, 300]  # Default aspects
-                    mc_aspect_lines = self.calculate_mc_aspect_lines(
-                        body_data, gmst_deg, aspect_degrees, metadata_base
-                    )
-                    all_lines.extend(mc_aspect_lines)
-                
-                    # Calculate AC aspect lines
-                    ac_aspect_lines = self.calculate_ac_aspect_lines(
-                        body_data, gmst_deg, obliquity_deg, aspect_degrees, metadata_base
-                    )
-                    all_lines.extend(ac_aspect_lines)
+                    # Calculate MC aspect lines (only for bodies that render lines)
+                    if options.aspects:
+                        aspect_degrees = [60, 90, 120, 240, 270, 300]  # Default aspects
+                        mc_aspect_lines = self.calculate_mc_aspect_lines(
+                            body_data, gmst_deg, aspect_degrees, metadata_base
+                        )
+                        all_lines.extend(mc_aspect_lines)
+                    
+                        # Calculate AC aspect lines
+                        ac_aspect_lines = self.calculate_ac_aspect_lines(
+                            body_data, gmst_deg, obliquity_deg, aspect_degrees, metadata_base
+                        )
+                        all_lines.extend(ac_aspect_lines)
             
             # Calculate parans if requested
             if options.include_parans and len(body_data_list) > 1:
@@ -812,6 +895,13 @@ class ACGCalculationEngine:
         
         if metadata.hit_radius is not None:
             props['hit_radius'] = metadata.hit_radius
+        
+        # Add rendering metadata for asteroids and fixed stars
+        if metadata.influence_radius_miles > 0.0:
+            props['influence_radius_miles'] = metadata.influence_radius_miles
+        
+        if metadata.render_orb_only:
+            props['render_orb_only'] = metadata.render_orb_only
         
         if metadata.custom:
             props['custom'] = metadata.custom

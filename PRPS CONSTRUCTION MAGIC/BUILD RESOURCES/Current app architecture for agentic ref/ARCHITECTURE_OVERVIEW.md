@@ -21,7 +21,7 @@ Single reference map of the system's technical architecture for humans and agent
 | **Ephemeris Core** | Planet/house/angle computations, coordinate & datetime utilities, batching, caching | `app/core/ephemeris/*` |
 | **Charts** | Domain orchestration for natal charts with comprehensive aspects and metadata | `charts/natal.py`, `charts/subject.py` |
 | **API Layer** | Request validation, response formatting, error handling, performance headers, v1 & v2 APIs | `app/api/routes/*.py`, `schemas.py` |
-| **Professional ACG System** | Jim Lewis paran analysis, aspect-to-angle lines, retrograde integration, 3D visualization | `app/core/acg/*`, `app/api/routes/acg.py`, `app/api/routes/parans.py` |
+| **Professional ACG System** | Jim Lewis paran analysis, aspect-to-angle lines, retrograde integration, extended celestial bodies (asteroids/fixed stars), 3D visualization | `app/core/acg/*`, `app/api/routes/acg.py`, `app/api/routes/parans.py` |
 | **Predictive Engine** | NASA-validated eclipses, precision transits, astronomical event calculations | `tools/eclipse_calculator.py`, `tools/transit_calculator.py`, `app/api/routes/predictive.py` |
 | **Arabic Parts Engine** | 16 traditional Hermetic lots, sect determination, custom formula support | `tools/arabic_parts.py`, `tools/sect_calculator.py`, `tools/arabic_parts_formulas.py` |
 | **Advanced Caching** | Multi-tier Redis+memory caching, intelligent key generation, performance optimization | `classes/cache.py`, `classes/redis_cache.py`, `performance/advanced_cache.py` |

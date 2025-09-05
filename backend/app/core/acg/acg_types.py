@@ -103,6 +103,11 @@ class ACGMetadata:
     style: Optional[str] = field(default=None, metadata={"description": "Display style for frontend"})
     z_index: Optional[int] = field(default=None, metadata={"description": "Z-index for layering"})
     hit_radius: Optional[float] = field(default=None, metadata={"description": "Hit test radius in degrees"})
+    
+    # Rendering metadata for extended asteroids and fixed stars
+    influence_radius_miles: float = field(default=0.0, metadata={"description": "Influence radius in miles for orbs"})
+    render_orb_only: bool = field(default=False, metadata={"description": "Render only orb, no ACG lines"})
+    
     custom: Optional[Dict[str, Any]] = field(default=None, metadata={"description": "Custom metadata fields"})
 
 
