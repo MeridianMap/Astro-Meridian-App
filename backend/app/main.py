@@ -18,6 +18,7 @@ import uvicorn
 
 from .api.routes.ephemeris import router as ephemeris_router
 from .api.routes.acg import router as acg_router
+from .api.routes.predictive import router as predictive_router
 from .api.models.schemas import ErrorResponse
 from .core.ephemeris.settings import settings
 from .core.monitoring.metrics import setup_metrics_middleware, get_metrics, update_health_metrics
@@ -41,8 +42,14 @@ async def lifespan(app: FastAPI):
     # Initialize performance optimizations
     try:
         from .core.performance.optimizations import get_performance_optimizer
+        from .core.performance.production_optimization import get_production_optimizer
+        
         optimizer = get_performance_optimizer()
+        production_optimizer = get_production_optimizer()
+        await production_optimizer.initialize()
+        
         logger.info("⚡ Performance optimizer initialized")
+        logger.info("🏭 Production optimizer initialized")
     except Exception as e:
         logger.warning(f"⚠️  Performance optimizer initialization failed: {e}")
     
@@ -93,6 +100,15 @@ async def lifespan(app: FastAPI):
     
     # Shutdown
     logger.info("🛑 Shutting down Meridian Ephemeris API")
+    
+    # Clean shutdown of production optimizer
+    try:
+        from .core.performance.production_optimization import get_production_optimizer
+        production_optimizer = get_production_optimizer()
+        await production_optimizer.shutdown()
+        logger.info("🏭 Production optimizer shut down cleanly")
+    except Exception as e:
+        logger.warning(f"⚠️  Production optimizer shutdown failed: {e}")
 
 
 # Create FastAPI application
@@ -112,6 +128,9 @@ app = FastAPI(
     - 📊 **Comprehensive Data**: Complete natal charts with planets, houses, angles, and aspects
     - 🔒 **Input Validation**: Robust validation with clear error messages
     - 📖 **OpenAPI Documentation**: Interactive API documentation and schema validation
+    - 🌙 **Eclipse Predictions**: NASA-validated eclipse calculations with ±1 minute accuracy
+    - 🪐 **Transit Calculations**: Precise planetary transit timing with retrograde support
+    - 📅 **Predictive Features**: Solar/lunar returns, sign ingresses, and future transits
     
     ## Supported Formats
     
@@ -174,6 +193,14 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 # Set up Prometheus metrics middleware
 setup_metrics_middleware(app)
 
+# Add production optimization middleware
+try:
+    from .core.performance.production_optimization import setup_production_middleware
+    setup_production_middleware(app)
+    logger.info("🏭 Production optimization middleware configured")
+except ImportError as e:
+    logger.warning(f"⚠️  Production optimization middleware not available: {e}")
+
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
@@ -206,6 +233,7 @@ async def log_requests(request: Request, call_next):
 # Include routers
 app.include_router(ephemeris_router)
 app.include_router(acg_router)
+app.include_router(predictive_router)
 
 
 # Root endpoint
@@ -242,6 +270,17 @@ async def root():
                 "animate": "/acg/animate",
                 "features": "/acg/features",
                 "schema": "/acg/schema"
+            },
+            "predictive": {
+                "health": "/v2/health",
+                "next_solar_eclipse": "/v2/eclipses/next-solar",
+                "next_lunar_eclipse": "/v2/eclipses/next-lunar",
+                "search_eclipses": "/v2/eclipses/search",
+                "eclipse_visibility": "/v2/eclipses/visibility",
+                "planet_transits": "/v2/transits/planet-to-degree",
+                "sign_ingresses": "/v2/transits/sign-ingresses",
+                "transit_search": "/v2/transits/search",
+                "rate_limits": "/v2/rate-limits"
             },
             "schemas": {
                 "natal_request": "/ephemeris/schemas/natal-request",

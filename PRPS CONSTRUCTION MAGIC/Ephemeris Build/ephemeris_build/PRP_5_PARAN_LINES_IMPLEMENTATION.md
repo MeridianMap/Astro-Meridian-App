@@ -1,21 +1,21 @@
-# PRP 5: Paran Lines Implementation – Advanced Astrocartography Simultaneity
+# PRP 5: Jim Lewis ACG Paran Lines Implementation – Planetary Simultaneity
 
-## Reference: Ephemeris Extensions Content and Plan - Priority 2 Advanced Feature & Paran Technical Reference
+## Reference: Jim Lewis ACG Parans Technical Reference & ACG Planetary Simultaneity
 
 ---
 
 ## Feature Goal
-Implement a comprehensive paran line calculation system that determines locations where two planetary bodies are simultaneously angular (on different angles), using rigorous mathematical methods with ≤0.03° latitude precision.
+Implement Jim Lewis-style ACG planetary paran calculations where two planets are simultaneously angular on different cardinal angles (ASC, DSC, MC, IC), producing constant-latitude parallels with ≤0.03° precision.
 
 ## Deliverable
-A complete paran calculation module (`backend/app/core/acg/paran_calculator.py`) with dedicated API endpoints, supporting closed-form solutions for meridian-horizon pairs and numerical methods for horizon-horizon pairs.
+A complete ACG paran calculation module (`backend/app/core/acg/paran_calculator.py`) implementing closed-form meridian-horizon solutions and numerical horizon-horizon methods according to Jim Lewis ACG standards.
 
 ## Success Definition
-- Calculate paran lines with ≤0.03° latitude accuracy for all planet pairs
-- Support simultaneity conditions: meridian-horizon, horizon-horizon, meridian-meridian
-- Achieve <2000ms response time for global paran searches
-- Include visibility filters: both visible, meridian visible only, geometric horizon
-- Cross-validate results against established astrological software
+- Calculate ACG planetary parans with ≤0.03° latitude accuracy using Jim Lewis methods
+- Support all simultaneity conditions: meridian-horizon (primary), horizon-horizon 
+- Achieve <800ms response time for global paran searches (optimized for closed-form dominance)
+- Include ACG-standard visibility filters: all, both_visible, meridian_visible_only
+- Validate against Jim Lewis ACG software and established ACG references
 
 ---
 
@@ -24,157 +24,172 @@ A complete paran calculation module (`backend/app/core/acg/paran_calculator.py`)
 ### Key Files and Patterns
 ```yaml
 reference_files:
-  - "docs/reference/Parans reference doc.md": Complete mathematical specifications
+  - "BUILD RESOURCES/Astrological Reference/Parans reference doc.md": Jim Lewis ACG paran specifications
   - "backend/app/core/acg/acg_core.py": Existing ACG calculation patterns
   - "backend/app/core/ephemeris/tools/ephemeris.py": Swiss Ephemeris integration
   - "backend/app/api/routes/acg.py": ACG API endpoint patterns
   
-mathematical_foundations:
-  simultaneity_conditions:
-    - "Two bodies on different angles simultaneously"
-    - "Body A on meridian (MC/IC) when Body B on horizon (ASC/DSC)"
-    - "Both bodies on horizon simultaneously (complex case)"
-    - "Meridian-meridian impossible (same longitude)"
+jim_lewis_acg_foundations:
+  simultaneity_equation:
+    - "α_A + H_e(A, φ) = α_B + H_e(B, φ) (mod 2π)"
+    - "Planets A and B simultaneously angular at latitude φ"
+    - "Uses geocentric apparent places on true equator/equinox of date"
     
-  precision_requirements:
-    - "≤0.03° latitude error for planets"
-    - "Robust float64 operations throughout"
-    - "Numerical stability for edge cases"
-    - "Circumpolar region handling"
-
-paran_calculation_methods:
+  event_types:
+    - "R (rising): H^R = -H₀"
+    - "S (setting): H^S = +H₀" 
+    - "MC (upper culmination): H^MC = 0"
+    - "IC (lower culmination): H^IC = π"
+    
   closed_form_solutions:
-    - "Meridian-Horizon: Analytical solution using required horizon angle"
-    - "One body crossing meridian, other crossing horizon"
-    - "Direct latitude calculation from declinations and separations"
+    - "Meridian-Horizon: φ = atan2(-cos(H₀)·cos(δ), sin(δ))"
+    - "H₀ = wrap_0_π(Δα + H_const) for meridian-horizon pairs"
+    - "Direct analytical solution, no iteration required"
     
   numerical_methods:
-    - "Horizon-Horizon: Numerical root finding (Brent's method/bisection)"
-    - "Both bodies simultaneously crossing horizon"
-    - "More complex due to coupled equations"
-    - "Requires careful initial bracketing"
+    - "Horizon-Horizon: Brent root finding on coupled equations"
+    - "F(φ) = s_A·arccos(-tan(φ)·tan(δ_A)) - s_B·arccos(-tan(φ)·tan(δ_B)) - Δα"
+    - "Robust bracketing with domain validation"
 ```
 
-### Paran Types and Visibility
+### Jim Lewis ACG Paran Types
 ```yaml
-paran_types:
-  meridian_horizon:
-    - "A on MC, B on ASC" # Body A culminating, Body B rising
-    - "A on MC, B on DSC" # Body A culminating, Body B setting  
-    - "A on IC, B on ASC" # Body A anticulminating, Body B rising
-    - "A on IC, B on DSC" # Body A anticulminating, Body B setting
+acg_paran_pairs:
+  recommended_default_set:
+    # For each unordered planet pair {A, B}, compute:
+    - "A on horizon (R,S) with B on MC,IC (4 combinations)"
+    - "B on horizon (R,S) with A on MC,IC (4 combinations)"
+    # Total: 8 paran lines per planet pair
     
-  horizon_horizon:
-    - "A on ASC, B on DSC" # Body A rising, Body B setting
-    - "A on DSC, B on ASC" # Body A setting, Body B rising
+  meridian_horizon_pairs:
+    - "MC-R, MC-S, IC-R, IC-S" # Meridian body with horizon body
+    - "Closed-form analytical solution available"
+    - "Primary ACG paran type - most commonly used"
     
-  meridian_meridian:
-    - "Not possible" # Same longitude, different times
+  horizon_horizon_pairs:
+    - "R-S combinations" # Both bodies on horizon
+    - "Numerical solution required (Brent method)"
+    - "Less common but mathematically valid"
     
-visibility_conditions:
-  both_visible: "Both bodies above apparent horizon"
-  meridian_visible: "Only meridian body must be visible"
-  geometric: "Use geometric horizon (no refraction)"
-  apparent: "Use apparent horizon (with refraction)"
+  degenerate_cases:
+    - "MC-MC, IC-IC, MC-IC" # Both on meridian
+    - "Solutions only when Δα ∈ {0, ±π} - suppress as trivial"
+
+acg_visibility_modes:
+  all: "No visibility filter - geometric only"
+  both_visible: "Both planets above geometric horizon"
+  meridian_visible_only: "Only meridian planet must be visible"
+  
+horizon_conventions:
+  default: "Geometric horizon (h = 0°) for line placement"
+  optional: "Apparent horizon with refraction (-0.5667°) for visibility only"
 ```
 
 ---
 
 ## Implementation Tasks
 
-### Task 1: Create Core Paran Calculation Engine
+### Task 1: Create Jim Lewis ACG Paran Calculator
 **Target**: `backend/app/core/acg/paran_calculator.py`
 ```yaml
-paran_calculator_core:
-  ParanCalculator:
-    - calculate_paran_line(body_a, body_b, paran_type) -> ParanLine
-    - calculate_all_paran_combinations(bodies) -> List[ParanLine]
-    - _solve_meridian_horizon_paran(body_a, body_b, angles) -> List[float]
-    - _solve_horizon_horizon_paran(body_a, body_b) -> List[float] 
-    - _validate_paran_visibility(lat, bodies, visibility_type) -> bool
+acg_paran_calculator:
+  ACGParanCalculator:
+    - calculate_planetary_parans(planets, pairs) -> List[ParanLine]
+    - _solve_meridian_horizon_closed_form(body_a, body_b, events) -> float
+    - _solve_horizon_horizon_numerical(body_a, body_b, events) -> Optional[float]
+    - _apply_visibility_filter(paran_line, mode) -> bool
+    - _validate_domain_constraints(phi, delta_values) -> bool
     
-  closed_form_implementation:
-    # From Paran reference doc §3.1
-    solve_paran_meridian_horizon():
-      - Input: declinations, right_ascensions, angle_configuration
-      - Calculate: required_horizon_angle = f(delta_alpha, angles)
-      - Solve: latitude = arctan2(-cos(H0)·cos(δ), sin(δ))
-      - Return: latitude_degrees with precision validation
+  jim_lewis_closed_form:
+    # Direct implementation of reference doc equations
+    meridian_horizon_solution():
+      - Input: alpha_meridian, delta_meridian, alpha_horizon, delta_horizon
+      - Calculate: delta_alpha = wrap_minus_pi_pi(alpha_meridian - alpha_horizon)
+      - Calculate: H0 = wrap_0_pi(delta_alpha + H_const_meridian)
+      - Solve: phi = atan2(-cos(H0) * cos(delta_horizon), sin(delta_horizon))
+      - Return: latitude in degrees with validation
       
-  numerical_solver_implementation:
-    # From Paran reference doc §3.2  
+  jim_lewis_numerical_solver:
+    # From reference doc §3.2 - horizon vs horizon
     solve_horizon_horizon_paran():
-      - Setup: coupled equations for simultaneous horizon crossing
-      - Method: Brent's method or bisection for root finding
-      - Bracketing: intelligent initial latitude range estimation
-      - Convergence: iterate until ≤0.03° precision achieved
+      - Setup: F(φ) = s_A·arccos(-tan(φ)·tan(δ_A)) - s_B·arccos(-tan(φ)·tan(δ_B)) - Δα
+      - Method: Brent root finding with domain validation
+      - Domain: reject intervals where |tan(φ)tan(δ)| > 1 (no horizon crossing)
+      - Convergence: target ≤0.03° latitude precision
 ```
 
-### Task 2: Implement Mathematical Algorithms
+### Task 2: Implement ACG Paran Mathematical Algorithms
 **Target**: `backend/app/core/acg/paran_math.py`
 ```yaml
-mathematical_implementations:
-  required_horizon_angle_calculation:
-    # Core algorithm from reference doc
-    calculate_required_horizon_angle():
-      - Input: delta_alpha (RA separation), angle_events
-      - Logic: H_req = f(cos(δA)·cos(δB)·cos(Δα) + sin(δA)·sin(δB))
-      - Handle: edge cases where cos(H_req) > 1 (no solution)
-      - Return: required horizon angle in radians
+jim_lewis_mathematical_implementations:
+  spherical_astronomy_helpers:
+    # Core identities from reference doc §2
+    hour_angle_constants():
+      - H_MC = 0 (upper culmination)
+      - H_IC = π (lower culmination) 
+      - H_R = -H₀ (rising, negative hour angle)
+      - H_S = +H₀ (setting, positive hour angle)
+      - H₀ = arccos(-tan(φ)·tan(δ)) when |tan(φ)tan(δ)| ≤ 1
       
-  latitude_solving:
-    solve_latitude_from_horizon_angle():
-      - Input: declination, required_horizon_angle
-      - Formula: φ = arctan2(-cos(H0)·cos(δ), sin(δ))
-      - Handle: circumpolar cases (body never sets/rises)
-      - Validate: latitude within ±90° range
+  closed_form_meridian_horizon:
+    # Direct implementation of reference doc §3.1
+    solve_meridian_horizon_paran():
+      - Input: (α_meridian, δ_meridian), (α_horizon, δ_horizon), event_types
+      - Calculate: Δα = wrap_minus_pi_pi(α_meridian - α_horizon)
+      - Calculate: H₀ = wrap_0_pi(Δα + H_const_meridian)
+      - Solve: φ = atan2(-cos(H₀)·cos(δ_horizon), sin(δ_horizon))
+      - Validate: result within [-89.999°, +89.999°]
       
-  visibility_calculations:
-    check_body_visibility():
-      - Calculate: local hour angle at given latitude
-      - Determine: if body is above apparent/geometric horizon
-      - Apply: atmospheric refraction corrections if needed
-      - Return: visibility status and horizon crossing details
+  numerical_horizon_horizon:
+    # Implementation of reference doc §3.2
+    brent_solver_horizon_horizon():
+      - Setup: F(φ) = s_A·arccos(clip(-tan(φ)·tan(δ_A))) - s_B·arccos(clip(-tan(φ)·tan(δ_B))) - Δα_general
+      - Domain: validate |tan(φ)tan(δ)| ≤ 1 for both bodies
+      - Bracket: φ ∈ [-89.9°, +89.9°] with domain exclusions
+      - Converge: tolerance = 1e-8 radians (≤0.03° precision)
       
-  numerical_optimization:
-    brent_method_solver():
-      - Implement: Brent's method for horizon-horizon cases
-      - Bracket: intelligent initial range for latitude search
-      - Converge: to ≤0.03° precision requirement
-      - Handle: multiple solutions and edge cases
+  visibility_filters:
+    # ACG-standard visibility checking
+    apply_acg_visibility_filter():
+      - Mode 'all': no filtering beyond geometric constraints
+      - Mode 'both_visible': both planets h > 0° at calculated latitude
+      - Mode 'meridian_visible_only': only meridian body h > 0°
+      - Use: sin(h) = sin(φ)sin(δ) + cos(φ)cos(δ)cos(H)
 ```
 
-### Task 3: Create Paran Data Models
+### Task 3: Create ACG Paran Data Models
 **Target**: `backend/app/core/acg/paran_models.py`
 ```yaml
-paran_data_models:
-  ParanLine:
-    - body_a: PlanetaryBody
-    - body_b: PlanetaryBody  
-    - paran_type: str  # "mc_asc", "mc_dsc", "ic_asc", "ic_dsc", "asc_dsc"
-    - latitude_degrees: float
-    - longitude_coverage: Tuple[float, float]  # Full longitude range
+acg_paran_data_models:
+  ACGParanLine:
+    - planet_a: str  # "Sun", "Moon", "Mercury", etc.
+    - event_a: str   # "MC", "IC", "R", "S"
+    - planet_b: str  # Second planet
+    - event_b: str   # Second planet's event
+    - latitude_deg: float  # Constant latitude where simultaneity occurs
     - calculation_method: str  # "closed_form" or "numerical"
     - precision_achieved: float  # Actual precision in degrees
-    - visibility_condition: str  # "both_visible", "meridian_only", "geometric"
-    - calculation_metadata: Dict[str, Any]
+    - visibility_status: str  # "all", "both_visible", "meridian_only"
+    - epoch_utc: datetime  # Calculation epoch
+    - line_id: str  # Unique identifier for this paran line
     
-  ParanConfiguration:
-    - body_pairs: List[Tuple[str, str]]  # Planet pairs to calculate
-    - paran_types: List[str]  # Which angle combinations
-    - visibility_filter: str  # Visibility requirements
-    - precision_target: float  # Target precision (default 0.03°)
-    - max_latitude: float  # Latitude bounds (default ±85°)
-    - include_circumpolar: bool  # Include extreme latitude solutions
+  ACGParanConfiguration:
+    - planet_pairs: List[Tuple[str, str]]  # Unordered pairs like [("Sun", "Mars")]
+    - event_combinations: List[str] = ["meridian_horizon", "horizon_horizon"]
+    - visibility_mode: str = "all"  # ACG standard visibility filter
+    - horizon_convention: str = "geometric"  # "geometric" or "apparent" 
+    - precision_target: float = 0.03  # Target precision in degrees
+    - time_anchor: str = "12:00Z"  # Fixed daily epoch for deterministic results
+    - include_both_directions: bool = True  # A-B and B-A pairs
     
-  ParanResult:
-    - calculated_parans: List[ParanLine]
-    - total_combinations: int
-    - successful_calculations: int
-    - failed_calculations: List[Dict]  # Failed combinations with reasons
-    - calculation_time_ms: float
-    - average_precision: float
-    - precision_statistics: Dict[str, float]
+  ACGParanResult:
+    - paran_lines: List[ACGParanLine]
+    - total_planet_pairs: int
+    - total_paran_lines_calculated: int
+    - failed_calculations: List[Dict[str, Any]]  # With failure reasons
+    - calculation_summary: Dict[str, int]  # counts by method type
+    - performance_metrics: Dict[str, float]  # timing and precision stats
+    - metadata: Dict[str, Any]  # epoch, models used, etc.
 ```
 
 ### Task 4: Implement Visibility Filtering System
@@ -249,34 +264,34 @@ paran_api_endpoints:
       - warnings: List[str]  # Precision warnings, circumpolar notifications
 ```
 
-### Task 6: Optimize Performance for Complex Calculations
-**Target**: Performance optimization for computationally intensive parans
+### Task 6: Optimize Performance for ACG Paran Calculations
+**Target**: Performance optimization for production ACG paran usage
 ```yaml
-performance_optimizations:
+acg_performance_optimizations:
   calculation_efficiency:
-    - Vectorize declination and RA calculations across planet pairs
-    - Pre-compute trigonometric values for repeated use
-    - Parallel processing for independent paran calculations
-    - Intelligent caching of intermediate mathematical results
+    - Vectorize closed-form meridian-horizon calculations (majority of parans)
+    - Pre-compute sin(δ), cos(δ), tan(δ) arrays for all planets
+    - Batch process planet pairs to minimize function call overhead
+    - Use numpy operations for angle wrapping and trigonometric functions
     
   numerical_solver_optimization:
-    - Smart initial bracketing for faster convergence
-    - Adaptive step sizing based on function behavior
-    - Early termination when precision target achieved
-    - Fallback methods for difficult convergence cases
+    - Limit numerical methods to horizon-horizon cases only (minority)
+    - Smart domain bracketing to avoid |tan(φ)tan(δ)| > 1 regions
+    - Early termination for Brent solver when precision achieved
+    - Fallback to bisection if Brent method fails to converge
     
   memory_management:
-    - Efficient storage of paran line coordinate data
-    - Lazy evaluation for large planet combination sets
-    - Memory pool management for repeated calculations
-    - Garbage collection optimization for long-running searches
+    - Efficient storage of constant-latitude parallel coordinates
+    - Reuse trig pre-computations across multiple paran calculations
+    - Lazy generation of longitude grids for parallel rendering
+    - Memory pool for repeated ACG calculations
     
-  caching_strategy:
-    paran_specific_caching:
-      - Cache paran calculations with planet pair + chart data as key
-      - Medium TTL (6 hours) for paran results
-      - Separate cache for high-precision vs standard calculations
-      - Redis integration for production scaling
+  acg_caching_strategy:
+    epoch_based_caching:
+      - Cache planetary positions by epoch (12:00Z anchor)
+      - Cache paran results with planet_pair + epoch key
+      - TTL: 24 hours (planetary positions change slowly)
+      - Separate cache tiers for different precision requirements
 ```
 
 ### Task 7: Integration with Existing ACG System
@@ -304,40 +319,43 @@ acg_integration:
     - Create legend entries for different paran types
 ```
 
-### Task 8: Comprehensive Testing and Validation
-**Target**: `backend/tests/core/acg/test_paran_calculator.py`
+### Task 8: Comprehensive ACG Paran Testing and Validation
+**Target**: `backend/tests/core/acg/test_acg_paran_calculator.py`
 ```yaml
-test_coverage:
-  mathematical_accuracy_tests:
-    - test_closed_form_solution_accuracy()
-    - test_numerical_solver_convergence()
-    - test_precision_requirements_met()
-    - test_edge_case_handling()
-    - test_circumpolar_region_calculations()
+acg_test_coverage:
+  jim_lewis_mathematical_accuracy:
+    - test_closed_form_meridian_horizon_accuracy()
+    - test_numerical_horizon_horizon_convergence()
+    - test_simultaneity_equation_validation()
+    - test_latitude_precision_requirements()
+    - test_domain_constraint_handling()
     
-  paran_type_tests:
-    - test_meridian_horizon_paran_calculations()
-    - test_horizon_horizon_paran_calculations()
-    - test_all_angle_combinations()
-    - test_visibility_filtering_accuracy()
+  acg_paran_type_validation:
+    - test_all_meridian_horizon_combinations()
+    - test_horizon_horizon_numerical_solutions()
+    - test_planet_pair_enumeration_policy()
+    - test_acg_visibility_filtering_modes()
+    - test_degenerate_case_suppression()
     
-  integration_tests:
-    - test_paran_api_endpoints()
-    - test_acg_integration()
-    - test_performance_benchmarks()
-    - test_cache_integration()
+  integration_and_performance:
+    - test_acg_paran_api_endpoints()
+    - test_integration_with_existing_acg_system()
+    - test_performance_benchmarks_meet_targets()
+    - test_cache_integration_and_effectiveness()
     
-  validation_against_references:
-    - Cross-validate against established astrological software
-    - Test known planetary configurations with verified paran positions
-    - Validate mathematical implementations against reference sources
-    - Test precision across full range of declinations and separations
+  jim_lewis_acg_validation:
+    - test_against_jim_lewis_acg_software_results()
+    - test_known_planetary_configurations_from_acg_literature()
+    - test_mathematical_implementation_against_reference_doc()
+    - test_precision_across_declination_ranges()
+    - test_constant_latitude_parallel_generation()
     
-  performance_benchmarks:
-    - Single paran calculation <50ms
-    - Full planet combination set <2000ms
-    - Memory usage optimization validation
-    - Cache effectiveness under load
+  acg_performance_benchmarks:
+    - Single meridian-horizon paran <10ms (closed-form)
+    - Single horizon-horizon paran <100ms (numerical)
+    - Full 10-planet ACG paran set <800ms total
+    - Memory usage <20MB for complete paran calculation
+    - Cache effectiveness >60% for repeated ACG requests
 ```
 
 ---
@@ -345,12 +363,12 @@ test_coverage:
 ## Validation Gates
 
 ### Mathematical Validation
-- [ ] All paran calculations achieve ≤0.03° latitude precision
-- [ ] Closed-form solutions match analytical expectations
-- [ ] Numerical solvers converge within precision requirements
-- [ ] Circumpolar region handling mathematically correct
-- [ ] Visibility calculations accurate for all latitude ranges
-- [ ] Cross-validation against established astrological software
+- [ ] All ACG paran calculations achieve ≤0.03° latitude precision
+- [ ] Closed-form meridian-horizon solutions match Jim Lewis ACG standards
+- [ ] Numerical horizon-horizon solvers converge within precision requirements
+- [ ] Simultaneity equation: α_A + H_e(A, φ) = α_B + H_e(B, φ) verified
+- [ ] Domain validation prevents |tan(φ)tan(δ)| > 1 calculation attempts
+- [ ] Results produce true constant-latitude parallels (no longitude curvature)
 
 ### Technical Validation
 - [ ] All unit tests pass with >90% code coverage
@@ -360,13 +378,13 @@ test_coverage:
 - [ ] Cache integration optimizes repeated calculations
 - [ ] Memory usage remains within acceptable limits
 
-### Astrological Validation
-- [ ] Paran line positions match traditional astrological sources
-- [ ] Visibility filtering enables meaningful astrological analysis
-- [ ] All paran types (meridian-horizon, horizon-horizon) calculated correctly
-- [ ] Results validate against professional astrological software
-- [ ] Edge cases produce appropriate warnings and metadata
-- [ ] Precision standards meet professional astrology requirements
+### Jim Lewis ACG Validation
+- [ ] Paran line positions match Jim Lewis ACG software and literature
+- [ ] ACG visibility filtering modes work according to astrocartography standards
+- [ ] Planet-planet parans (not fixed-star) calculated per ACG conventions
+- [ ] Results use geocentric apparent places on true equator/equinox of date
+- [ ] Geometric horizon (h=0°) used for line placement, refraction only for visibility
+- [ ] Constant-latitude parallels match established ACG mapping standards
 
 ### Integration Validation
 - [ ] Paran API endpoints integrate with ACG system architecture
@@ -405,19 +423,20 @@ test_coverage:
 - [ ] Response validation passes for all paran calculation types
 - [ ] Error handling returns meaningful feedback for failed calculations
 
-### Astrological Professional Standards
-- [ ] Paran calculations match established astrological references
-- [ ] Precision meets standards for professional astrological software
-- [ ] Visibility filtering enables traditional astrological analysis
-- [ ] Results cross-validated against multiple astrological software packages
-- [ ] Documentation includes astrological context and interpretation guidance
+### ACG Professional Standards
+- [ ] Paran calculations match Jim Lewis ACG methodology and standards
+- [ ] Precision meets or exceeds commercial ACG software accuracy
+- [ ] Visibility filtering supports traditional ACG astrocartography practice
+- [ ] Results cross-validated against established ACG software packages
+- [ ] Documentation includes ACG historical context and usage guidance
+- [ ] Implementation supports classic ACG pair enumeration policies
 
 ---
 
-**Implementation Priority: MEDIUM - Advanced feature for specialized astrocartography**
+**Implementation Priority: MEDIUM - Advanced ACG feature, simplified from original Brady parans**
 
-**Dependencies**: Existing ACG system, advanced mathematical libraries, numerical optimization
+**Dependencies**: Existing ACG system, numpy for vectorized operations, scipy for numerical solvers
 
-**Estimated Complexity**: HIGH (complex mathematical implementations, precision requirements)
+**Estimated Complexity**: MEDIUM (mostly closed-form solutions, well-defined mathematical spec)
 
-**Success Metrics**: ≤0.03° precision, <2000ms global search, validated against professional software
+**Success Metrics**: ≤0.03° precision, <800ms global search, validated against Jim Lewis ACG standards

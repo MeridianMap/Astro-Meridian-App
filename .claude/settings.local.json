@@ -1,10 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(venvScriptspython -m pytest tests/core/ephemeris/tools/test_predictive.py -v)",
+      "Bash(venv\\Scripts\\python -m pytest tests/core/ephemeris/tools/test_predictive.py -v)",
+      "Bash(source:*)"
     ],
     "deny": [],
-    "defaultMode": "acceptEdits",
-    "ask": []
+    "ask": [],
+    "defaultMode": "acceptEdits"
   }
 }

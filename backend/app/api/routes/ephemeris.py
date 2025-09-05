@@ -10,7 +10,10 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.responses import JSONResponse
 
 from ..models.schemas import (
-    NatalChartRequest, NatalChartResponse, ErrorResponse, HealthResponse
+    NatalChartRequest, NatalChartResponse, ErrorResponse, HealthResponse,
+    NatalChartEnhancedRequest, NatalChartEnhancedResponse, CalculationMetadata,
+    AspectMatrixResponse, EnhancedAspectResponse, ArabicPartsResponse,
+    SectDeterminationResponse, ArabicPartResponse
 )
 from ...services.ephemeris_service import (
     ephemeris_service, EphemerisServiceError, InputValidationError, CalculationError
@@ -130,6 +133,240 @@ async def calculate_natal_chart(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content=error_response.model_dump()
         )
+
+
+@router.post(
+    "/v2/natal-enhanced",
+    response_model=NatalChartEnhancedResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Calculate Enhanced Natal Chart",
+    description="""
+    Calculate a comprehensive natal chart with enhanced features including configurable aspects and Arabic parts.
+    
+    Enhanced features include:
+    - Professional aspect calculations with configurable orb systems
+    - Traditional, Modern, or Tight orb presets
+    - Custom orb configuration support
+    - Applying/separating aspect detection
+    - Aspect strength and exactitude calculations
+    - Arabic parts calculations with sect determination
+    - Traditional 16 Hermetic lots with day/night formula variations
+    - Custom Arabic parts formula support
+    - Retrograde motion analysis
+    - Comprehensive calculation metadata
+    
+    Supports all input formats from the standard natal endpoint plus:
+    - Aspect orb preset selection (traditional, modern, tight)
+    - Custom orb configuration overrides
+    - Arabic parts calculation with traditional lots
+    - Custom Arabic parts formulas
+    - Metadata detail level control
+    
+    Performance: Aspect calculations typically complete in <50ms, Arabic parts in <40ms for 16 traditional lots.
+    """,
+    responses={
+        200: {
+            "model": NatalChartEnhancedResponse,
+            "description": "Successful enhanced chart calculation"
+        },
+        400: {
+            "model": ErrorResponse,
+            "description": "Input validation error"
+        },
+        500: {
+            "model": ErrorResponse,
+            "description": "Chart calculation error"
+        }
+    }
+)
+async def calculate_natal_chart_enhanced(
+    request: NatalChartEnhancedRequest
+) -> Union[NatalChartEnhancedResponse, JSONResponse]:
+    """
+    Calculate enhanced natal chart with aspect calculations and additional features.
+    
+    Args:
+        request: Enhanced natal chart calculation request
+        
+    Returns:
+        Complete enhanced natal chart response with aspects and metadata
+        
+    Raises:
+        HTTPException: For validation or calculation errors
+    """
+    try:
+        # Convert enhanced request to standard request for service
+        standard_request = NatalChartRequest(
+            subject=request.subject,
+            configuration=request.configuration
+        )
+        
+        # Calculate enhanced chart using service
+        result_dict = ephemeris_service.calculate_natal_chart_enhanced(
+            request=standard_request,
+            include_aspects=request.include_aspects,
+            aspect_orb_preset=request.aspect_orb_preset,
+            custom_orb_config=request.custom_orb_config,
+            include_south_nodes=True,  # Always include for enhanced
+            include_retrograde_analysis=True,  # Always include for enhanced
+            include_arabic_parts=request.include_arabic_parts,
+            arabic_parts_selection=request.arabic_parts_selection,
+            include_all_traditional_parts=request.include_all_traditional_parts,
+            custom_arabic_formulas=request.custom_arabic_formulas
+        )
+        
+        # Format response according to enhanced schema
+        enhanced_response = _format_enhanced_response(result_dict, request.metadata_level)
+        
+        return enhanced_response
+        
+    except InputValidationError as e:
+        # Input validation errors (400 Bad Request)
+        error_response = ephemeris_service.create_error_response(e)
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content=error_response.model_dump()
+        )
+        
+    except CalculationError as e:
+        # Calculation errors (500 Internal Server Error)
+        error_response = ephemeris_service.create_error_response(e)
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content=error_response.model_dump()
+        )
+        
+    except Exception as e:
+        # Unexpected errors (500 Internal Server Error)
+        error_response = ephemeris_service.create_error_response(e)
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content=error_response.model_dump()
+        )
+
+
+def _format_enhanced_response(result_dict: dict, metadata_level: str) -> NatalChartEnhancedResponse:
+    """
+    Format the enhanced chart calculation result into the proper response schema.
+    
+    Args:
+        result_dict: Raw result dictionary from service
+        metadata_level: Level of metadata detail to include
+        
+    Returns:
+        Formatted enhanced response
+    """
+    # Extract calculation metadata
+    calculation_time = result_dict.get('calculation_time', 0.0)
+    aspect_matrix_data = result_dict.get('aspect_matrix', {})
+    
+    # Determine features included
+    features_included = []
+    if result_dict.get('aspects'):
+        features_included.append('aspects')
+    if result_dict.get('retrograde_analysis'):
+        features_included.append('retrograde_analysis')
+    if result_dict.get('arabic_parts'):
+        features_included.append('arabic_parts')
+    
+    # Create calculation metadata based on level
+    metadata_fields = {
+        'calculation_time': calculation_time,
+        'features_included': features_included
+    }
+    
+    if metadata_level in ['full', 'audit']:
+        metadata_fields.update({
+            'aspect_calculation_time_ms': aspect_matrix_data.get('calculation_time_ms'),
+            'orb_system_used': aspect_matrix_data.get('orb_config_used')
+        })
+    
+    if metadata_level == 'audit':
+        metadata_fields['performance_metrics'] = {
+            'total_aspects_calculated': aspect_matrix_data.get('total_aspects', 0),
+            'aspect_breakdown': {
+                'major': aspect_matrix_data.get('major_aspects', 0),
+                'minor': aspect_matrix_data.get('minor_aspects', 0)
+            }
+        }
+    
+    calculation_metadata = CalculationMetadata(**metadata_fields)
+    
+    # Format enhanced aspects
+    enhanced_aspects = []
+    for aspect in result_dict.get('aspects', []):
+        enhanced_aspect = EnhancedAspectResponse(
+            object1=aspect.get('object1', ''),
+            object2=aspect.get('object2', ''),
+            aspect=aspect.get('aspect', ''),
+            angle=aspect.get('angle', 0.0),
+            orb=aspect.get('orb', 0.0),
+            applying=aspect.get('applying'),
+            strength=aspect.get('strength', 0.0),
+            exact_angle=aspect.get('exact_angle', 0.0),
+            orb_percentage=aspect.get('orb_percentage', 0.0)
+        )
+        enhanced_aspects.append(enhanced_aspect)
+    
+    # Create aspect matrix response if data available
+    aspect_matrix_response = None
+    if aspect_matrix_data:
+        aspect_matrix_response = AspectMatrixResponse(**aspect_matrix_data)
+    
+    # Create Arabic parts response if data available
+    arabic_parts_response = None
+    if result_dict.get('arabic_parts'):
+        arabic_parts_data = result_dict['arabic_parts']
+        
+        # Format sect determination
+        sect_data = arabic_parts_data.get('sect_determination', {})
+        sect_response = SectDeterminationResponse(
+            sect=sect_data.get('sect', 'unknown'),
+            is_day_chart=sect_data.get('is_day_chart', False),
+            sun_above_horizon=sect_data.get('sun_above_horizon', False),
+            method_used=sect_data.get('method_used', 'unknown'),
+            validation_methods=sect_data.get('validation_methods', {})
+        )
+        
+        # Format individual Arabic parts
+        formatted_parts = {}
+        for name, part_data in arabic_parts_data.get('arabic_parts', {}).items():
+            formatted_parts[name] = ArabicPartResponse(
+                name=part_data.get('name', name),
+                display_name=part_data.get('display_name', name.title()),
+                longitude=part_data.get('longitude', 0.0),
+                sign_name=part_data.get('sign_name', ''),
+                sign_longitude=part_data.get('sign_longitude', 0.0),
+                house_number=part_data.get('house_number', 1),
+                formula_used=part_data.get('formula_used', ''),
+                description=part_data.get('description', ''),
+                traditional_source=part_data.get('traditional_source', '')
+            )
+        
+        arabic_parts_response = ArabicPartsResponse(
+            sect_determination=sect_response,
+            arabic_parts=formatted_parts,
+            formulas_used=arabic_parts_data.get('formulas_used', []),
+            calculation_time_ms=arabic_parts_data.get('calculation_time_ms', 0.0),
+            total_parts_calculated=arabic_parts_data.get('total_parts_calculated', 0)
+        )
+    
+    # Build enhanced response
+    enhanced_response = NatalChartEnhancedResponse(
+        success=result_dict.get('success', True),
+        subject=result_dict['subject'],
+        planets=result_dict['planets'],
+        houses=result_dict['houses'],
+        angles=result_dict['angles'],
+        aspects=enhanced_aspects,
+        aspect_matrix=aspect_matrix_response,
+        calculation_metadata=calculation_metadata,
+        retrograde_analysis=result_dict.get('retrograde_analysis'),
+        arabic_parts=arabic_parts_response,
+        chart_type="natal_enhanced"
+    )
+    
+    return enhanced_response
 
 
 @router.get(
