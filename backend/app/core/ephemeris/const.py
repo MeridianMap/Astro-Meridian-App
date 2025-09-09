@@ -166,6 +166,11 @@ PLANET_NAMES: Dict[int, str] = {
     SwePlanets.OSCULATING_APOG: 'Lilith (True)',
     SwePlanets.EARTH: 'Earth',
     SwePlanets.CHIRON: 'Chiron',
+    16: 'Pholus',                                   # (5145) Pholus - centaur
+    17: 'Ceres',                                    # (1) Ceres - dwarf planet
+    18: 'Pallas',                                   # (2) Pallas - asteroid
+    19: 'Juno',                                     # (3) Juno - asteroid
+    20: 'Vesta',                                    # (4) Vesta - asteroid
 }
 
 PLANET_SYMBOLS: Dict[int, str] = {
@@ -185,6 +190,11 @@ PLANET_SYMBOLS: Dict[int, str] = {
     SwePlanets.OSCULATING_APOG: '⚸',
     SwePlanets.EARTH: '🜨',
     SwePlanets.CHIRON: '⚷',
+    16: '⚷',  # Pholus (centaur symbol)
+    17: '⚳',  # Ceres (official symbol)
+    18: '⚴',  # Pallas (official symbol)
+    19: '⚵',  # Juno (official symbol)
+    20: '⚶',  # Vesta (official symbol)
 }
 
 SIGN_NAMES: Dict[int, str] = {

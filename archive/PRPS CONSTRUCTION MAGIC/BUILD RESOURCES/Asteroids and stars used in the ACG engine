@@ -1,0 +1,126 @@
+# Astrocartography Rendering Reference — Asteroids & Fixed Stars
+
+This document defines the finalized sets of extended asteroids and fixed stars for astrocartography rendering. These features will be displayed as **soft orbital zones of influence**, not traditional lines.
+
+---
+
+## Asteroids (Final Set)
+
+* All rendered with **150 mile radius**
+* Will display **points with AC, DC, IC, MC lines and angle aspect lines**
+
+1. **Chiron** — Wounded healer, integration of pain and wisdom
+2. **Ceres** — Nurturance, food, cycles of loss/return
+3. **Juno** — Partnership, contracts, devotion in relationships
+4. **Vesta** — Focus, service, sexuality, devotion
+5. **Pallas Athena** — Strategy, pattern recognition, creative intelligence
+6. **Lilith (Black Moon)** — Autonomy, shadowed feminine, raw instinct
+7. **Eros** — Erotic energy, attraction, desire
+
+---
+
+## Fixed Stars
+
+Stars are grouped into two main tiers for rendering. To clarify nomenclature:
+
+* **Foundation 24**: The core stars most consistently used in astrology and astrocartography. Highest priority.
+* **Extended 77**: The Foundation 24 plus an additional 53 stars drawn from Brady and other traditions. Comprehensive, hemispherically balanced, and culturally significant.
+
+**Fixed Stars show only as points/orbs of influence — they do not render AC, DC, IC, MC, or aspect lines.**
+
+### Foundation 24 (100 mile radius)
+
+1. Regulus (α Leo) — honor, ascent, charisma, hubris risk
+2. Aldebaran (α Tau) — integrity, success, guardianship
+3. Antares (α Sco) — passion, battle, obsession, danger
+4. Fomalhaut (α PsA) — vision, mysticism, ideal vs scandal
+5. Spica (α Vir) — talent, gifts, protection, harvest
+6. Arcturus (α Boo) — pathfinding, leadership, guidance
+7. Sirius (α CMa) — brilliance, renown, longevity
+8. Canopus (α Car) — navigation, stewardship, authority
+9. Vega (α Lyr) — artistry, charisma, inspiration
+10. Capella (α Aur) — guardianship, resourcefulness
+11. Betelgeuse (α Ori) — prominence, volatility, force
+12. Rigel (β Ori) — mastery, achievement through action
+13. Altair (α Aql) — daring, risk, independence
+14. Algol (β Per) — extremity, loss, survival, power
+15. Procyon (α CMi) — quick rise, nimbleness, ephemeral
+16. Bellatrix (γ Ori) — boldness, Amazon, campaigns
+17. Deneb Adige (α Cyg) — poetry, imagination, elevation
+18. Alcyone (η Tau, Pleiades) — collective vision, sorrow, depth
+19. Achernar (α Eri) — endings, ideals, transition
+20. Acrux (α Cru) — mysticism, intensity, devotion
+21. Alphecca (α CrB) — artistry, dignity, allure
+22. Rasalhague (α Oph) — healing, integration, medicine
+23. Denebola (β Leo) — outsider, reforms, contrarian
+24. Markab (α Peg) — ambition, steadiness, risk of fall
+
+### Extended 77 (80 mile radius)
+
+Includes all **Foundation 24** plus the following:
+
+25. Alpheratz (α And) — independence, freedom, prominence
+26. Scheat (β Peg) — misfortune, intensity, brilliance
+27. Pollux (β Gem) — courage, martial energy
+28. Castor (α Gem) — intellect, duality, instability
+29. Deneb (α Cyg) — ascension, spirituality, artistry
+30. Sadalsuud (β Aqr) — fortune, abundance
+31. Sadalmelik (α Aqr) — benevolence, optimism
+32. Zuben Elgenubi (α Lib) — justice, social causes
+33. Zuben Eschamali (β Lib) — diplomacy, gain, cunning
+34. Vindemiatrix (ε Vir) — foresight, premature action
+35. Zosma (δ Leo) — victim/savior dynamics
+36. Algorab (δ Crv) — destruction, cunning
+37. Kochab (β UMi) — guardianship, stability
+38. Ankaa (α Phe) — renewal, cycles of rebirth
+39. Phact (α Col) — curiosity, travel, exploration
+40. Shaula (λ Sco) — decisive strike, endings
+41. Ras Algethi (α Her) — strength, devotion
+42. Facies (M22 region) — laser focus, severity
+43. Deneb Algedi (δ Cap) — law, order, repercussions
+44. Nashira (γ Cap) — success, discipline
+45. Nunki (σ Sgr) — navigation, broadcasting
+46. Algenib (γ Peg) — ambition, surge
+47. Enif (ε Peg) — imagination, force
+48. Alnilam (ε Ori) — visibility, prominence
+49. Mintaka (δ Ori) — clarity, portals
+50. Alnitak (ζ Ori) — ignition, enterprise
+51. Mizar (ζ UMa) — networks, visibility
+52. Dubhe (α UMa) — guardianship, authority
+53. Alderamin (α Cep) — stewardship, planning
+54. Almach (γ And) — artistry, union, allure
+55. Mirach (β And) — beauty, partnership, charisma
+56. Ras Elased Australis (ε Leo) — pride, assertion, drama
+57. Ras Elased Borealis (μ Leo) — command, authority
+58. Alkes (α Crt) — vessel, receptivity, tradition
+59. Gienah (γ Crv) — omens, messages, sharpness
+60. Sualocin (α Del) — guidance, nimbleness
+61. Rotanev (β Del) — humor, resourcefulness
+62. Peacock (α Pav) — pride, vision, creativity
+63. Alphard (α Hya) — intensity, passion, solitary themes
+64. Menkar (α Cet) — collective sacrifice, deep waters
+65. Hamal (α Ari) — leadership, assertion, beginnings
+66. Alpherg (η Psc) — spirituality, initiation, mysticism
+67. Foramen (θ Car) — navigation, endurance
+68. Avior (ε Car) — guidance, exploration
+69. Suhail (γ Vel) — command, logistics
+70. Kaus Australis (ε Sgr) — aim, trajectory, clarity
+71. Unukalhai (α Ser) — healing, danger, intensity
+72. Sadachbia (γ Aqr) — good fortune, hidden help
+73. Skat (δ Aqr) — teamwork, collective work
+74. Alkaid (η UMa) — command, endings
+75. Pherkad (γ UMi) — guidance, guardianship
+76. Caph (β Cas) — prominence, drama
+77. Schedar (α Cas) — dignity, authority
+
+---
+
+## Final Rendering Logic
+
+* **Planets, Asteroids, Lunar Points, Nodes**: Show as points with AC, DC, IC, MC lines and angle aspect lines.
+* **Hermetic Lots**: Show only AC, DC, IC, MC lines.
+* **Fixed Stars**: Show as points/orbs only (no lines).
+* **Asteroids**: Radius 150 mi.
+* **Foundation 24 Stars**: Radius 100 mi.
+* **Extended 77 Stars**: Radius 80 mi.
+

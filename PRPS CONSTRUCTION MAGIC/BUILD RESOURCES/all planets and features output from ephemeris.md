@@ -20,39 +20,29 @@ This technical reference documents all implemented astronomical objects, astrolo
 | **Jupiter** | ♃ | 5 | `swe.JUPITER` | Gas Giant | 0.0831 | ✅ Full | Expansion, wisdom, philosophy |
 | **Saturn** | ♄ | 6 | `swe.SATURN` | Gas Giant | 0.0335 | ✅ Full | Structure, discipline, limitation |
 
-### Modern Planets (Post-1781 Discoveries) - IMPLEMENTED
-| Object | Symbol | SE_ID | Internal ID | Discovery | Orbital Period | API Support | Keywords |
-|--------|--------|-------|-------------|-----------|----------------|-------------|----------|
 | **Uranus** | ⛢ | 7 | `swe.URANUS` | 1781 | 84 years | ✅ Full + Transit | Innovation, rebellion, freedom |
 | **Neptune** | ♆ | 8 | `swe.NEPTUNE` | 1846 | 165 years | ✅ Full + Transit | Dreams, spirituality, dissolution |
 | **Pluto** | ♇ | 9 | `swe.PLUTO` | 1930 | 248 years | ✅ Full + Transit | Transformation, power, regeneration |
 
 ---
 
-## ☄️ **ASTEROIDS & MINOR PLANETS** (IMPLEMENTED)
+## ☄️ **ASTEROIDS & MINOR PLANETS** 
 
 ### Major Asteroids (Core Set) - Full API Support
 | Object | Symbol | SE_ID | Discovery | Size (km) | Orbital Period | API Support | Keywords |
 |--------|--------|-------|-----------|-----------|----------------|-------------|----------|
-| **Chiron** | ⚷ | 15 | 1977 | 233 | 50.5 years | ✅ Full + ACG | Wounded healer, bridge, teaching |
-| **Ceres** | ⚳ | 17 | 1801 | 946 | 4.6 years | ✅ Full + ACG | Nurturing, agriculture, motherhood |
-| **Pallas** | ⚴ | 2 | 1802 | 582 | 4.6 years | ✅ Full + ACG | Wisdom, strategy, pattern recognition |
-| **Juno** | ⚵ | 3 | 1804 | 320 | 4.4 years | ✅ Full + ACG | Marriage, commitment, contracts |
-| **Vesta** | ⚶ | 4 | 1807 | 578 | 3.6 years | ✅ Full + ACG | Sacred flame, devotion, focus |
-| **Pholus** | ⟡ | 16 | 1992 | 183 | 92 years | ✅ Full + ACG | Catalyst, generational patterns |
-
-### Extended Asteroid Access
-| Range | Access Method | Description | Example |
-|-------|---------------|-------------|---------|
-| **1-999999** | `SE_AST_OFFSET + number` | Numbered minor planets | `SE_AST_OFFSET + 433` (Eros) |
-| **Named Objects** | By specific SE constant | Well-known objects | `SE_SEDNA`, `SE_ERIS` |
-| **Custom Orbital** | External ephemeris files | TNOs, hypotheticals | Via orbital elements |
+| **Chiron** | ⚷ | 15 | 1977 | 233 | 50.5 years | ✅ Full + ACG | Wounded healer, integration of pain & wisdom |
+| **Ceres** | ⚳ | 17 | 1801 | 946 | 4.6 years | ✅ Full + ACG | Nurturance, food cycles, return/loss |
+| **Pallas Athena** | ⚴ | 2 | 1802 | 582 | 4.6 years | ✅ Full + ACG | Strategy, pattern recognition, creative intelligence |
+| **Juno** | ⚵ | 3 | 1804 | 320 | 4.4 years | ✅ Full + ACG | Partnership, sacred contracts, devotion |
+| **Vesta** | ⚶ | 4 | 1807 | 578 | 3.6 years | ✅ Full + ACG | Focus, service, sexuality, sacred flame |
+| **Eros** | (ϵ) | *433* | 1898 | 17 | 1.76 years | ✅ Full + ACG | Erotic magnetism, desire, attraction |
 
 ---
 
-## 🌙 **LUNAR NODES & APOGEE POINTS** (FULLY IMPLEMENTED)
+## 🌙 **LUNAR NODES & APOGEE POINTS**
 
-### Lunar Nodes - Enhanced with South Node Support
+### Lunar Nodes
 | Point | Symbol | SE_ID | Type | Calculation Method | Motion Rate | API Support |
 |-------|--------|-------|------|--------------------|-------------|-------------|
 | **North Node (Mean)** | ☊ | 10 | Mean | `swe.MEAN_NODE` | -0.0529°/day | ✅ Full |
@@ -105,6 +95,30 @@ This technical reference documents all implemented astronomical objects, astrolo
 
 ---
 
+### ACG Rendering Sets: Fixed Stars (Finalized)
+The system distinguishes two prioritized tiers for astrocartography visualization. Fixed Stars render ONLY as circular orbs/points of influence (no angular or aspect lines) with tier-specific radii.
+
+| Tier | Count | Radius (mi) | Rendering | Inclusion Logic |
+|------|-------|------------|-----------|-----------------|
+| **Foundation 24** | 24 | 100 | Point + soft influence orb | Core, historically ubiquitous in practice |
+| **Extended 77** | 77 (24 + 53) | 80 | Point + soft influence orb | Comprehensive cultural & hemispheric balance |
+
+#### Foundation 24 (100 mile radius)
+Regulus (α Leo), Aldebaran (α Tau), Antares (α Sco), Fomalhaut (α PsA), Spica (α Vir), Arcturus (α Boo), Sirius (α CMa), Canopus (α Car), Vega (α Lyr), Capella (α Aur), Betelgeuse (α Ori), Rigel (β Ori), Altair (α Aql), Algol (β Per), Procyon (α CMi), Bellatrix (γ Ori), Deneb Adige (α Cyg), Alcyone (η Tau – Pleiades), Achernar (α Eri), Acrux (α Cru), Alphecca (α CrB), Rasalhague (α Oph), Denebola (β Leo), Markab (α Peg)
+
+#### Extended 77 (Adds the following 53, 80 mile radius)
+Alpheratz (α And), Scheat (β Peg), Pollux (β Gem), Castor (α Gem), Deneb (α Cyg), Sadalsuud (β Aqr), Sadalmelik (α Aqr), Zuben Elgenubi (α Lib), Zuben Eschamali (β Lib), Vindemiatrix (ε Vir), Zosma (δ Leo), Algorab (δ Crv), Kochab (β UMi), Ankaa (α Phe), Phact (α Col), Shaula (λ Sco), Ras Algethi (α Her), Facies (M22 region), Deneb Algedi (δ Cap), Nashira (γ Cap), Nunki (σ Sgr), Algenib (γ Peg), Enif (ε Peg), Alnilam (ε Ori), Mintaka (δ Ori), Alnitak (ζ Ori), Mizar (ζ UMa), Dubhe (α UMa), Alderamin (α Cep), Almach (γ And), Mirach (β And), Ras Elased Australis (ε Leo), Ras Elased Borealis (μ Leo), Alkes (α Crt), Gienah (γ Crv), Sualocin (α Del), Rotanev (β Del), Peacock (α Pav), Alphard (α Hya), Menkar (α Cet), Hamal (α Ari), Alpherg (η Psc), Foramen (θ Car), Avior (ε Car), Suhail (γ Vel), Kaus Australis (ε Sgr), Unukalhai (α Ser), Sadachbia (γ Aqr), Skat (δ Aqr), Alkaid (η UMa), Pherkad (γ UMi), Caph (β Cas), Schedar (α Cas)
+
+> Rendering Logic Summary:
+> * Asteroids & listed minor bodies: point + AC/DC/IC/MC lines + aspect-to-angle lines + 150 mi radius orb.
+> * Fixed Stars (both tiers): point/orb only (no lines). Radius: 100 mi (Foundation 24), 80 mi (Extended 77 additions).
+> * Hermetic / Arabic Parts: AC/DC/IC/MC lines only (no point orb beyond line markers).
+> * Implementation ensures tier-aware styling + legend grouping for user filtering.
+
+---
+
+---
+
 ## 📐 **CALCULATED POINTS & MATHEMATICAL OBJECTS**
 
 ### Primary Angles (House Cusps)
@@ -120,7 +134,7 @@ This technical reference documents all implemented astronomical objects, astrolo
 
 ---
 
-## 🏠 **HOUSE SYSTEMS - Complete Technical Reference**
+## 🏠 **HOUSE SYSTEMS**
 
 ### Supported House Systems (18 Total)
 | Code | System Name | Method | Era | Primary Use | Technical Notes |
@@ -146,7 +160,7 @@ This technical reference documents all implemented astronomical objects, astrolo
 
 ---
 
-## ⚛️ **ASPECTS & ANGULAR RELATIONSHIPS** (FULLY IMPLEMENTED)
+## ⚛️ **ASPECTS & ANGULAR RELATIONSHIPS**
 
 ### Traditional Aspects (Ptolemaic) - Production Quality
 | Aspect | Symbol | Angle | Orb Range | Nature | API Support | Performance |
@@ -157,7 +171,7 @@ This technical reference documents all implemented astronomical objects, astrolo
 | **Trine** | △ | 120° | 6-8° | Soft/Harmony | ✅ Full + Enhanced | <5ms |
 | **Sextile** | ⚹ | 60° | 4-6° | Soft/Opportunity | ✅ Full + Enhanced | <5ms |
 
-### Extended Aspects (Modern) - IMPLEMENTED
+### Extended Aspects (Modern)
 | Aspect | Symbol | Angle | Orb Range | Nature | API Support | Status |
 |--------|--------|-------|-----------|--------|-----------|---------|
 | **Quincunx/Inconjunct** | ⚺ | 150° | 2-4° | Adjustment | ✅ Enhanced only | Production |
@@ -189,7 +203,7 @@ This technical reference documents all implemented astronomical objects, astrolo
 
 ---
 
-## 🗺️ **ASTROCARTOGRAPHY (ACG) ENGINE - Full Production Implementation**
+## 🗺️ **ASTROCARTOGRAPHY (ACG) ENGINE**
 
 ### Primary Line Types (Angular Crossings) - IMPLEMENTED
 | Line Type | Mathematical Definition | Calculation Method | Performance | API Support |
@@ -199,13 +213,12 @@ This technical reference documents all implemented astronomical objects, astrolo
 | **AC Lines** | Body rises on eastern horizon | Complex horizon crossing formula | <100ms | ✅ v1 + v2 |
 | **DC Lines** | Body sets on western horizon | Complex horizon crossing formula | <100ms | ✅ v1 + v2 |
 
-### Enhanced Line Types (v2 API) - COMPREHENSIVE IMPLEMENTATION
+### Enhanced Line Types (v2 API)
 | Line Type | Description | Calculation Method | Performance | Precision | Status |
 |-----------|-------------|-------------------|-------------|-----------|--------|
 | **Aspect-to-Angle Lines** | Planet aspects to MC/AC/IC/DC | Numerical optimization | <200ms | 0.1° | ✅ Production |
 | **Paran Lines** | Jim Lewis simultaneity analysis | Closed-form + Brent method | <800ms | ≤0.03° | ✅ Production |
 | **Retrograde Integration** | Motion status visualization | Enhanced metadata | <150ms | 0.001°/day | ✅ Production |
-| **Fixed Star Lines** | Bright stars ACG lines | Proper motion corrected | <100ms | Arc-second | ✅ Available |
 | **Asteroid Lines** | Minor planet ACG lines | Full orbital precision | <150ms | High precision | ✅ Production |
 | **Arabic Parts Lines** | Hermetic lots ACG mapping | Sect-aware calculation | <120ms | Standard | ✅ Production |
 
@@ -389,6 +402,51 @@ This technical reference documents all implemented astronomical objects, astrolo
 | **Custom Formula** | <20ms | 5-15ms typical | ✅ Exceeds target |
 | **Batch Calculation** | Linear scaling | Optimized performance | ✅ Production ready |
 
+### Hermetic Lots (Explicit Day / Night Formulas)
+The system implements a superset of traditional Hermetic Lots (a.k.a. Arabic Parts). Below are the explicit Day and Night formulas for the core canonical set plus additional optional / extended lots. Where a formula is marked sect-independent, the same expression is used regardless of day/night. Existing implementation already applies automatic sect reversal for lots derived from Fortune & Spirit when applicable.
+
+#### Core Lots
+| Lot | Day Formula | Night Formula | Notes |
+|-----|-------------|---------------|-------|
+| Fortune (Pars Fortuna) | ASC + Moon − Sun | ASC + Sun − Moon | Implemented (alias: Part of Fortune) |
+| Spirit (Pars Spiritus) | ASC + Sun − Moon | ASC + Moon − Sun | Implemented (alias: Part of Spirit) |
+| Basis | ASC + Fortune − Spirit | Same | Structural grounding / root purpose |
+| Travel | ASC + 9th Cusp − Ruler 9th | Same | Uses chosen house system for 9th cusp |
+| Fame | ASC + 10th Cusp − Sun | Same | Career / public visibility (uses 10th cusp) |
+| Work / Profession | ASC + Mercury − Saturn | ASC + Saturn − Mercury | Distinct from Fame (skill + labor) |
+| Property | ASC + 4th Cusp − Ruler 4th | Same | Land / real estate / domicile |
+| Wealth | ASC + Jupiter − Sun | ASC + Sun − Jupiter | Material accumulation (NOT Increase lot) |
+
+#### Optional / Extended Lots
+| Lot | Day Formula | Night Formula | Notes |
+|-----|-------------|---------------|-------|
+| Eros | ASC + Venus − Spirit | ASC + Spirit − Venus | Implemented (alias: Part of Eros) |
+| Necessity | ASC + Spirit − Fortune | ASC + Fortune − Spirit | Implemented (alias: Part of Necessity) |
+| Victory | ASC + Jupiter − Spirit | ASC + Spirit − Jupiter | Implemented (alias: Part of Victory) |
+| Nemesis | ASC + Spirit − Saturn | ASC + Saturn − Spirit | Implemented (alias: Part of Nemesis) |
+| Exaltation | ASC + (Degree of Exalted Luminary − Luminary) | Same | Luminary = Sun (day) / Moon (night) exaltation logic optional* |
+| Marriage | ASC + Venus − Saturn | ASC + Saturn − Venus | Implemented (separate from Marriage lot variant using DSC) |
+| Faith (Religion) | ASC + Jupiter − Sun | ASC + Sun − Jupiter | Implemented (alias: Part of Faith) |
+| Friends | ASC + Mercury − Jupiter | ASC + Jupiter − Mercury | Intellectual-social alliances |
+
+#### Previously Documented Additional Implemented Lots (Extended Suite)
+These appear in the earlier table and are retained for backward compatibility & interpretive richness:
+| Lot | Formula (Base Form – Day) | Night Variation | Notes |
+|-----|---------------------------|-----------------|-------|
+| Love | ASC + Venus − Sun | (Sect-adaptive if configured) | Sometimes mapped to Eros; kept distinct |
+| Courage | ASC + Fortune − Mars | (Sect-adaptive if configured) | Action / valor (implementation alias) |
+| Death | ASC + 8th Cusp − Moon | (Sect-adaptive optional) | Transitional themes |
+| Increase (Increase & Benefit) | ASC + Jupiter − Sun | ASC + Sun − Jupiter | Overlaps formula with Wealth (different interpretive lens) |
+| Understanding | ASC + Mars − Mercury | (Sect-adaptive optional) | Insight / mental force |
+| Honor | ASC + Sun − Spirit | (Sect-adaptive) | Recognition / reputation |
+| Siblings | ASC + Jupiter − Saturn | (Sect-independent) | Kin / fraternity |
+| Exile | ASC + Saturn − Fortune | (Sect-independent) | Displacement / travel mandate |
+
+*Exaltation Implementation Note: The degree of the exalted luminary refers to the classical exaltation (Sun at 19° Aries / Moon at 3° Taurus). In practice we compute: ASC + (Exaltation Degree of Luminary − Actual Degree of Luminary). Sect-independent in most historical sources; configurable flag retained.
+
+> API Output: Each calculated lot returns longitude, sign position, house placement, and derivation metadata (base points used + resolved formula after sect adjustment) to ensure auditability.
+
+---
 ---
 
 ## 🌌 **ENHANCED RETROGRADE ANALYSIS** (IMPLEMENTED)
@@ -401,25 +459,6 @@ This technical reference documents all implemented astronomical objects, astrolo
 | **Period Analysis** | Full retrograde cycles | Complete tracking | <30ms | ✅ Production |
 | **Visual Styling** | Color-coded motion states | Dynamic rendering | Instant | ✅ Production |
 
-### Supported Bodies for Retrograde Analysis
-| Body Type | Retrograde Support | Station Analysis | Performance Notes |
-|-----------|-------------------|------------------|-------------------|
-| **Mercury** | ✅ Full precision | ✅ Exact timing | Fastest inner planet |
-| **Venus** | ✅ Full precision | ✅ Exact timing | Optimized algorithms |
-| **Mars** | ✅ Full precision | ✅ Exact timing | Complex motion tracking |
-| **Outer Planets** | ✅ Full precision | ✅ Exact timing | Long-period optimization |
-| **Asteroids** | ✅ Supported | ✅ Available | Extended ephemeris |
-
-### Motion Status Categories
-| Status | Color Code | Description | Detection Method |
-|--------|------------|-------------|------------------|
-| **Direct** | Green | Normal forward motion | Speed > +0.001°/day |
-| **Stationary** | Yellow | Near-zero motion | |±Speed±| < 0.001°/day |
-| **Retrograde** | Red | Apparent backward motion | Speed < -0.001°/day |
-| **Station Direct** | Blue | Turning point to direct | Acceleration analysis |
-| **Station Retrograde** | Orange | Turning point to retrograde | Acceleration analysis |
-
----
 
 ---
 
@@ -536,7 +575,9 @@ This technical reference documents all implemented astronomical objects, astrolo
 | **Uranus** | Cyan | `#00FFFF` | Dotted |
 | **Neptune** | Deep Blue | `#000080` | Wave pattern |
 | **Pluto** | Purple | `#800080` | Dashed thick |
-| **Fixed Stars** | White | `#FFFFFF` | Point + circle |
+| **Fixed Stars (Foundation)** | White | `#FFFFFF` | Point + 100mi orb |
+| **Fixed Stars (Extended)** | White (faded) | `#FFFFFF` (lower opacity) | Point + 80mi orb |
+| **Asteroids (Final Set)** | Gray | `#808080` | Lines + 150mi orb |
 | **Asteroids** | Gray | `#808080` | Thin solid |
 
 ### Z-Index Layering (Display Priority)

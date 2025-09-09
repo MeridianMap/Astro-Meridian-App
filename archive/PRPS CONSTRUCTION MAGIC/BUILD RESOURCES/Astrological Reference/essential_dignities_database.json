@@ -1,0 +1,764 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "sources_note": "Traditional schema widely attested in Hellenistic/medieval practice. Variants exist for bounds; decans follow Chaldean order. Modern outer-planet exaltations are not canonical.",
+    "triplicity_scheme": "Dorothean (day/night/participating)",
+    "bounds_scheme": "Egyptian (common modern traditional variant); Virgo has known variants."
+  },
+  "planets": {
+    "Sun": {
+      "domiciles": [
+        "Leo"
+      ],
+      "detriments": [
+        "Aquarius"
+      ],
+      "exaltation": {
+        "sign": "Aries",
+        "degree": 19
+      },
+      "fall": {
+        "sign": "Libra",
+        "degree": 19
+      }
+    },
+    "Moon": {
+      "domiciles": [
+        "Cancer"
+      ],
+      "detriments": [
+        "Capricorn"
+      ],
+      "exaltation": {
+        "sign": "Taurus",
+        "degree": 3
+      },
+      "fall": {
+        "sign": "Scorpio",
+        "degree": 3
+      }
+    },
+    "Mercury": {
+      "domiciles": [
+        "Gemini",
+        "Virgo"
+      ],
+      "detriments": [
+        "Sagittarius",
+        "Pisces"
+      ],
+      "exaltation": {
+        "sign": "Virgo",
+        "degree": 15
+      },
+      "fall": {
+        "sign": "Pisces",
+        "degree": 15
+      }
+    },
+    "Venus": {
+      "domiciles": [
+        "Taurus",
+        "Libra"
+      ],
+      "detriments": [
+        "Scorpio",
+        "Aries"
+      ],
+      "exaltation": {
+        "sign": "Pisces",
+        "degree": 27
+      },
+      "fall": {
+        "sign": "Virgo",
+        "degree": 27
+      }
+    },
+    "Mars": {
+      "domiciles": [
+        "Aries",
+        "Scorpio"
+      ],
+      "detriments": [
+        "Libra",
+        "Taurus"
+      ],
+      "exaltation": {
+        "sign": "Capricorn",
+        "degree": 28
+      },
+      "fall": {
+        "sign": "Cancer",
+        "degree": 28
+      }
+    },
+    "Jupiter": {
+      "domiciles": [
+        "Sagittarius",
+        "Pisces"
+      ],
+      "detriments": [
+        "Gemini",
+        "Virgo"
+      ],
+      "exaltation": {
+        "sign": "Cancer",
+        "degree": 15
+      },
+      "fall": {
+        "sign": "Capricorn",
+        "degree": 15
+      }
+    },
+    "Saturn": {
+      "domiciles": [
+        "Capricorn",
+        "Aquarius"
+      ],
+      "detriments": [
+        "Cancer",
+        "Leo"
+      ],
+      "exaltation": {
+        "sign": "Libra",
+        "degree": 21
+      },
+      "fall": {
+        "sign": "Aries",
+        "degree": 21
+      }
+    },
+    "Uranus": {
+      "domiciles": [
+        "Aquarius"
+      ],
+      "detriments": [
+        "Leo"
+      ],
+      "exaltation": {
+        "status": "disputed",
+        "candidates": [
+          "Scorpio",
+          "Aries"
+        ],
+        "note": "No canonical exaltation; proposals vary by modern schools."
+      },
+      "fall": {
+        "status": "disputed",
+        "note": "No canonical fall; sometimes inferred as opposite of candidate exaltations."
+      }
+    },
+    "Neptune": {
+      "domiciles": [
+        "Pisces"
+      ],
+      "detriments": [
+        "Virgo"
+      ],
+      "exaltation": {
+        "status": "disputed",
+        "candidates": [
+          "Cancer",
+          "Leo"
+        ],
+        "note": "No canonical exaltation; proposals vary; many practitioners leave it unset."
+      },
+      "fall": {
+        "status": "disputed",
+        "note": "No canonical fall; sometimes inferred as opposite of candidate exaltations."
+      }
+    },
+    "Pluto": {
+      "domiciles": [
+        "Scorpio"
+      ],
+      "detriments": [
+        "Taurus"
+      ],
+      "exaltation": {
+        "status": "disputed",
+        "candidates": [
+          "Aries",
+          "Leo"
+        ],
+        "note": "No canonical exaltation; many practitioners leave it unset."
+      },
+      "fall": {
+        "status": "disputed",
+        "note": "No canonical fall; sometimes inferred as opposite of candidate exaltations."
+      }
+    }
+  },
+  "triplicities": {
+    "Fire": {
+      "signs": [
+        "Aries",
+        "Leo",
+        "Sagittarius"
+      ],
+      "day_ruler": "Sun",
+      "night_ruler": "Jupiter",
+      "participating_ruler": "Saturn"
+    },
+    "Earth": {
+      "signs": [
+        "Taurus",
+        "Virgo",
+        "Capricorn"
+      ],
+      "day_ruler": "Venus",
+      "night_ruler": "Moon",
+      "participating_ruler": "Mars"
+    },
+    "Air": {
+      "signs": [
+        "Gemini",
+        "Libra",
+        "Aquarius"
+      ],
+      "day_ruler": "Saturn",
+      "night_ruler": "Mercury",
+      "participating_ruler": "Jupiter"
+    },
+    "Water": {
+      "signs": [
+        "Cancer",
+        "Scorpio",
+        "Pisces"
+      ],
+      "day_ruler": "Venus",
+      "night_ruler": "Mars",
+      "participating_ruler": "Moon"
+    }
+  },
+  "decans_chaldean": {
+    "Aries": [
+      {
+        "start_deg": 0,
+        "end_deg": 10,
+        "ruler": "Mars"
+      },
+      {
+        "start_deg": 10,
+        "end_deg": 20,
+        "ruler": "Sun"
+      },
+      {
+        "start_deg": 20,
+        "end_deg": 30,
+        "ruler": "Venus"
+      }
+    ],
+    "Taurus": [
+      {
+        "start_deg": 0,
+        "end_deg": 10,
+        "ruler": "Mercury"
+      },
+      {
+        "start_deg": 10,
+        "end_deg": 20,
+        "ruler": "Moon"
+      },
+      {
+        "start_deg": 20,
+        "end_deg": 30,
+        "ruler": "Saturn"
+      }
+    ],
+    "Gemini": [
+      {
+        "start_deg": 0,
+        "end_deg": 10,
+        "ruler": "Jupiter"
+      },
+      {
+        "start_deg": 10,
+        "end_deg": 20,
+        "ruler": "Mars"
+      },
+      {
+        "start_deg": 20,
+        "end_deg": 30,
+        "ruler": "Sun"
+      }
+    ],
+    "Cancer": [
+      {
+        "start_deg": 0,
+        "end_deg": 10,
+        "ruler": "Venus"
+      },
+      {
+        "start_deg": 10,
+        "end_deg": 20,
+        "ruler": "Mercury"
+      },
+      {
+        "start_deg": 20,
+        "end_deg": 30,
+        "ruler": "Moon"
+      }
+    ],
+    "Leo": [
+      {
+        "start_deg": 0,
+        "end_deg": 10,
+        "ruler": "Saturn"
+      },
+      {
+        "start_deg": 10,
+        "end_deg": 20,
+        "ruler": "Jupiter"
+      },
+      {
+        "start_deg": 20,
+        "end_deg": 30,
+        "ruler": "Mars"
+      }
+    ],
+    "Virgo": [
+      {
+        "start_deg": 0,
+        "end_deg": 10,
+        "ruler": "Sun"
+      },
+      {
+        "start_deg": 10,
+        "end_deg": 20,
+        "ruler": "Venus"
+      },
+      {
+        "start_deg": 20,
+        "end_deg": 30,
+        "ruler": "Mercury"
+      }
+    ],
+    "Libra": [
+      {
+        "start_deg": 0,
+        "end_deg": 10,
+        "ruler": "Moon"
+      },
+      {
+        "start_deg": 10,
+        "end_deg": 20,
+        "ruler": "Saturn"
+      },
+      {
+        "start_deg": 20,
+        "end_deg": 30,
+        "ruler": "Jupiter"
+      }
+    ],
+    "Scorpio": [
+      {
+        "start_deg": 0,
+        "end_deg": 10,
+        "ruler": "Mars"
+      },
+      {
+        "start_deg": 10,
+        "end_deg": 20,
+        "ruler": "Sun"
+      },
+      {
+        "start_deg": 20,
+        "end_deg": 30,
+        "ruler": "Venus"
+      }
+    ],
+    "Sagittarius": [
+      {
+        "start_deg": 0,
+        "end_deg": 10,
+        "ruler": "Mercury"
+      },
+      {
+        "start_deg": 10,
+        "end_deg": 20,
+        "ruler": "Moon"
+      },
+      {
+        "start_deg": 20,
+        "end_deg": 30,
+        "ruler": "Saturn"
+      }
+    ],
+    "Capricorn": [
+      {
+        "start_deg": 0,
+        "end_deg": 10,
+        "ruler": "Jupiter"
+      },
+      {
+        "start_deg": 10,
+        "end_deg": 20,
+        "ruler": "Mars"
+      },
+      {
+        "start_deg": 20,
+        "end_deg": 30,
+        "ruler": "Sun"
+      }
+    ],
+    "Aquarius": [
+      {
+        "start_deg": 0,
+        "end_deg": 10,
+        "ruler": "Venus"
+      },
+      {
+        "start_deg": 10,
+        "end_deg": 20,
+        "ruler": "Mercury"
+      },
+      {
+        "start_deg": 20,
+        "end_deg": 30,
+        "ruler": "Moon"
+      }
+    ],
+    "Pisces": [
+      {
+        "start_deg": 0,
+        "end_deg": 10,
+        "ruler": "Saturn"
+      },
+      {
+        "start_deg": 10,
+        "end_deg": 20,
+        "ruler": "Jupiter"
+      },
+      {
+        "start_deg": 20,
+        "end_deg": 30,
+        "ruler": "Mars"
+      }
+    ]
+  },
+  "bounds_egyptian": {
+    "Aries": [
+      {
+        "ruler": "Jupiter",
+        "end_deg": 6
+      },
+      {
+        "ruler": "Venus",
+        "end_deg": 14
+      },
+      {
+        "ruler": "Mercury",
+        "end_deg": 21
+      },
+      {
+        "ruler": "Mars",
+        "end_deg": 26
+      },
+      {
+        "ruler": "Saturn",
+        "end_deg": 30
+      }
+    ],
+    "Taurus": [
+      {
+        "ruler": "Venus",
+        "end_deg": 8
+      },
+      {
+        "ruler": "Mercury",
+        "end_deg": 14
+      },
+      {
+        "ruler": "Jupiter",
+        "end_deg": 22
+      },
+      {
+        "ruler": "Saturn",
+        "end_deg": 27
+      },
+      {
+        "ruler": "Mars",
+        "end_deg": 30
+      }
+    ],
+    "Gemini": [
+      {
+        "ruler": "Mercury",
+        "end_deg": 7
+      },
+      {
+        "ruler": "Jupiter",
+        "end_deg": 14
+      },
+      {
+        "ruler": "Venus",
+        "end_deg": 21
+      },
+      {
+        "ruler": "Mars",
+        "end_deg": 28
+      },
+      {
+        "ruler": "Saturn",
+        "end_deg": 30
+      }
+    ],
+    "Cancer": [
+      {
+        "ruler": "Mars",
+        "end_deg": 7
+      },
+      {
+        "ruler": "Venus",
+        "end_deg": 13
+      },
+      {
+        "ruler": "Mercury",
+        "end_deg": 19
+      },
+      {
+        "ruler": "Jupiter",
+        "end_deg": 28
+      },
+      {
+        "ruler": "Saturn",
+        "end_deg": 30
+      }
+    ],
+    "Leo": [
+      {
+        "ruler": "Saturn",
+        "end_deg": 6
+      },
+      {
+        "ruler": "Mercury",
+        "end_deg": 13
+      },
+      {
+        "ruler": "Venus",
+        "end_deg": 19
+      },
+      {
+        "ruler": "Jupiter",
+        "end_deg": 25
+      },
+      {
+        "ruler": "Mars",
+        "end_deg": 30
+      }
+    ],
+    "Virgo": [
+      {
+        "ruler": "Mercury",
+        "end_deg": 7
+      },
+      {
+        "ruler": "Venus",
+        "end_deg": 13
+      },
+      {
+        "ruler": "Jupiter",
+        "end_deg": 17
+      },
+      {
+        "ruler": "Mercury",
+        "end_deg": 21
+      },
+      {
+        "ruler": "Saturn",
+        "end_deg": 30
+      }
+    ],
+    "Libra": [
+      {
+        "ruler": "Saturn",
+        "end_deg": 6
+      },
+      {
+        "ruler": "Mercury",
+        "end_deg": 14
+      },
+      {
+        "ruler": "Jupiter",
+        "end_deg": 21
+      },
+      {
+        "ruler": "Venus",
+        "end_deg": 28
+      },
+      {
+        "ruler": "Mars",
+        "end_deg": 30
+      }
+    ],
+    "Scorpio": [
+      {
+        "ruler": "Mars",
+        "end_deg": 7
+      },
+      {
+        "ruler": "Venus",
+        "end_deg": 13
+      },
+      {
+        "ruler": "Mercury",
+        "end_deg": 19
+      },
+      {
+        "ruler": "Jupiter",
+        "end_deg": 24
+      },
+      {
+        "ruler": "Saturn",
+        "end_deg": 30
+      }
+    ],
+    "Sagittarius": [
+      {
+        "ruler": "Jupiter",
+        "end_deg": 12
+      },
+      {
+        "ruler": "Venus",
+        "end_deg": 17
+      },
+      {
+        "ruler": "Mercury",
+        "end_deg": 21
+      },
+      {
+        "ruler": "Saturn",
+        "end_deg": 26
+      },
+      {
+        "ruler": "Mars",
+        "end_deg": 30
+      }
+    ],
+    "Capricorn": [
+      {
+        "ruler": "Mercury",
+        "end_deg": 7
+      },
+      {
+        "ruler": "Jupiter",
+        "end_deg": 14
+      },
+      {
+        "ruler": "Venus",
+        "end_deg": 22
+      },
+      {
+        "ruler": "Saturn",
+        "end_deg": 26
+      },
+      {
+        "ruler": "Mars",
+        "end_deg": 30
+      }
+    ],
+    "Aquarius": [
+      {
+        "ruler": "Mercury",
+        "end_deg": 7
+      },
+      {
+        "ruler": "Venus",
+        "end_deg": 13
+      },
+      {
+        "ruler": "Jupiter",
+        "end_deg": 20
+      },
+      {
+        "ruler": "Mars",
+        "end_deg": 25
+      },
+      {
+        "ruler": "Saturn",
+        "end_deg": 30
+      }
+    ],
+    "Pisces": [
+      {
+        "ruler": "Venus",
+        "end_deg": 12
+      },
+      {
+        "ruler": "Jupiter",
+        "end_deg": 19
+      },
+      {
+        "ruler": "Mercury",
+        "end_deg": 24
+      },
+      {
+        "ruler": "Mars",
+        "end_deg": 27
+      },
+      {
+        "ruler": "Saturn",
+        "end_deg": 30
+      }
+    ]
+  },
+  "asteroids_small_bodies": {
+    "Ceres": {
+      "type": "dwarf/asteroid",
+      "themes": [
+        "nurture",
+        "food",
+        "harvest",
+        "sustainability"
+      ],
+      "dignities": "none"
+    },
+    "Pallas": {
+      "type": "asteroid",
+      "themes": [
+        "strategy",
+        "pattern-recognition",
+        "craft"
+      ],
+      "dignities": "none"
+    },
+    "Juno": {
+      "type": "asteroid",
+      "themes": [
+        "bonding",
+        "contracts",
+        "equity in relationships"
+      ],
+      "dignities": "none"
+    },
+    "Vesta": {
+      "type": "asteroid",
+      "themes": [
+        "focus",
+        "devotion",
+        "hearth/home",
+        "sacred service"
+      ],
+      "dignities": "none"
+    },
+    "Chiron": {
+      "type": "centaur",
+      "themes": [
+        "wounding/healing",
+        "bridging",
+        "mentorship"
+      ],
+      "dignities": "none"
+    },
+    "Eris": {
+      "type": "dwarf",
+      "themes": [
+        "discord",
+        "contestation",
+        "inclusion/exclusion"
+      ],
+      "dignities": "none"
+    }
+  }
+}

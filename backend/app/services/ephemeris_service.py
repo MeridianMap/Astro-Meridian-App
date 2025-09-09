@@ -17,12 +17,13 @@ from ..api.models.schemas import (
 )
 from ..core.ephemeris.charts.subject import Subject
 from ..core.ephemeris.charts.natal import NatalChart
-from ..core.ephemeris.const import PLANET_NAMES
+from ..core.ephemeris.const import PLANET_NAMES, get_sign_from_longitude, get_sign_name
 from ..core.ephemeris.tools.ephemeris import validate_ephemeris_files, analyze_retrograde_motion
 from ..core.ephemeris.tools.aspects import AspectCalculator
 from ..core.ephemeris.tools.orb_systems import OrbSystemManager
 from ..core.ephemeris.tools.arabic_parts import ArabicPartsCalculator
 from ..core.ephemeris.tools.arabic_parts_models import ArabicPartsRequest
+from ..core.ephemeris.tools.fixed_stars import FixedStarCalculator
 
 
 class EphemerisServiceError(Exception):
@@ -48,12 +49,37 @@ class EphemerisService:
     handling input normalization, validation, and response formatting.
     """
     
+    # House system code to name mapping
+    _HOUSE_SYSTEM_NAMES = {
+        'P': 'placidus',
+        'K': 'koch', 
+        'O': 'porphyrius',
+        'R': 'regiomontanus',
+        'C': 'campanus',
+        'A': 'equal',
+        'V': 'vehlow',
+        'W': 'whole_sign',
+        'T': 'topocentric',
+        'M': 'morinus',
+        'H': 'horizontal',
+        'B': 'alcabitus',
+        'G': 'gauquelin_sectors'
+    }
+    
     def __init__(self):
         """Initialize ephemeris service."""
         self.start_time = time.time()
         self._ephemeris_validation_cache: Optional[Dict[str, bool]] = None
         self._last_validation_check: Optional[float] = None
         self._validation_cache_ttl = 300  # 5 minutes
+        
+        # Set up Swiss Ephemeris library path for fixed stars FIRST
+        self._setup_swiss_ephemeris_path()
+        
+        # Force reload of fixed stars module to pick up new path
+        import sys
+        if 'app.core.ephemeris.tools.fixed_stars' in sys.modules:
+            del sys.modules['app.core.ephemeris.tools.fixed_stars']
         
         # Initialize predictive service integration
         self._predictive_available = True
@@ -63,6 +89,83 @@ class EphemerisService:
         except ImportError:
             self._predictive_available = False
             self._predictive_service = None
+        
+        # Initialize fixed star calculator AFTER path setup
+        from ..core.ephemeris.tools.fixed_stars import FixedStarCalculator
+        self.fixed_star_calculator = FixedStarCalculator()
+    
+    def _get_sign_name(self, longitude: float) -> str:
+        """Get zodiac sign name from longitude."""
+        sign_number = get_sign_from_longitude(longitude)
+        return get_sign_name(sign_number)
+    
+    def _get_sign_position(self, longitude: float) -> float:
+        """Get position within zodiac sign from longitude."""
+        return longitude % 30.0
+    
+    def _normalize_house_system_code(self, system_code: str) -> str:
+        """
+        Normalize house system code to canonical name.
+        
+        Args:
+            system_code: House system code (e.g., 'P', 'K', etc.)
+            
+        Returns:
+            Canonical house system name (e.g., 'placidus', 'koch', etc.)
+        """
+        if system_code in self._HOUSE_SYSTEM_NAMES:
+            return self._HOUSE_SYSTEM_NAMES[system_code]
+        else:
+            # If already a canonical name, return as-is
+            # Otherwise, default to placidus
+            canonical_names = set(self._HOUSE_SYSTEM_NAMES.values())
+            return system_code if system_code in canonical_names else 'placidus'
+    
+    def _setup_swiss_ephemeris_path(self):
+        """Set up Swiss Ephemeris library path for enhanced fixed star calculations."""
+        import os
+        import swisseph as swe
+        
+        # Find project root by looking for specific folders
+        current_dir = os.path.dirname(__file__)
+        project_root = current_dir
+        
+        # Go up directories until we find the Swiss Eph Library Files folder
+        max_levels = 10
+        for _ in range(max_levels):
+            potential_swe_path = os.path.join(project_root, "Swiss Eph Library Files")
+            if os.path.exists(potential_swe_path):
+                swe_lib_path = potential_swe_path
+                break
+            parent = os.path.dirname(project_root)
+            if parent == project_root:  # Reached filesystem root
+                break
+            project_root = parent
+        else:
+            # Fallback - try absolute path based on known project location
+            swe_lib_path = "C:/Users/jacks/OneDrive/Desktop/MERIDIAN/Meridian DEV/ASTRO MERIDIAN APP V1.0/Swiss Eph Library Files"
+        
+        if os.path.exists(swe_lib_path):
+            # Set environment variable
+            os.environ['SE_EPHE_PATH'] = swe_lib_path
+            
+            # Also try to set path using any available Swiss Ephemeris method
+            try:
+                # Some versions might have swe.set_ephemeris_path()
+                if hasattr(swe, 'set_ephemeris_path'):
+                    swe.set_ephemeris_path(swe_lib_path)
+            except:
+                pass  # Not critical if this method doesn't exist
+                
+            # Verify star catalog exists
+            star_catalog = os.path.join(swe_lib_path, "sefstars.txt")
+            if os.path.exists(star_catalog):
+                print(f"Swiss Ephemeris library path configured: {swe_lib_path}")
+                print(f"Star catalog found: {os.path.getsize(star_catalog):,} bytes")
+            else:
+                print(f"Warning: Swiss Ephemeris path set but no star catalog found at {star_catalog}")
+        else:
+            print(f"Swiss Ephemeris library folder not found at: {swe_lib_path}")
     
     def get_health_status(self) -> HealthResponse:
         """
@@ -187,6 +290,40 @@ class EphemerisService:
         
         return None
     
+    def _get_timezone_offset(self, subject) -> Optional[float]:
+        """
+        Calculate UTC offset for timezone-aware datetime handling.
+        
+        Args:
+            subject: Subject instance with timezone information
+            
+        Returns:
+            UTC offset in hours, or None if cannot be determined
+        """
+        try:
+            import pytz
+            
+            if hasattr(subject, 'timezone_name') and subject.timezone_name:
+                # Get timezone from name
+                tz = pytz.timezone(subject.timezone_name)
+                
+                # Use the subject's datetime to get the correct offset (handles DST)
+                if hasattr(subject, 'datetime') and subject.datetime:
+                    dt_naive = subject.datetime.replace(tzinfo=None)
+                    dt_localized = tz.localize(dt_naive)
+                    offset_seconds = dt_localized.utcoffset().total_seconds()
+                    return offset_seconds / 3600  # Convert to hours
+                    
+            elif hasattr(subject, 'utc_offset') and subject.utc_offset is not None:
+                return float(subject.utc_offset)
+                
+        except Exception:
+            # If timezone calculation fails, return existing value
+            if hasattr(subject, 'utc_offset'):
+                return subject.utc_offset
+            
+        return None
+    
     def _create_subject_from_request(self, subject_req: SubjectRequest) -> Subject:
         """
         Create Subject instance from API request.
@@ -228,13 +365,15 @@ class EphemerisService:
                 raise
             raise InputValidationError(f"Failed to create subject: {str(e)}") from e
     
-    def _format_planet_response(self, planet_id: int, planet_data: Any) -> PlanetResponse:
+    def _format_planet_response(self, planet_id: int, planet_data: Any, retrograde_analysis: Optional[Dict] = None, dignities_data: Optional[Dict] = None) -> PlanetResponse:
         """
         Format planet data for API response.
         
         Args:
             planet_id: Planet ID
             planet_data: Planet position data
+            retrograde_analysis: Optional retrograde analysis data
+            dignities_data: Optional dignities analysis data
             
         Returns:
             Formatted planet response
@@ -251,18 +390,80 @@ class EphemerisService:
         house_position = getattr(planet_data, 'house_position', None)
         house_number = house_position.get('number') if isinstance(house_position, dict) else None
         
-        return PlanetResponse(
-            name=PLANET_NAMES.get(planet_id, f"Object {planet_id}"),
-            longitude=planet_data.longitude,
-            latitude=planet_data.latitude,
-            distance=planet_data.distance,
-            longitude_speed=getattr(planet_data, 'longitude_speed', None),
+        # Get planet name for lookups
+        planet_name = PLANET_NAMES.get(planet_id, f"Object {planet_id}")
+        
+        # Extract retrograde information from planet speed
+        is_retrograde = False
+        motion_type = 'direct'
+        longitude_speed = round(getattr(planet_data, 'longitude_speed', 0), 6) if getattr(planet_data, 'longitude_speed', None) is not None else None
+        
+        # Determine retrograde status directly from longitude speed (< 0 = retrograde)
+        if longitude_speed is not None and longitude_speed < 0:
+            is_retrograde = True
+            motion_type = 'retrograde'
+            
+        # Override with retrograde analysis data if available (for more complex cases)
+        if retrograde_analysis:
+            retrograde_bodies = retrograde_analysis.get('retrograde_bodies', [])
+            for body_data in retrograde_bodies:
+                if isinstance(body_data, dict) and body_data.get('name', '').lower() == planet_name.lower():
+                    is_retrograde = True
+                    motion_type = 'retrograde'
+                    break
+        
+        # Extract dignity information from analysis data or planet data
+        dignity_info = None
+        if dignities_data:
+            planet_dignities = dignities_data.get('planet_dignities', {})
+            planet_key = planet_name.lower().replace(' ', '_')
+            if planet_key in planet_dignities:
+                dignities = planet_dignities[planet_key]
+                from ..api.models.schemas import EssentialDignityInfo
+                dignity_info = EssentialDignityInfo(**dignities)
+        
+        if dignity_info is None:
+            # Try to extract from planet data directly
+            dignities = getattr(planet_data, 'essential_dignities', None)
+            if dignities:
+                from ..api.models.schemas import EssentialDignityInfo
+                dignity_info = EssentialDignityInfo(**dignities)
+        
+        # Normalize precision for consistency (6 decimal places for angles)
+        longitude = round(planet_data.longitude, 6) if planet_data.longitude is not None else None
+        latitude = round(planet_data.latitude, 6) if planet_data.latitude is not None else None
+        sign_longitude = round(getattr(planet_data, 'sign_longitude', 0), 6) if getattr(planet_data, 'sign_longitude', None) is not None else None
+        
+        # Debug: Print values being set
+        if planet_name == 'Mercury':
+            print(f"DEBUG _format_planet_response - Creating Mercury PlanetResponse:")
+            print(f"  is_retrograde: {is_retrograde} (type: {type(is_retrograde)})")
+            print(f"  motion_type: {motion_type} (type: {type(motion_type)})")
+            print(f"  longitude_speed: {longitude_speed}")
+        
+        planet_response = PlanetResponse(
+            name=planet_name,
+            longitude=longitude,
+            latitude=latitude,
+            distance=planet_data.distance,  # Keep distance as-is (already in AU)
+            longitude_speed=longitude_speed,
+            is_retrograde=is_retrograde,
+            motion_type=motion_type,
             sign_name=getattr(planet_data, 'sign_name', None),
-            sign_longitude=getattr(planet_data, 'sign_longitude', None),
+            sign_longitude=sign_longitude,
             house_number=house_number,
             element=element,
-            modality=modality
+            modality=modality,
+            essential_dignities=dignity_info
         )
+        
+        # Debug: Verify object after creation
+        if planet_name == 'Mercury':
+            print(f"DEBUG _format_planet_response - Created Mercury PlanetResponse:")
+            print(f"  is_retrograde: {planet_response.is_retrograde}")
+            print(f"  motion_type: {planet_response.motion_type}")
+        
+        return planet_response
     
     def _format_chart_response(self, chart_data: Any, calculation_time: datetime) -> NatalChartResponse:
         """
@@ -276,22 +477,27 @@ class EphemerisService:
             Formatted natal chart response
         """
         # Format subject data
+        # Calculate proper UTC offset if needed
+        utc_offset = chart_data.subject.utc_offset
+        if utc_offset is None:
+            utc_offset = self._get_timezone_offset(chart_data.subject)
+        
         subject_response = SubjectResponse(
             name=chart_data.subject.name,
             datetime=chart_data.subject.datetime.isoformat(),
-            julian_day=chart_data.subject.julian_day,
-            latitude=chart_data.subject.latitude,
-            longitude=chart_data.subject.longitude,
+            julian_day=round(chart_data.subject.julian_day, 6),
+            latitude=round(chart_data.subject.latitude, 6),
+            longitude=round(chart_data.subject.longitude, 6),
             altitude=chart_data.subject.altitude,
             timezone_name=chart_data.subject.timezone_name,
-            utc_offset=chart_data.subject.utc_offset
+            utc_offset=round(utc_offset, 1) if utc_offset is not None else None
         )
         
         # Format planets
         planets_response = {}
         for planet_id, planet_data in chart_data.planets.items():
             planet_name = PLANET_NAMES.get(planet_id, f"Object {planet_id}")
-            planets_response[planet_name] = self._format_planet_response(planet_id, planet_data)
+            planets_response[planet_name] = self._format_planet_response(planet_id, planet_data, None, None)
         
         # Format houses
         # Normalize house cusps to 12 for API response (tests expect 12)
@@ -299,7 +505,7 @@ class EphemerisService:
         if isinstance(cusps, list) and len(cusps) == 13 and cusps[0] == 0:
             cusps = cusps[1:]
         houses_response = HousesResponse(
-            system=chart_data.houses.system_code,
+            system=self._normalize_house_system_code(chart_data.houses.system_code),
             cusps=cusps
         )
         
@@ -323,6 +529,23 @@ class EphemerisService:
                 applying=aspect.applying
             ))
         
+        # Prepare summary metadata
+        features_included = ["planets", "houses", "angles", "aspects"]
+        # Note: request object not available in this context, using static features
+        features_included.extend(["aspect_analysis", "essential_dignities"])
+        
+        summary_metadata = {
+            "data_version": "1.0",
+            "api_version": "1.0.0", 
+            "epoch": calculation_time.isoformat(),
+            "swiss_ephemeris_version": getattr(chart_data, 'se_version', 'unknown'),
+            "source": "Meridian Ephemeris Engine",
+            "calculation_method": "Swiss Ephemeris + Meridian Enhancements",
+            "total_planets": len(planets_response),
+            "total_aspects": len(aspects_response),
+            "house_system": houses_response.system
+        }
+        
         return NatalChartResponse(
             success=True,
             subject=subject_response,
@@ -331,7 +554,9 @@ class EphemerisService:
             angles=angles_response,
             aspects=aspects_response,
             calculation_time=calculation_time.isoformat(),
-            chart_type=chart_data.chart_type
+            chart_type=chart_data.chart_type,
+            summary=summary_metadata,
+            features_included=features_included
         )
     
     def calculate_natal_chart(self, request: NatalChartRequest) -> NatalChartResponse:
@@ -358,7 +583,7 @@ class EphemerisService:
             config = request.configuration or {}
             chart = NatalChart(
                 subject=subject,
-                house_system=getattr(config, 'house_system', 'P'),
+                house_system=self._normalize_house_system_code(getattr(config, 'house_system', 'P')),
                 include_asteroids=getattr(config, 'include_asteroids', True),
                 include_nodes=getattr(config, 'include_nodes', True),
                 include_lilith=getattr(config, 'include_lilith', True),
@@ -388,10 +613,13 @@ class EphemerisService:
         include_all_traditional_parts: bool = False,
         custom_arabic_formulas: Optional[Dict[str, Dict[str, str]]] = None,
         include_south_nodes: bool = True,
-        include_retrograde_analysis: bool = True
+        include_retrograde_analysis: bool = True,
+        include_dignities: bool = False,
+        include_fixed_stars: bool = False,
+        fixed_star_magnitude_limit: float = 2.0
     ) -> Dict[str, Any]:
         """
-        Calculate natal chart with enhanced features including aspects, Arabic parts, and analysis.
+        Calculate natal chart with enhanced features including aspects, Arabic parts, fixed stars, and analysis.
         
         Args:
             request: Natal chart request data
@@ -404,6 +632,9 @@ class EphemerisService:
             custom_arabic_formulas: Custom lot formulas (name -> {day_formula, night_formula})
             include_south_nodes: Include calculated South Node positions
             include_retrograde_analysis: Include retrograde motion analysis
+            include_dignities: Include essential dignities calculations
+            include_fixed_stars: Include fixed star positions and aspects
+            fixed_star_magnitude_limit: Maximum magnitude for automatic star selection
             
         Returns:
             Enhanced natal chart response with additional features
@@ -556,16 +787,18 @@ class EphemerisService:
                         chart_data, parts_request
                     )
                     
-                    # Format results for response
-                    chart_dict['arabic_parts'] = [part.to_dict() for part in arabic_result.calculated_parts]
-                    chart_dict['sect_determination'] = arabic_result.sect_determination.to_dict()
-                    chart_dict['arabic_parts_metadata'] = {
-                        'total_parts_calculated': arabic_result.total_parts_calculated,
-                        'successful_calculations': arabic_result.successful_calculations,
-                        'failed_calculations': arabic_result.failed_calculations,
-                        'calculation_time_ms': arabic_result.calculation_time_ms,
+                    # Format results for response - structure expected by route handler
+                    parts_by_name = {}
+                    for part in arabic_result.calculated_parts:
+                        part_dict = part.to_dict()
+                        parts_by_name[part.name] = part_dict
+                    
+                    chart_dict['arabic_parts'] = {
+                        'arabic_parts': parts_by_name,
+                        'sect_determination': arabic_result.sect_determination.to_dict(),
                         'formulas_used': arabic_result.formulas_used,
-                        'calculation_errors': arabic_result.calculation_errors
+                        'calculation_time_ms': arabic_result.calculation_time_ms,
+                        'total_parts_calculated': arabic_result.total_parts_calculated
                     }
                     
                 except Exception as e:
@@ -578,9 +811,181 @@ class EphemerisService:
                         'calculation_error': str(e)
                     }
             
+            # Add essential dignities calculation if requested
+            if include_dignities:
+                try:
+                    from ..core.ephemeris.tools.dignities import EssentialDignitiesCalculator
+                    
+                    # Initialize dignities calculator - using traditional rulers (no modern planets)
+                    dignities_calculator = EssentialDignitiesCalculator(use_modern_rulers=False)
+                    
+                    # Convert chart planets data to proper format for dignities calculation
+                    planets_data_for_dignities = {}
+                    if isinstance(chart_dict.get('planets'), dict):
+                        # API format: planets as dict by name
+                        for planet_name, planet_data in chart_dict['planets'].items():
+                            # Find planet ID from name
+                            from ..core.ephemeris.const import PLANET_NAMES
+                            planet_id = None
+                            for pid, name in PLANET_NAMES.items():
+                                if name == planet_name:
+                                    planet_id = pid
+                                    break
+                            
+                            if planet_id is not None:
+                                planets_data_for_dignities[planet_id] = planet_data
+                    
+                    # Determine if day chart (for triplicity calculation)
+                    # Day chart = Sun above horizon (houses 7-12)
+                    is_day_chart = True  # Default
+                    sun_data = chart_dict['planets'].get('Sun')
+                    if sun_data and 'angles' in chart_dict:
+                        try:
+                            # Get Sun longitude and Ascendant
+                            sun_longitude = getattr(sun_data, 'longitude', sun_data.get('longitude', 0))
+                            angles = chart_dict['angles']
+                            ascendant = getattr(angles, 'ascendant', angles.get('ascendant', 0))
+                            
+                            # Calculate if Sun is above horizon (traditional method)
+                            # Day chart = Sun in houses 7-12 (above horizon)
+                            # Night chart = Sun in houses 1-6 (below horizon)
+                            
+                            # Method 1: Check which side of ASC-DESC axis Sun is on
+                            # Descendant is 180° from Ascendant
+                            descendant = (ascendant + 180) % 360
+                            
+                            # Sun is above horizon if it's between DESC and ASC (going clockwise)
+                            # This corresponds to houses 7, 8, 9, 10, 11, 12
+                            if descendant > ascendant:
+                                # Normal case: DESC > ASC (e.g., DESC=270°, ASC=90°)
+                                is_day_chart = descendant <= sun_longitude or sun_longitude <= ascendant
+                            else:
+                                # Wrapped case: DESC < ASC (e.g., DESC=30°, ASC=210°)  
+                                is_day_chart = descendant <= sun_longitude <= ascendant
+                        except Exception:
+                            # If calculation fails, use time of day as fallback
+                            birth_time = getattr(chart_data.subject, 'datetime', None)
+                            if birth_time:
+                                hour = birth_time.hour
+                                is_day_chart = 6 <= hour <= 18  # Rough day/night by clock time
+                    
+                    # Calculate dignities for all planets
+                    dignity_results = dignities_calculator.calculate_batch_dignities(
+                        planets_data_for_dignities, is_day_chart
+                    )
+                    
+                    # Add dignity info to each planet in chart_dict
+                    for planet_name, planet_data in chart_dict['planets'].items():
+                        # Find corresponding dignity result
+                        planet_id = None
+                        from ..core.ephemeris.const import PLANET_NAMES
+                        for pid, name in PLANET_NAMES.items():
+                            if name == planet_name:
+                                planet_id = pid
+                                break
+                        
+                        if planet_id in dignity_results:
+                            dignity_info = dignity_results[planet_id]
+                            
+                            # Only include dignities if there's meaningful information
+                            # (skip if all scores are zero - typical for non-planetary bodies)
+                            if (dignity_info.total_score != 0 or 
+                                dignity_info.dignities_held or 
+                                dignity_info.debilities_held):
+                                
+                                # Add dignity info to planet data
+                                if hasattr(planet_data, '__dict__'):
+                                    planet_data.essential_dignities = {
+                                        'total_score': dignity_info.total_score,
+                                        'rulership_score': dignity_info.rulership_score,
+                                        'exaltation_score': dignity_info.exaltation_score,
+                                        'triplicity_score': dignity_info.triplicity_score,
+                                        'term_score': dignity_info.term_score,
+                                        'face_score': dignity_info.face_score,
+                                        'dignities_held': dignity_info.dignities_held,
+                                        'debilities_held': dignity_info.debilities_held
+                                    }
+                                elif isinstance(planet_data, dict):
+                                    planet_data['essential_dignities'] = {
+                                        'total_score': dignity_info.total_score,
+                                        'rulership_score': dignity_info.rulership_score,
+                                        'exaltation_score': dignity_info.exaltation_score,
+                                        'triplicity_score': dignity_info.triplicity_score,
+                                        'term_score': dignity_info.term_score,
+                                        'face_score': dignity_info.face_score,
+                                        'dignities_held': dignity_info.dignities_held,
+                                        'debilities_held': dignity_info.debilities_held
+                                    }
+                    
+                except Exception as e:
+                    # Log but don't fail the entire calculation
+                    import logging
+                    logging.warning(f"Essential dignities calculation failed: {e}")
+            
+            # Add fixed stars if requested
+            if include_fixed_stars:
+                try:
+                    fixed_stars_result = self.calculate_fixed_stars(
+                        request, 
+                        star_names=None,  # Use available stars
+                        include_aspects=True,
+                        magnitude_limit=fixed_star_magnitude_limit
+                    )
+                    
+                    chart_dict['fixed_stars'] = fixed_stars_result
+                    
+                except Exception as e:
+                    # Log but don't fail the entire calculation
+                    import logging
+                    logging.warning(f"Fixed stars calculation failed: {e}")
+                    chart_dict['fixed_stars'] = {
+                        'stars': {},
+                        'count': 0,
+                        'selected_stars_count': 0,
+                        'calculation_error': str(e)
+                    }
+            
             # Update calculation time
             calculation_time = time.time() - calculation_start
             chart_dict['calculation_time'] = calculation_time
+            
+            # Integrate enhanced features back into planet responses
+            if 'planets' in chart_dict:
+                retrograde_analysis = chart_dict.get('retrograde_analysis')
+                dignities_data = chart_dict.get('dignities')
+                
+                # Update each planet with enhanced data
+                for planet_name, planet_data in chart_dict['planets'].items():
+                    # Add retrograde information
+                    is_retrograde = False
+                    motion_type = 'direct'
+                    longitude_speed = planet_data.get('longitude_speed', 0)
+                    
+                    # Determine from speed first
+                    if longitude_speed is not None and longitude_speed < 0:
+                        is_retrograde = True
+                        motion_type = 'retrograde'
+                    
+                    # Override with retrograde analysis if available
+                    if retrograde_analysis:
+                        retrograde_bodies = retrograde_analysis.get('retrograde_bodies', [])
+                        for body_data in retrograde_bodies:
+                            if isinstance(body_data, dict) and body_data.get('name', '').lower() == planet_name.lower():
+                                is_retrograde = True
+                                motion_type = 'retrograde'
+                                break
+                    
+                    # Update planet data with retrograde info
+                    planet_data['is_retrograde'] = is_retrograde
+                    planet_data['motion_type'] = motion_type
+                    
+                    # Add dignities information
+                    if dignities_data and 'planet_dignities' in dignities_data:
+                        planet_key = planet_name.lower().replace(' ', '_')
+                        if planet_key in dignities_data['planet_dignities']:
+                            planet_dignities = dignities_data['planet_dignities'][planet_key]
+                            planet_data['essential_dignities'] = planet_dignities
+                        # Skip empty dignities - no longer providing default empty structure
             
             return chart_dict
             
@@ -599,7 +1004,7 @@ class EphemerisService:
         Returns:
             List of PlanetPosition objects
         """
-        from ..core.ephemeris.classes.serialize import PlanetPosition
+        from ..core.ephemeris.tools.ephemeris import PlanetPosition
         from ..core.ephemeris.const import PLANET_NAMES
         
         positions = []
@@ -656,7 +1061,7 @@ class EphemerisService:
                 'aspect': aspect.aspect_type.title().replace('_', ' '),
                 'angle': round(aspect.angle, 2),
                 'orb': round(aspect.orb_percentage / 100 * aspect.orb_used, 2),
-                'applying': aspect.is_applying,
+                'applying': bool(aspect.is_applying),  # Ensure Python bool, not numpy.bool_
                 'strength': round(aspect.strength, 3),
                 'exact_angle': aspect.exact_angle,
                 'orb_percentage': round(aspect.orb_percentage, 1)
@@ -731,14 +1136,16 @@ class EphemerisService:
         Returns:
             ChartData object suitable for Arabic parts calculation
         """
-        from ..core.ephemeris.classes.serialize import ChartData, PlanetPosition, HouseSystem
+        from ..core.ephemeris.tools.ephemeris import ChartData, PlanetPosition, HouseSystem
         
         # Extract planet positions
         planets = {}
         planet_name_to_id = {
             'Sun': 0, 'Moon': 1, 'Mercury': 2, 'Venus': 3, 'Mars': 4,
             'Jupiter': 5, 'Saturn': 6, 'Uranus': 7, 'Neptune': 8, 'Pluto': 9,
-            'True Node': 11, 'Chiron': 12
+            'North Node (Mean)': 10, 'North Node (True)': 11,
+            'Lilith (Mean)': 12, 'Lilith (True)': 13, 'Earth': 14,
+            'Chiron': 15, 'Pholus': 16, 'Ceres': 17, 'Pallas': 18, 'Juno': 19, 'Vesta': 20
         }
         
         planets_data = chart_dict.get('planets', {})
@@ -795,7 +1202,7 @@ class EphemerisService:
         house_system = HouseSystem(
             house_cusps=house_cusps,
             ascmc=ascmc,
-            system_code=system_code,
+            system_code=self._normalize_house_system_code(system_code),
             calculation_time=chart_dict.get('calculation_time', datetime.now()),
             latitude=0.0,  # Default values - not critical for Arabic parts
             longitude=0.0
@@ -1108,6 +1515,134 @@ class EphemerisService:
             'nasa_validated': True,
             'sign_ingresses': True
         }
+    
+    def calculate_fixed_stars(
+        self,
+        request: NatalChartRequest,
+        star_names: Optional[List[str]] = None,
+        include_aspects: bool = True,
+        magnitude_limit: float = 2.0
+    ) -> Dict[str, Any]:
+        """
+        Calculate fixed star positions and aspects for a natal chart.
+        
+        Args:
+            request: Natal chart request
+            star_names: Specific stars to calculate (None for available stars)
+            include_aspects: Whether to include star-planet aspects
+            magnitude_limit: Maximum magnitude for automatic star selection
+            
+        Returns:
+            Dictionary with fixed star calculations
+        """
+        try:
+            # Parse inputs
+            subject = self._create_subject_from_request(request.subject)
+            
+            # Calculate Julian day - Subject already has julian_day calculated
+            jd = subject._data.julian_day
+            
+            # Get available stars
+            if star_names is None:
+                available_stars = self.fixed_star_calculator.get_available_stars()
+                bright_stars = self.fixed_star_calculator.find_stars_by_magnitude(magnitude_limit)
+                star_names = [star for star in available_stars if star in bright_stars]
+            
+            # Calculate star positions
+            star_positions = self.fixed_star_calculator.calculate_multiple_stars(
+                star_names, jd
+            )
+            
+            # Format star positions
+            formatted_stars = {}
+            for star_name, star_data in star_positions.items():
+                if star_data:
+                    formatted_stars[star_name] = {
+                        'name': star_data['name'],
+                        'longitude': round(star_data['longitude'], 6),
+                        'latitude': round(star_data['latitude'], 6),
+                        'magnitude': star_data['magnitude'],
+                        'spectral_class': star_data['spectral_class'],
+                        'constellation': star_data['constellation'],
+                        'traditional_name': star_data['traditional_name'],
+                        'sign_name': self._get_sign_name(star_data['longitude']),
+                        'sign_position': self._get_sign_position(star_data['longitude']),
+                        'distance_light_years': star_data.get('distance', 0) / 63241.077  # AU to light years
+                    }
+            
+            result = {
+                'stars': formatted_stars,
+                'count': len(formatted_stars),
+                'selected_stars_count': len([s for s in formatted_stars.keys() 
+                                          if s in self.fixed_star_calculator.get_foundation_24_stars()])
+            }
+            
+            # Calculate aspects if requested
+            if include_aspects and formatted_stars:
+                # Get planet positions for aspects
+                chart = self.calculate_natal_chart_enhanced(
+                    request, 
+                    include_aspects=False,
+                    include_dignities=False,
+                    include_arabic_parts=False
+                )
+                
+                # Extract planets data from response
+                if hasattr(chart, 'model_dump'):
+                    # Pydantic v2 compatibility
+                    chart_dict = chart.model_dump()
+                elif hasattr(chart, 'dict'):
+                    # Pydantic v1 compatibility
+                    chart_dict = chart.dict()
+                else:
+                    # Already a dictionary
+                    chart_dict = chart
+                    
+                planet_positions = chart_dict.get('planets', {})
+                
+                # Calculate star-planet aspects
+                star_aspects = self.fixed_star_calculator.calculate_star_aspects(
+                    star_positions, planet_positions, orb_degrees=1.0
+                )
+                
+                # Format aspects
+                formatted_aspects = []
+                for aspect in star_aspects:
+                    formatted_aspects.append({
+                        'star': aspect['star'],
+                        'planet': aspect['planet'],
+                        'aspect': aspect['aspect'],
+                        'orb': round(aspect['orb'], 3),
+                        'exact': aspect['exact'],
+                        'star_longitude': round(aspect['star_longitude'], 6),
+                        'planet_longitude': round(aspect['planet_longitude'], 6)
+                    })
+                
+                result['aspects'] = formatted_aspects
+                result['aspect_count'] = len(formatted_aspects)
+            
+            return result
+            
+        except Exception as e:
+            raise CalculationError(f"Fixed star calculation failed: {str(e)}")
+    
+    def get_fixed_star_availability(self) -> Dict[str, Any]:
+        """
+        Get information about fixed star availability.
+        
+        Returns:
+            Dictionary with star availability information
+        """
+        return self.fixed_star_calculator.validate_star_availability()
+    
+    def get_foundation_24_stars(self) -> List[str]:
+        """
+        Get the Foundation 24 fixed stars available for calculation.
+        
+        Returns:
+            List of available Foundation 24 star names
+        """
+        return self.fixed_star_calculator.get_foundation_24_stars()
 
 
 # Global service instance

@@ -1,0 +1,28 @@
+﻿{
+    "test_info":  {
+                      "endpoint":  "http://127.0.0.1:8000/ephemeris/natal",
+                      "timestamp":  "2025-09-07T15:36:32.6431017-06:00",
+                      "status":  "success"
+                  },
+    "request":  {
+                    "configuration":  {
+                                          "house_system":  "P"
+                                      },
+                    "subject":  {
+                                    "latitude":  {
+                                                     "decimal":  32.7833333333
+                                                 },
+                                    "longitude":  {
+                                                      "decimal":  -96.8
+                                                  },
+                                    "timezone":  {
+                                                     "name":  "America/Chicago"
+                                                 },
+                                    "name":  "Test Person - Dallas 1987",
+                                    "datetime":  {
+                                                     "iso_string":  "1987-07-15T09:01:00"
+                                                 }
+                                }
+                },
+    "response":  null
+}

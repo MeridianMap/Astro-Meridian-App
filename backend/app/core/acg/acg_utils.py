@@ -56,6 +56,30 @@ def wrap_pm180(x: np.ndarray) -> np.ndarray:
     return y
 
 
+def normalize_geojson_coordinates(coordinates):
+    """
+    Normalize coordinates for GeoJSON compliance.
+    Ensures all longitudes are within [-180, 180] range.
+    
+    Args:
+        coordinates: GeoJSON coordinate structure (nested lists)
+        
+    Returns:
+        Normalized coordinates with proper longitude wrapping
+    """
+    if isinstance(coordinates, (list, tuple)):
+        if len(coordinates) == 2 and all(isinstance(x, (int, float)) for x in coordinates):
+            # This is a [longitude, latitude] pair
+            lon, lat = coordinates
+            normalized_lon = wrap_pm180(np.array([lon]))[0]
+            return [float(normalized_lon), float(lat)]
+        else:
+            # This is a nested structure, recurse
+            return [normalize_geojson_coordinates(coord) for coord in coordinates]
+    else:
+        return coordinates
+
+
 def gmst_deg_from_jd_ut1(jd: float) -> float:
     """
     Calculate Greenwich Mean Sidereal Time from Julian Day (UT1).
@@ -175,19 +199,45 @@ def ac_dc_line(
         mask = (H > 0)  # Body west of meridian (setting)
     
     # Calculate latitude using horizon crossing formula
+    # For altitude = 0: sin(φ) * sin(δ) + cos(φ) * cos(δ) * cos(H) = 0
+    # Solving: tan(φ) = -cos(δ) * cos(H) / sin(δ)
     cd = np.cos(delta_deg * DEG_TO_RAD)
     sd = np.sin(delta_deg * DEG_TO_RAD)
     cH = np.cos(H * DEG_TO_RAD)
     
-    num = -cd * cH
-    den = sd
-    phis = np.arctan2(num, den) * RAD_TO_DEG
+    # Use atan instead of atan2 for the correct horizon crossing formula
+    # Handle case where denominator is very small (near celestial pole)
+    sd_safe = np.where(np.abs(sd) < 1e-10, np.sign(sd) * 1e-10, sd)
+    tan_phi = (-cd * cH) / sd_safe
+    phis = np.arctan(tan_phi) * RAD_TO_DEG
     
     # Apply mask and validity checks
     keep = mask & np.isfinite(phis) & (np.abs(phis) <= 90.0)
     
+    # If no points pass the mask, try with a more lenient approach
     if not np.any(keep):
-        return np.array([]).reshape(0, 2)
+        logger.debug(f"Primary mask failed for {kind}, delta={delta_deg:.2f}°. Trying backup approach.")
+        # For edge cases, try removing the H mask constraint
+        keep = np.isfinite(phis) & (np.abs(phis) <= 90.0)
+        
+        # If still no valid points, return empty array
+        if not np.any(keep):
+            # Let's debug what's happening with detailed diagnostics
+            finite_count = np.sum(np.isfinite(phis))
+            valid_lat_count = np.sum(np.abs(phis) <= 90.0)
+            mask_count = np.sum(mask)
+            
+            # Sample some calculated latitudes for debugging
+            sample_phis = phis[np.isfinite(phis)][:5] if finite_count > 0 else []
+            min_phi = np.min(phis[np.isfinite(phis)]) if finite_count > 0 else float('nan')
+            max_phi = np.max(phis[np.isfinite(phis)]) if finite_count > 0 else float('nan')
+            
+            logger.warning(f"No valid {kind} line points for delta={delta_deg:.2f}°. finite={finite_count}, valid_lat={valid_lat_count}, mask={mask_count}")
+            logger.warning(f"Calculated latitude range: [{min_phi:.1f}°, {max_phi:.1f}°], samples={sample_phis}")
+            
+            # Since latitudes are outside ±90°, there's likely a formula error
+            # For now, return empty to avoid invalid coordinates
+            return np.array([]).reshape(0, 2)
     
     lons_keep = lons[keep]
     phis_keep = phis[keep]

@@ -1,0 +1,14 @@
+{
+  "test_jd": 2451545.0,
+  "working_stars": [
+    "Spica"
+  ],
+  "positions": {
+    "Spica": {
+      "longitude": 203.8361451819934,
+      "latitude": -2.054285341858482,
+      "distance": 15793630.109880207
+    }
+  },
+  "count": 1
+}

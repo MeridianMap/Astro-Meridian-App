@@ -147,7 +147,21 @@ class Subject:
             
             if isinstance(timezone_info, ZoneInfo):
                 timezone_name = str(timezone_info)
-            elif timezone_info is not None:
+                # For ZoneInfo, also calculate the UTC offset for this specific datetime
+                try:
+                    dt_with_tz = dt.replace(tzinfo=timezone_info)
+                    utc_offset = dt_with_tz.utcoffset().total_seconds() / 3600.0
+                except Exception:
+                    # Fallback: try to localize the datetime
+                    try:
+                        import pytz
+                        if hasattr(pytz.timezone(str(timezone_info)), 'localize'):
+                            dt_localized = pytz.timezone(str(timezone_info)).localize(dt.replace(tzinfo=None))
+                            utc_offset = dt_localized.utcoffset().total_seconds() / 3600.0
+                    except Exception:
+                        pass
+            elif timezone_info is not None and hasattr(timezone_info, 'utcoffset'):
+                # Handle datetime.timezone objects
                 utc_offset = timezone_info.utcoffset(dt).total_seconds() / 3600.0
             
             # Create immutable data object

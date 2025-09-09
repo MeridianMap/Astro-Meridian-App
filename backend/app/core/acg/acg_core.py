@@ -25,7 +25,7 @@ from .acg_utils import (
     gmst_deg_from_jd_ut1, mc_ic_longitudes, build_ns_meridian,
     ac_dc_line, ac_aspect_lines, find_paran_latitudes, paran_longitude,
     ecl_to_eq, segment_line_at_discontinuities, get_swiss_ephemeris_version,
-    wrap_deg, wrap_pm180
+    wrap_deg, wrap_pm180, normalize_geojson_coordinates
 )
 from .acg_natal_integration import ACGNatalIntegrator
 from .acg_cache import get_acg_cache_manager
@@ -317,7 +317,8 @@ class ACGCalculationEngine:
             
             # Create MC line
             mc_metadata = ACGMetadata(
-                **metadata_base,
+                **{k: v for k, v in metadata_base.items() if k != 'id'},
+                id=f"ACG_{body_data.body.id}_MC",
                 line=ACGLineInfo(
                     angle="MC",
                     line_type="MC",
@@ -338,7 +339,8 @@ class ACGCalculationEngine:
             
             # Create IC line
             ic_metadata = ACGMetadata(
-                **metadata_base,
+                **{k: v for k, v in metadata_base.items() if k != 'id'},
+                id=f"ACG_{body_data.body.id}_IC",
                 line=ACGLineInfo(
                     angle="IC",
                     line_type="IC", 
@@ -396,7 +398,8 @@ class ACGCalculationEngine:
                 
                 if ac_segments:
                     ac_metadata = ACGMetadata(
-                        **metadata_base,
+                        **{k: v for k, v in metadata_base.items() if k != 'id'},
+                        id=f"ACG_{body_data.body.id}_AC",
                         line=ACGLineInfo(
                             angle="AC",
                             line_type="AC",
@@ -404,9 +407,10 @@ class ACGCalculationEngine:
                         )
                     )
                     
+                    raw_coordinates = [seg.tolist() for seg in ac_segments] if len(ac_segments) > 1 else ac_segments[0].tolist()
                     geometry = {
                         "type": "MultiLineString" if len(ac_segments) > 1 else "LineString",
-                        "coordinates": [seg.tolist() for seg in ac_segments] if len(ac_segments) > 1 else ac_segments[0].tolist()
+                        "coordinates": normalize_geojson_coordinates(raw_coordinates)
                     }
                     
                     ac_line = ACGLineData(
@@ -416,6 +420,10 @@ class ACGCalculationEngine:
                         metadata=ac_metadata
                     )
                     lines.append(ac_line)
+                else:
+                    self.logger.warning(f"AC line segments empty for {body_data.body.id}")
+            else:
+                self.logger.warning(f"AC coordinates empty for {body_data.body.id} (RA={body_data.coordinates.ra:.2f}°, Dec={body_data.coordinates.dec:.2f}°)")
             
             # Calculate DC line
             dc_coords = ac_dc_line(
@@ -431,7 +439,8 @@ class ACGCalculationEngine:
                 
                 if dc_segments:
                     dc_metadata = ACGMetadata(
-                        **metadata_base,
+                        **{k: v for k, v in metadata_base.items() if k != 'id'},
+                        id=f"ACG_{body_data.body.id}_DC",
                         line=ACGLineInfo(
                             angle="DC",
                             line_type="DC",
@@ -439,9 +448,10 @@ class ACGCalculationEngine:
                         )
                     )
                     
+                    raw_coordinates = [seg.tolist() for seg in dc_segments] if len(dc_segments) > 1 else dc_segments[0].tolist()
                     geometry = {
                         "type": "MultiLineString" if len(dc_segments) > 1 else "LineString",
-                        "coordinates": [seg.tolist() for seg in dc_segments] if len(dc_segments) > 1 else dc_segments[0].tolist()
+                        "coordinates": normalize_geojson_coordinates(raw_coordinates)
                     }
                     
                     dc_line = ACGLineData(
@@ -451,6 +461,10 @@ class ACGCalculationEngine:
                         metadata=dc_metadata
                     )
                     lines.append(dc_line)
+                else:
+                    self.logger.warning(f"DC line segments empty for {body_data.body.id}")
+            else:
+                self.logger.warning(f"DC coordinates empty for {body_data.body.id} (RA={body_data.coordinates.ra:.2f}°, Dec={body_data.coordinates.dec:.2f}°)")
             
         except Exception as e:
             self.logger.error(f"Failed to calculate AC/DC lines for {body_data.body.id}: {e}")
@@ -488,7 +502,8 @@ class ACGCalculationEngine:
                 aspect_coords = build_ns_meridian(lam_aspect)
                 
                 aspect_metadata = ACGMetadata(
-                    **metadata_base,
+                    **{k: v for k, v in metadata_base.items() if k != 'id'},
+                    id=f"ACG_{body_data.body.id}_MC_ASPECT_{aspect_deg}",
                     line=ACGLineInfo(
                         angle=aspect_deg,
                         aspect=aspect_names.get(aspect_deg, f"{aspect_deg}°"),
@@ -551,7 +566,8 @@ class ACGCalculationEngine:
                 
                 if aspect_segments:
                     aspect_metadata = ACGMetadata(
-                        **metadata_base,
+                        **{k: v for k, v in metadata_base.items() if k != 'id'},
+                        id=f"ACG_{body_data.body.id}_AC_ASPECT_{aspect_deg}",
                         line=ACGLineInfo(
                             angle=aspect_deg,
                             aspect=aspect_names.get(aspect_deg, f"{aspect_deg}°"),
@@ -560,9 +576,10 @@ class ACGCalculationEngine:
                         )
                     )
                     
+                    raw_coordinates = [seg.tolist() for seg in aspect_segments] if len(aspect_segments) > 1 else aspect_segments[0].tolist()
                     geometry = {
                         "type": "MultiLineString" if len(aspect_segments) > 1 else "LineString",
-                        "coordinates": [seg.tolist() for seg in aspect_segments] if len(aspect_segments) > 1 else aspect_segments[0].tolist()
+                        "coordinates": normalize_geojson_coordinates(raw_coordinates)
                     }
                     
                     aspect_line = ACGLineData(
@@ -634,21 +651,34 @@ class ACGCalculationEngine:
                                 ])
                                 
                                 paran_metadata = ACGMetadata(
-                                    id=f"{body1.body.id}-{body2.body.id}",
+                                    id=f"PARAN_{body1.body.id}_{body2.body.id}_{event1}_{event2}_BAND",
                                     type="paran",
                                     **{k: v for k, v in metadata_base.items() if k not in ['id', 'type']},
                                     line=ACGLineInfo(
                                         angle=f"{event1}-{event2}",
                                         line_type="PARAN",
                                         method=f"paran: {body1.body.id} {event1} with {body2.body.id} {event2}"
-                                    )
+                                    ),
+                                    # Add individual body coordinates to prevent reuse
+                                    paran_coords={
+                                        body1.body.id: {
+                                            "ra": body1.coordinates.ra,
+                                            "dec": body1.coordinates.dec,
+                                            "ecliptic_lon": body1.coordinates.lambda_
+                                        },
+                                        body2.body.id: {
+                                            "ra": body2.coordinates.ra,
+                                            "dec": body2.coordinates.dec,
+                                            "ecliptic_lon": body2.coordinates.lambda_
+                                        }
+                                    }
                                 )
                                 
                                 paran_line = ACGLineData(
                                     line_type=ACGLineType.PARAN,
                                     geometry={
                                         "type": "Polygon",
-                                        "coordinates": [paran_coords.tolist()]
+                                        "coordinates": normalize_geojson_coordinates([paran_coords.tolist()])
                                     },
                                     body_data=body1,  # Primary body
                                     metadata=paran_metadata

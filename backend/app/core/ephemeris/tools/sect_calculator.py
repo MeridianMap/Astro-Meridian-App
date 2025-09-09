@@ -21,7 +21,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from .arabic_parts_models import SectDetermination, ChartSect
-from ..classes.serialize import PlanetPosition, HouseSystem
+from ..tools.ephemeris import PlanetPosition, HouseSystem
 from ..const import normalize_longitude
 
 
@@ -102,7 +102,11 @@ class SectCalculator:
         
         # Add supporting data based on primary method
         if primary_method == SectCalculationMethod.HOUSE_POSITION:
-            sect_determination.sun_house = primary_result.get("sun_house")
+            sun_house = primary_result.get("sun_house")
+            sect_determination.sun_house = sun_house
+            # Derive sun_above_horizon from house position
+            if sun_house is not None:
+                sect_determination.sun_above_horizon = sun_house >= 7 and sun_house <= 12
         elif primary_method == SectCalculationMethod.HORIZON_CALCULATION:
             sect_determination.sun_above_horizon = primary_result.get("above_horizon")
         
@@ -110,13 +114,20 @@ class SectCalculator:
         if validate_with_alternatives:
             alternative_results = {}
             
+            method_names = {
+                SectCalculationMethod.HOUSE_POSITION: "house_position_method",
+                SectCalculationMethod.HORIZON_CALCULATION: "horizon_calculation_method", 
+                SectCalculationMethod.ASCENDANT_DEGREES: "ascendant_degrees_method"
+            }
+            
             for method in [SectCalculationMethod.HOUSE_POSITION, 
                           SectCalculationMethod.HORIZON_CALCULATION,
                           SectCalculationMethod.ASCENDANT_DEGREES]:
                 if method != primary_method:
                     try:
                         alt_result = self._calculate_by_method(analysis_data, method)
-                        alternative_results[method] = alt_result["is_day"]
+                        method_name = method_names.get(method, str(method))
+                        alternative_results[method_name] = alt_result["is_day"]
                     except Exception:
                         # Alternative method failed - not critical
                         pass

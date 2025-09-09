@@ -24,8 +24,22 @@ from ..const import (
 )
 from ..settings import settings
 from ..classes.cache import cached
-from ..classes.serialize import PlanetPosition, HouseSystem
+from ..models.planet_data import PlanetData
 
+
+# Legacy compatibility classes for existing code
+@dataclass(frozen=True)
+class PlanetPosition:
+    """Legacy compatibility class - use PlanetData instead."""
+    longitude: float
+    latitude: float
+    distance: float
+    longitude_speed: float
+    latitude_speed: float
+    distance_speed: float
+    name: str
+    object_id: int
+    flags: int = 0
 
 @dataclass(frozen=True)
 class ChartAngles:
@@ -35,6 +49,22 @@ class ChartAngles:
     descendant: float
     imum_coeli: float
     calculation_time: datetime
+
+
+@dataclass(frozen=True)
+class HouseSystem:
+    """House system data."""
+    cusps: List[float]
+    angles: ChartAngles
+    system: str
+
+
+@dataclass(frozen=True)  
+class ChartData:
+    """Legacy compatibility class for chart data."""
+    planets: Dict[str, PlanetPosition]
+    houses: HouseSystem
+    angles: ChartAngles
 
 
 def julian_day_from_datetime(dt: datetime) -> float:
@@ -110,7 +140,8 @@ def get_planet(
         if len(result) < 6:
             raise RuntimeError(f"Swiss Ephemeris calculation failed for planet {planet_id}")
         
-        return PlanetPosition(
+        # Create position object
+        position = PlanetPosition(
             planet_id=planet_id,
             longitude=normalize_longitude(result[0]),
             latitude=result[1],
@@ -121,6 +152,23 @@ def get_planet(
             calculation_time=datetime_from_julian_day(julian_day),
             flags=ret_flags
         )
+        
+        # Apply Mean Lilith sign convention correction
+        if planet_id == SwePlanets.MEAN_APOG and position.longitude_speed > 0:
+            # Create corrected position with negative speed
+            position = PlanetPosition(
+                planet_id=planet_id,
+                longitude=position.longitude,
+                latitude=position.latitude,
+                distance=position.distance,
+                longitude_speed=-abs(position.longitude_speed),  # Force negative for retrograde
+                latitude_speed=position.latitude_speed,
+                distance_speed=position.distance_speed,
+                calculation_time=position.calculation_time,
+                flags=position.flags
+            )
+        
+        return position
         
     except Exception as e:
         planet_name = get_planet_name(planet_id)
@@ -274,11 +322,19 @@ def get_point(
     
     elif point_type in ['lilith', 'mean_lilith']:
         result = get_planet(SwePlanets.MEAN_APOG, julian_day)
+        # Mean Lilith should be consistently retrograde (~-0.1119°/day)
+        # Apply correct sign convention if needed
+        corrected_speed = result.longitude_speed
+        if corrected_speed > 0:
+            corrected_speed = -abs(corrected_speed)  # Ensure negative (retrograde)
+        
         return {
             'longitude': result.longitude,
             'latitude': result.latitude,
-            'speed': result.longitude_speed,
-            'name': 'Lilith (Mean Apogee)'
+            'speed': corrected_speed,
+            'name': 'Lilith (Mean Apogee)',
+            'is_retrograde': corrected_speed < 0.0,
+            'motion_type': 'retrograde' if corrected_speed < 0.0 else 'direct'
         }
     
     elif point_type in ['true_lilith', 'osculating_lilith']:
@@ -287,7 +343,9 @@ def get_point(
             'longitude': result.longitude,
             'latitude': result.latitude,
             'speed': result.longitude_speed,
-            'name': 'Lilith (Osculating Apogee)'
+            'name': 'Lilith (Osculating Apogee)',
+            'is_retrograde': result.is_retrograde,
+            'motion_type': result.motion_type
         }
     
     elif point_type == 'vertex':

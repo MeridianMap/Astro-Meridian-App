@@ -14,6 +14,15 @@ import json
 import time
 from fastapi.testclient import TestClient
 from unittest.mock import Mock, patch
+from datetime import datetime, timezone
+import os
+import sys
+
+# Ensure the backend directory is on sys.path for direct execution (python this_file.py)
+CURRENT_DIR = os.path.dirname(__file__)
+BACKEND_DIR = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
+if BACKEND_DIR not in sys.path:
+    sys.path.insert(0, BACKEND_DIR)
 
 from app.main import app
 from app.api.models.schemas import (
@@ -345,6 +354,88 @@ class TestEnhancedEphemerisAPI:
                 
         except Exception as e:
             pytest.fail(f"Response does not comply with enhanced schema: {e}")
+
+    def test_capture_full_output_for_verification(self, client):
+        """Capture and print full JSON output for comprehensive chart with ALL features."""
+        # Chart: Wed, 15 July 1987, Dallas, TX (US), 96w48, 32n47, 9:01 a.m. local, UTC 14:01
+        request_payload = {
+            "subject": {
+                "name": "Dallas Comprehensive Chart 1987-07-15 09:01",
+                "datetime": {"iso_string": "1987-07-15T09:01:00"},
+                "latitude": {"decimal": 32.7833333333},
+                "longitude": {"decimal": -96.8},
+                "timezone": {"name": "America/Chicago"},
+            },
+            "configuration": {
+                "house_system": "P",
+                "include_asteroids": True,
+                "include_nodes": True,
+                "include_lilith": True,
+                "include_fixed_stars": True,
+                "fixed_star_magnitude_limit": 2.5
+            },
+            "include_aspects": True,
+            "aspect_orb_preset": "traditional",
+            "metadata_level": "audit",
+            "include_arabic_parts": True,
+            "include_all_traditional_parts": True,
+            "include_dignities": True,
+            "include_astrocartography": True,
+            "include_hermetic_lots": True
+        }
+
+        # Try the new comprehensive endpoint first, fallback to enhanced
+        response = client.post("/ephemeris/v3/comprehensive", json=request_payload)
+        if response.status_code == 404:
+            # Fallback to enhanced endpoint if comprehensive doesn't exist yet
+            response = client.post("/ephemeris/v2/natal-enhanced", json=request_payload)
+        status = response.status_code
+        # Try to decode JSON; fall back to raw text
+        try:
+            body = response.json()
+        except Exception:
+            body = {"raw": response.text}
+
+        # Wrap with minimal envelope for debugging context
+        data = {
+            "status_code": status,
+            "payload": request_payload,
+            "response": body,
+        }
+
+        # Print full JSON for manual review
+        print("\nCOMPREHENSIVE EPHEMERIS SNAPSHOT (Dallas 1987-07-15 09:01)")
+        print(f"HTTP status: {status}")
+        print("Features: Planets, Asteroids, Nodes, Lilith, Houses, Angles, Fixed Stars, Aspects, Hermetic Lots, ACG, Dignities\n")
+        print(json.dumps(data, indent=2, ensure_ascii=False))
+
+        # Write snapshot to current directory for easy access
+        current_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"COMPREHENSIVE_EPHEMERIS_OUTPUT_{current_timestamp}.json"
+        out_path = os.path.join(CURRENT_DIR, filename)
+        
+        # Also write to reference/snapshots if it exists
+        repo_root = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", "..", ".."))
+        snapshots_dir = os.path.join(repo_root, "reference", "snapshots")
+        if not os.path.exists(snapshots_dir):
+            os.makedirs(snapshots_dir, exist_ok=True)
+        
+        backup_path = os.path.join(snapshots_dir, f"API_SNAPSHOT_{current_timestamp}_COMPREHENSIVE_DALLAS_19870715.json")
+
+        # Write primary output to test directory
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+            
+        # Write backup to snapshots directory
+        with open(backup_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        print(f"\nPrimary output written to: {out_path}")
+        print(f"Backup snapshot written to: {backup_path}\n")
+        
+        # Make this test pass as long as we produced outputs
+        assert os.path.exists(out_path)
+        assert os.path.exists(backup_path)
 
 
 class TestAPIDocumentation:

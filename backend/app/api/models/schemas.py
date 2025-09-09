@@ -205,11 +205,39 @@ class PlanetResponse(BaseModel):
     latitude: float = Field(..., description="Ecliptic latitude in degrees")
     distance: float = Field(..., description="Distance from Earth")
     longitude_speed: Optional[float] = Field(None, description="Longitude speed in degrees/day")
+    is_retrograde: bool = Field(
+        False, 
+        description="Whether planet is in retrograde motion (longitude_speed < 0)"
+    )
+    motion_type: str = Field(
+        "direct", 
+        description="Motion classification: direct, retrograde, stationary, or unknown",
+        examples=["direct", "retrograde", "stationary"]
+    )
     sign_name: Optional[str] = Field(None, description="Zodiac sign name")
     sign_longitude: Optional[float] = Field(None, description="Longitude within sign")
     house_number: Optional[int] = Field(None, description="House number (1-12)")
     element: Optional[str] = Field(None, description="Element (Fire, Earth, Air, Water)")
     modality: Optional[str] = Field(None, description="Modality (Cardinal, Fixed, Mutable)")
+    essential_dignities: Optional['EssentialDignityInfo'] = Field(
+        None, 
+        description="Essential dignity analysis (requires enhanced calculation)"
+    )
+
+
+class EssentialDignityInfo(BaseModel):
+    """Essential dignity information for a planet."""
+    
+    model_config = ConfigDict(extra="allow")
+    
+    total_score: int = Field(..., description="Total dignity score (William Lilly system)")
+    rulership_score: int = Field(0, description="Rulership/detriment score (+5/-4)")
+    exaltation_score: int = Field(0, description="Exaltation/fall score (+4/-5)")
+    triplicity_score: int = Field(0, description="Triplicity score (+3)")
+    term_score: int = Field(0, description="Term/bounds score (+2)")
+    face_score: int = Field(0, description="Face/decan score (+1)")
+    dignities_held: List[str] = Field(default_factory=list, description="List of dignities held")
+    debilities_held: List[str] = Field(default_factory=list, description="List of debilities held")
 
 
 class HousesResponse(BaseModel):
@@ -279,6 +307,10 @@ class NatalChartResponse(BaseModel):
     aspects: List[AspectResponse] = Field(..., description="Aspect relationships")
     calculation_time: str = Field(..., description="When calculation was performed")
     chart_type: str = Field("natal", description="Type of chart")
+    
+    # New summary metadata fields
+    summary: Optional[Dict[str, Any]] = Field(None, description="API response summary with data version and epoch")
+    features_included: Optional[List[str]] = Field(None, description="List of features included in this response")
 
 
 class ErrorResponse(BaseModel):
@@ -327,7 +359,8 @@ class NatalChartEnhancedRequest(BaseModel):
                 "aspect_orb_preset": "traditional",
                 "metadata_level": "full",
                 "include_arabic_parts": True,
-                "include_all_traditional_parts": True
+                "include_all_traditional_parts": True,
+                "include_dignities": True
             }
         }
     )
@@ -365,6 +398,10 @@ class NatalChartEnhancedRequest(BaseModel):
     custom_arabic_formulas: Optional[Dict[str, Dict[str, str]]] = Field(
         None,
         description="Custom Arabic part formulas with day/night variations"
+    )
+    include_dignities: bool = Field(
+        False,
+        description="Include essential dignities analysis for all planets"
     )
 
     @field_validator('aspect_orb_preset')
@@ -567,5 +604,216 @@ class NatalChartEnhancedResponse(BaseModel):
     arabic_parts: Optional[ArabicPartsResponse] = Field(
         None,
         description="Arabic parts calculations if requested"
+    )
+
+
+class FixedStarResponse(BaseModel):
+    """Fixed star position and metadata."""
+    
+    model_config = ConfigDict(extra="allow")
+    
+    name: str = Field(..., description="Fixed star name")
+    longitude: float = Field(..., description="Ecliptic longitude in degrees")
+    latitude: float = Field(..., description="Ecliptic latitude in degrees")
+    magnitude: float = Field(..., description="Visual magnitude")
+    right_ascension: Optional[float] = Field(None, description="Right ascension in degrees")
+    declination: Optional[float] = Field(None, description="Declination in degrees")
+    spectral_type: Optional[str] = Field(None, description="Spectral classification")
+    constellation: Optional[str] = Field(None, description="Parent constellation")
+
+
+class HermeticLotResponse(BaseModel):
+    """Hermetic lot calculation result."""
+    
+    model_config = ConfigDict(extra="allow")
+    
+    name: str = Field(..., description="Lot name (e.g., 'Part of Fortune')")
+    longitude: float = Field(..., description="Lot longitude in degrees")
+    sign_name: str = Field(..., description="Zodiac sign")
+    sign_longitude: float = Field(..., description="Longitude within sign")
+    house_number: Optional[int] = Field(None, description="House number (1-12)")
+    formula_used: str = Field(..., description="Day or night formula used")
+    element: str = Field(..., description="Element of the sign")
+    modality: str = Field(..., description="Modality of the sign")
+
+
+class ACGLineResponse(BaseModel):
+    """Astrocartography line data."""
+    
+    model_config = ConfigDict(extra="allow")
+    
+    planet: str = Field(..., description="Planet name")
+    line_type: str = Field(..., description="Line type (AC, DC, IC, MC, aspect, paran)")
+    geojson_feature: Dict[str, Any] = Field(..., description="GeoJSON Feature object")
+    line_category: str = Field(..., description="primary, aspect_line, or paran_line")
+    intensity: Optional[float] = Field(None, description="Line intensity/strength")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional line metadata")
+
+
+class ComprehensiveChartResponse(BaseModel):
+    """
+    Comprehensive ephemeris chart response with all features.
+    
+    This unified response model consolidates all available astrological calculations:
+    - Core planetary positions with enhanced metadata
+    - Traditional and modern asteroids
+    - Lunar nodes and Lilith points  
+    - House systems and chart angles
+    - Fixed stars (optional)
+    - Complete aspect analysis
+    - 16 traditional hermetic lots with sect determination
+    - Jim Lewis style astrocartography data
+    - Essential dignities analysis
+    - Comprehensive calculation metadata
+    
+    Replaces multiple fragmented response models with single comprehensive structure.
+    """
+    
+    model_config = ConfigDict(
+        extra="allow",
+        json_schema_extra={
+            "example": {
+                "success": True,
+                "subject": {
+                    "name": "John Doe",
+                    "datetime": "1990-06-15T14:30:00-04:00",
+                    "latitude": 40.7128,
+                    "longitude": -74.0060
+                },
+                "planets": {
+                    "Sun": {
+                        "longitude": 84.5,
+                        "latitude": 0.0002,
+                        "sign_name": "Gemini", 
+                        "house_number": 10,
+                        "is_retrograde": False,
+                        "motion_type": "direct"
+                    }
+                },
+                "asteroids": {
+                    "Chiron": {
+                        "longitude": 234.7,
+                        "sign_name": "Scorpio",
+                        "house_number": 4
+                    }
+                },
+                "houses": {
+                    "system": "P",
+                    "cusps": [0.0, 30.0, 60.0, 90.0, 120.0, 150.0, 180.0, 210.0, 240.0, 270.0, 300.0, 330.0]
+                },
+                "angles": {
+                    "ASC": 0.0,
+                    "MC": 90.0,
+                    "DSC": 180.0,
+                    "IC": 270.0
+                },
+                "aspects": [
+                    {
+                        "object1": "Sun",
+                        "object2": "Moon",
+                        "aspect": "Sextile", 
+                        "angle": 58.2,
+                        "orb": 1.8,
+                        "applying": True
+                    }
+                ],
+                "hermetic_lots": [
+                    {
+                        "name": "Part of Fortune",
+                        "longitude": 123.45,
+                        "sign_name": "Leo",
+                        "formula_used": "day"
+                    }
+                ],
+                "astrocartography": {
+                    "geojson": {
+                        "type": "FeatureCollection",
+                        "features": []
+                    }
+                },
+                "calculation_metadata": {
+                    "julian_day": 2448070.1041666665,
+                    "calculation_time": 0.125,
+                    "total_objects": 25,
+                    "features_included": ["planets", "asteroids", "aspects", "lots", "acg"]
+                }
+            }
+        }
+    )
+    
+    # Core success indicator
+    success: bool = Field(..., description="Whether calculation succeeded")
+    
+    # Subject and location data
+    subject: SubjectResponse = Field(..., description="Normalized subject birth data")
+    
+    # Core astronomical objects
+    planets: Dict[str, PlanetResponse] = Field(..., description="Traditional planets by name")
+    asteroids: Optional[Dict[str, PlanetResponse]] = Field(
+        None, 
+        description="Asteroid positions if included"
+    )
+    lunar_nodes: Optional[Dict[str, PlanetResponse]] = Field(
+        None,
+        description="True and Mean Node positions if included"
+    )
+    lilith_points: Optional[Dict[str, PlanetResponse]] = Field(
+        None,
+        description="Mean and True Lilith positions if included"  
+    )
+    
+    # House system and angles
+    houses: HousesResponse = Field(..., description="House cusps and system info")
+    angles: AnglesResponse = Field(..., description="Chart angles (ASC, MC, DSC, IC, etc.)")
+    
+    # Fixed stars (optional)
+    fixed_stars: Optional[List[FixedStarResponse]] = Field(
+        None,
+        description="Fixed star positions if included"
+    )
+    
+    # Aspects and relationships
+    aspects: List[EnhancedAspectResponse] = Field(..., description="Complete aspect analysis")
+    aspect_matrix: Optional[AspectMatrixResponse] = Field(
+        None,
+        description="Aspect matrix summary statistics"
+    )
+    
+    # Arabic/Hermetic lots
+    hermetic_lots: Optional[List[HermeticLotResponse]] = Field(
+        None,
+        description="Traditional hermetic lots with sect determination"
+    )
+    
+    # Astrocartography data
+    astrocartography: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Jim Lewis style ACG data in GeoJSON format"
+    )
+    acg_lines: Optional[List[ACGLineResponse]] = Field(
+        None,
+        description="Individual ACG line data"
+    )
+    
+    # Essential dignities
+    essential_dignities: Optional[Dict[str, EssentialDignityInfo]] = Field(
+        None,
+        description="Essential dignity analysis for all planets"
+    )
+    
+    # Comprehensive metadata
+    calculation_metadata: CalculationMetadata = Field(
+        ...,
+        description="Complete calculation metadata and performance metrics"
+    )
+    
+    # Error information (if any)
+    warnings: Optional[List[str]] = Field(
+        None,
+        description="Non-fatal calculation warnings"
+    )
+    errors: Optional[List[str]] = Field(
+        None, 
+        description="Error details if success=False"
     )
     chart_type: str = Field("natal_enhanced", description="Type of chart")

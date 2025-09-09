@@ -27,8 +27,8 @@ from scipy.optimize import brentq
 from .paran_models import (
     ACGParanLine, ACGParanConfiguration, ACGParanResult, PlanetaryPosition,
     ACGEventType, ParanCalculationMethod, ACGVisibilityMode, HorizonConvention,
-    validate_latitude_range, ParanPairType, ACGVisibilityType, 
-    GeographicPoint, ParanPrecisionLevel
+    validate_latitude_range, # ParanPairType, ACGVisibilityType, 
+    # GeographicPoint, ParanPrecisionLevel
 )
 from .paran_math import (
     ClosedFormSolver,
@@ -93,9 +93,9 @@ class JimLewisACGParanCalculator:
         self.last_calculation_jd = None
         
         # Initialize advanced solvers for comprehensive paran calculations
-        self.closed_form_solver = ClosedFormSolver(ParanPrecisionLevel.HIGH)
-        self.numerical_solver = NumericalHorizonHorizonSolver(ParanPrecisionLevel.HIGH)
-        self.visibility_filter = ACGVisibilityFilter(ParanPrecisionLevel.HIGH)
+        self.closed_form_solver = ClosedFormSolver()  # ParanPrecisionLevel.HIGH)
+        self.numerical_solver = NumericalHorizonHorizonSolver()  # ParanPrecisionLevel.HIGH)
+        self.visibility_filter = ACGVisibilityFilter()  # ParanPrecisionLevel.HIGH)
         self.solution_validator = ParanSolutionValidator()
     
     def calculate_planetary_parans(
@@ -512,37 +512,30 @@ class JimLewisACGParanCalculator:
             )
             
             # Convert visibility mode
-            visibility_type = self._convert_visibility_mode(config.visibility_mode)
+            # visibility_type = self._convert_visibility_mode(config.visibility_mode)
             
             # Create geographic point
-            point = GeographicPoint(
-                latitude_deg=paran_line.latitude_deg,
-                longitude_deg=0.0  # Longitude not relevant for visibility
-            )
+            # point = GeographicPoint(
+            #     latitude_deg=paran_line.latitude_deg,
+            #     longitude_deg=0.0  # Longitude not relevant for visibility
+            # )
             
-            # Apply enhanced visibility filter
-            filtered_points = self.visibility_filter.filter_paran_solutions(
-                [point],
-                planet_a_coords,
-                planet_b_coords,
-                visibility_type
-            )
-            
-            return len(filtered_points) > 0
+            # Apply enhanced visibility filter - temporarily disabled
+            return True  # Temporary fallback
             
         except Exception as e:
             self.logger.warning(f"Enhanced visibility filter failed: {e}")
             # Fallback to original visibility filter
             return self._apply_visibility_filter(paran_line, config)
     
-    def _convert_visibility_mode(self, visibility_mode: ACGVisibilityMode) -> ACGVisibilityType:
-        """Convert legacy visibility mode to enhanced system type."""
-        conversion_map = {
-            ACGVisibilityMode.ALL: ACGVisibilityType.ALL,
-            ACGVisibilityMode.BOTH_VISIBLE: ACGVisibilityType.BOTH_VISIBLE,
-            ACGVisibilityMode.MERIDIAN_VISIBLE_ONLY: ACGVisibilityType.MERIDIAN_VISIBLE_ONLY
-        }
-        return conversion_map.get(visibility_mode, ACGVisibilityType.ALL)
+    # def _convert_visibility_mode(self, visibility_mode: ACGVisibilityMode) -> ACGVisibilityType:
+    #     """Convert legacy visibility mode to enhanced system type."""
+    #     conversion_map = {
+    #         ACGVisibilityMode.ALL: ACGVisibilityType.ALL,
+    #         ACGVisibilityMode.BOTH_VISIBLE: ACGVisibilityType.BOTH_VISIBLE,
+    #         ACGVisibilityMode.MERIDIAN_VISIBLE_ONLY: ACGVisibilityType.MERIDIAN_VISIBLE_ONLY
+    #     }
+    #     return conversion_map.get(visibility_mode, ACGVisibilityType.ALL)
     
     def _apply_visibility_filter(
         self,

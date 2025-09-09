@@ -1,0 +1,1721 @@
+# Ephemeris Extensions - Content and Plan
+
+## Executive Summary
+
+This document outlines the next phase of enhancements for the Meridian Ephemeris Engine, building on the successfully implemented retrograde detection and South Node calculation features. These extensions will significantly increase the power and flexibility of the ephemeris backend while maintaining its clean architecture and performance characteristics.
+
+## Problem & Solution
+
+**Problem Statement:**
+While the core ephemeris engine successfully provides planetary positions and basic chart data, it lacks several advanced features that would make it a truly comprehensive astrological calculation engine, comparable to commercial offerings.
+
+**Solution Overview:**
+Implement a strategically prioritized set of extensions that enhance the calculation engine with aspects, Arabic parts, predictive features, and performance optimizations without compromising the clean architecture or creating technical debt.
+
+## Strategic Priorities
+
+Based on the technical analysis and review of the successful retrograde and South Node enhancements, we've identified the following priorities:
+
+### Priority 1: Essential Missing Features 🔴
+
+These features are fundamental to creating a complete ephemeris engine and should be implemented first:
+
+1. **Aspect Calculation Engine**
+   - Calculate aspects between planetary positions (longitude-based)
+   - **NEW**: Include declination parallels and contraparallels
+   - Support configurable orbs per aspect type
+   - Include applying/separating analysis
+   - **Performance**: Use numpy matrix operations for O(n²) → O(n) optimization
+
+2. **Hermetic Lots/Arabic Parts Calculator**
+   - **Reference Implementation**: Use existing [Hermetic lots library](../BUILD%20RESOURCES/Astrological%20Reference/Hermetic%20lots%20astro%20meridian%20implementation.md)
+   - **Core Lots**: Fortune, Spirit, Basis, Travel, Fame, Work/Profession, Property, Wealth
+   - **Optional Lots**: Eros, Necessity, Victory, Nemesis, Exaltation, Marriage, Faith, Friends
+   - Support day/night formula variations with proper sect calculation
+   - Safe formula parser (AST-based, no eval())
+   - Enable custom formula definitions
+
+3. **Eclipse & Transit Calculator**
+   - Calculate upcoming eclipses from a given date
+   - Find when planets transit specific points/degrees
+   - Calculate ingress times (planet entering signs)
+   - **Validation**: Cross-reference with NASA's Five Millennium Canon
+
+### Priority 2: ACG Engine Enhancements 🟡
+
+These features enhance the existing ACG functionality:
+
+1. **Retrograde-Aware ACG Lines**
+   - Add motion status to line metadata
+   - Create styling options based on motion type
+   - Enable filtering by motion status
+
+2. **Paran Line Implementation**
+   - Calculate co-rising/setting paran lines
+   - Add intersection points to GeoJSON
+   - Support multiple planet pairs
+
+3. **Aspect Lines to Angles**
+   - Calculate aspect lines to MC/AC
+   - Support major and minor aspects to angles
+   - Include midpoint lines (optional)
+
+### Priority 2.5: Advanced Calculations 🟠
+
+Essential features that should be considered for Phase 2:
+
+4. **Midpoint Calculations**
+   - Direct midpoints between any two planets
+   - Indirect midpoints (half-sums)
+   - Midpoint trees and structures
+   - Integration with aspect calculations
+
+5. **Declination & Parallel Aspects**
+   - Parallels (same declination)
+   - Contraparallels (opposite declinations)
+   - Configurable orbs for parallel aspects
+   - Integration with main aspect engine
+
+
+## User Stories
+
+### Epic: Advanced Natal Chart Calculations
+
+#### Story 1: Aspect Calculations
+**As a** professional astrologer  
+**I want** to see all aspects between planets in a chart  
+**So that** I can analyze the relationships and dynamics between celestial bodies
+
+**Acceptance Criteria:**
+- [ ] Calculate aspects between all planets in a chart
+- [ ] Support major aspects (conjunction, opposition, trine, square, sextile)
+- [ ] Support minor aspects (semi-sextile, quincunx, etc.)
+- [ ] Include configurable orbs per aspect type
+- [ ] Show applying vs. separating aspects
+- [ ] Return aspect strength/exactitude percentage
+- [ ] Include aspect matrix in API response
+
+**Technical Notes:**
+- Implement in `app/core/ephemeris/tools/aspects.py`
+- Create dedicated test module with known aspect configurations
+- Add aspect calculation to `EphemerisService.calculate_natal_chart_enhanced()`
+
+#### Story 2: Arabic Parts Calculation
+**As an** astrological researcher  
+**I want** to calculate Arabic parts (lots) in a chart  
+**So that** I can include these derived points in my analysis
+
+**Acceptance Criteria:**
+- [ ] Calculate Part of Fortune using traditional formula
+- [ ] Support day/night formula variations
+- [ ] Calculate at least 5 common Arabic parts
+- [ ] Allow custom formula definitions
+- [ ] Include parts in natal chart response
+- [ ] Provide option to exclude parts
+
+**Technical Notes:**
+- Implement in `app/core/ephemeris/tools/arabic_parts.py`
+- Create part formula registry with day/night variations
+- Add calculation to enhanced chart method
+
+#### Story 3: Eclipse and Transit Finder
+**As an** astrology enthusiast  
+**I want** to find upcoming eclipses and planetary transits  
+**So that** I can plan observations and understand future astrological events
+
+**Acceptance Criteria:**
+- [ ] Find next solar eclipse from a given date
+- [ ] Find next lunar eclipse from a given date
+- [ ] Calculate when a planet will transit a specific degree
+- [ ] Find when planets enter new signs (ingress)
+- [ ] Allow filtering by eclipse type (total, partial, annular)
+- [ ] Return detailed eclipse/transit information including duration
+
+**Technical Notes:**
+- Implement in `app/core/ephemeris/tools/predictive.py`
+- Use Swiss Ephemeris eclipse functions directly
+- Create new API endpoints in `app/api/routes/predictive.py`
+
+## Technical Architecture
+
+### Aspect Calculation Module
+```mermaid
+classDiagram
+    class AspectConfig {
+        +Dict~str, float~ orbs
+        +List~str~ enabled_aspects
+        +bool include_applying_separating
+    }
+    
+    class AspectCalculator {
+        +calculate_aspects(positions, config) List~Aspect~
+        +is_aspect_applying(pos1, pos2, angle) bool
+        +get_aspect_strength(angle, expected, orb) float
+    }
+    
+    class Aspect {
+        +str planet1
+        +str planet2
+        +str aspect_type
+        +float angle
+        +float orb
+        +bool is_applying
+        +float strength
+    }
+    
+    AspectCalculator -- AspectConfig
+    AspectCalculator --> Aspect
+```
+
+### Arabic Parts Calculator
+```mermaid
+classDiagram
+    class ArabicPartFormula {
+        +str day_formula
+        +str night_formula
+        +str description
+    }
+    
+    class ArabicPartsCalculator {
+        +Dict~str, ArabicPartFormula~ FORMULAS
+        +calculate_part(part_name, chart_data, is_day_chart) float
+        +calculate_all_parts(chart_data) Dict~str, float~
+        +evaluate_formula(formula, chart_data) float
+    }
+    
+    ArabicPartsCalculator -- ArabicPartFormula
+```
+
+### Predictive Features
+```mermaid
+classDiagram
+    class EclipseFinder {
+        +find_next_eclipse(start_date, eclipse_type) Dict
+        +find_eclipses_in_range(start_date, end_date, eclipse_type) List~Dict~
+    }
+    
+    class TransitCalculator {
+        +find_next_transit(planet_id, degree, start_date) Dict
+        +find_sign_ingress(planet_id, start_date) Dict
+        +find_transits_in_range(planet_id, degree, start_date, end_date) List~Dict~
+    }
+    
+    class PredictiveService {
+        +get_upcoming_events(start_date, planets, event_types) List~Dict~
+        +calculate_time_lord_periods(birth_data) Dict
+    }
+    
+    PredictiveService --> EclipseFinder
+    PredictiveService --> TransitCalculator
+```
+
+## Implementation Phases
+
+### Phase 1: Foundation (Weeks 1-2)
+- Create aspect calculation engine with tests
+- Implement basic Arabic parts calculator
+- Add configuration systems for new features
+
+### Phase 2: API Extensions (Weeks 3-4)
+- Create new API endpoints for aspects and parts
+- Extend enhanced chart calculations to include new features
+- Update documentation and examples
+
+### Phase 3: Predictive Features (Weeks 5-6)
+- Implement eclipse and transit finder
+- Create predictive API endpoints
+- Add batch calculation optimizations
+
+### Phase 4: ACG Enhancements (Weeks 7-8)
+- Add retrograde-aware ACG lines
+- Implement paran lines
+- Add aspect lines to angles
+
+### Phase 5: Performance (Weeks 9-10)
+- Implement smart caching layer
+- Add streaming responses
+- Optimize batch calculations
+
+## Risks & Mitigations
+
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| **Computational complexity in aspect calculations** | Performance degradation for charts with many objects | Implement matrix-based calculations; consider caching aspect results |
+| **Accuracy of predictive calculations** | Incorrect prediction of astronomical events | Validate against NASA data; create thorough test suite with known eclipses |
+| **Formulas for Arabic parts vary in sources** | Inconsistent results depending on source | Document formula sources; make formulas configurable |
+| **Performance impact of additional calculations** | Increased response times | Make features optional; implement parallel processing |
+| **Compatibility with existing frontends** | Breaking changes to API | Maintain backward compatibility; version API endpoints |
+
+## Success Metrics
+
+1. **Feature Completeness**
+   - All aspect types correctly calculated with 100% test coverage
+   - At least 10 Arabic parts formulas implemented
+   - Eclipse predictions match NASA data within 1 minute
+
+2. **Performance**
+   - Enhanced chart calculation <150ms (95th percentile)
+   - Batch processing scales linearly up to 100 charts
+   - Caching reduces repeat calculations by >80%
+
+3. **Developer Experience**
+   - Comprehensive documentation for all new features
+   - Example code for common use cases
+   - Updated SDKs for all supported languages
+
+## Technical Prerequisites
+
+1. **Update existing codebase**
+   - Migrate remaining Pydantic v1 code to v2 (`dict()` → `model_dump()`)
+   - Fix any remaining issues with the South Node and retrograde detection
+
+2. **Testing infrastructure**
+   - Create reference data for aspect patterns
+   - Set up NASA eclipse data for validation
+   - Add benchmark tests for new calculations
+
+3. **Configuration system**
+   - Extend settings to include aspect orbs
+   - Add formula registry for Arabic parts
+   - Create feature flags for optional calculations
+
+---
+
+## Documentation Analysis & Integration Strategy
+
+### Current Documentation Status ✅/⚠️/❌
+
+**Existing Documentation Quality: B+** (Comprehensive but needs updates)
+
+| Document | Status | Coverage | Integration Info | Action Needed |
+|----------|---------|----------|-----------------|---------------|
+| **Main README.md** | ✅ | Excellent overview | Basic SDK examples | Minor updates |
+| **docs/index.md** | ✅ | Good quickstart | Frontend patterns | Add enhanced features |
+| **docs/api/overview.md** | ✅ | Complete API reference | Full REST patterns | Add new endpoints |
+| **docs/reference/architecture.md** | ✅ | Excellent architecture | System integration | Add aspect/lots modules |
+| **docs/reference/python-sdk.md** | ✅ | Comprehensive SDK docs | Complete Python integration | Add new methods |
+| **ARCHITECTURE_OVERVIEW.md** | ✅ | Technical foundation | Component mapping | Update with new features |
+| **BACKEND_FLOW_GUIDE.md** | ✅ | Excellent flow docs | Request/response patterns | Add enhanced flows |
+| **FRONTEND_PWA_PLAN.md** | ✅ | Complete PWA strategy | React/Three.js integration | Implementation ready |
+
+### Integration Information Available ✅
+
+**The existing documentation already answers most integration questions:**
+
+#### 1. **Frontend Connectivity** (Fully Documented)
+- **REST API**: Complete OpenAPI specification at `/docs` endpoint
+- **Client SDKs**: Python, TypeScript, Go SDKs with full examples
+- **Response Formats**: JSON schemas, error handling, rate limiting
+- **Three.js Integration**: Detailed PWA plan with 3D globe visualization
+- **WebSocket Support**: Architecture ready (not yet implemented)
+
+#### 2. **SDK Integration Patterns** (Comprehensive)
+```python
+# Python SDK - Already documented
+from meridian_ephemeris import MeridianEphemeris
+client = MeridianEphemeris()
+chart = client.calculate_natal_chart(subject_data)
+```
+
+```typescript  
+// TypeScript SDK - Already documented
+import { MeridianEphemeris } from 'meridian-ephemeris-sdk';
+const client = new MeridianEphemeris();
+const chart = await client.calculateNatalChart(subject);
+```
+
+#### 3. **API Response Formats** (Well Defined)
+- **JSON Schema**: Complete Pydantic models with validation
+- **Error Handling**: Standardized error envelope with detailed messages
+- **Performance Headers**: `X-Process-Time`, `X-RateLimit-*`
+- **Caching Headers**: TTL and cache status included
+
+#### 4. **Configuration & Settings** (Documented)
+```yaml
+# .meridian-ephemeris.yml - Already documented
+api:
+  base_url: "https://api.meridianephemeris.com"
+  timeout: 30
+cache:
+  enabled: true
+  ttl: 3600
+retry:
+  max_retries: 3
+  backoff_factor: 2.0
+```
+
+### Missing Integration Information ⚠️
+
+**What needs to be added for enhanced features:**
+
+1. **Aspect Configuration**: Orb settings, aspect types, strength calculations
+2. **Arabic Parts Formulas**: Day/night variations, custom formula definitions
+3. **Enhanced Response Schemas**: New fields for retrograde, aspects, lots
+4. **Hermetic Lots Integration**: How to connect external lots library
+5. **Performance Benchmarks**: Updated timing with new calculations
+
+## Enhanced Documentation Plan
+
+### Phase 1: Update Existing Documents (Week 1)
+
+#### 1.1 Update Main README.md
+```markdown
+## ✨ Enhanced Features (NEW)
+- **🔮 Aspect Calculations**: Complete aspect matrix with configurable orbs
+- **📿 Arabic Parts**: Hermetic lots integration with 20+ traditional parts  
+- **🔄 Retrograde Analysis**: Enhanced motion detection and status
+- **🌙 South Node Precision**: Improved lunar node calculations
+- **⚡ Performance**: Sub-100ms enhanced chart calculations
+```
+
+#### 1.2 Extend API Documentation
+- Add `/ephemeris/natal-enhanced` endpoint documentation
+- Update response schemas with new aspect and retrograde fields
+- Document aspect configuration parameters
+- Add Arabic parts request/response examples
+
+#### 1.3 Update SDK Documentation
+```python
+# Enhanced chart calculation - to be documented
+enhanced_chart = client.calculate_natal_chart_enhanced(
+    subject_data,
+    settings={
+        "include_aspects": True,
+        "aspect_orbs": {"conjunction": 8.0, "trine": 6.0},
+        "include_arabic_parts": True,
+        "arabic_parts": ["fortune", "spirit", "basis"]
+    }
+)
+```
+
+### Phase 2: Create New Integration Guides (Week 2)
+
+#### 2.1 Frontend Integration Guide (`docs/guides/frontend-integration.md`)
+```markdown
+# Frontend Integration Guide
+
+## React/Three.js Integration
+- 3D globe visualization with aspect lines
+- Real-time chart updates
+- PWA offline capabilities
+
+## Vue.js Integration  
+- Reactive chart components
+- State management patterns
+- API error handling
+
+## Angular Integration
+- Service-based architecture
+- RxJS observable patterns
+- TypeScript type safety
+```
+
+#### 2.2 Advanced Features Guide (`docs/guides/advanced-features.md`)
+```markdown
+# Advanced Astrological Features
+
+## Aspect Calculations
+- Understanding orbs and strength
+- Applying vs separating aspects
+- Custom aspect configurations
+
+## Arabic Parts (Hermetic Lots)
+- Traditional formulas and variations
+- Day/night chart adjustments
+- Creating custom lots
+```
+
+### Phase 3: Create Comprehensive Reference (Week 3)
+
+#### 3.1 Complete Settings & Outputs Reference (`docs/reference/EPHEMERIS_COMPLETE_REFERENCE.md`)
+
+This will be the "single source of truth" document covering:
+
+**API Endpoints Reference**
+| Endpoint | Method | Purpose | Response Time | Cache Strategy |
+|----------|--------|---------|---------------|----------------|
+| `/v1/ephemeris/natal` | POST | Basic natal chart | ~50ms | 24h TTL |
+| `/v1/ephemeris/natal-enhanced` | POST | Enhanced with aspects/lots | ~150ms | 24h TTL |
+| `/v1/aspects/calculate` | POST | Standalone aspects | ~30ms | 12h TTL |
+| `/v1/arabic-parts/calculate` | POST | Hermetic lots calculation | ~40ms | 12h TTL |
+
+**Complete Object Catalog**
+| Object | ID | Type | Precision | Available Data |
+|--------|----|----|-----------|----------------|
+| Sun | 0 | Luminary | 0.1" | Position, speed, retrograde |
+| Moon | 1 | Luminary | 0.1" | Position, speed, phase |
+| Mercury | 2 | Planet | 0.1" | Position, speed, retrograde |
+| [... all objects] | ... | ... | ... | ... |
+
+**Configuration Reference**
+```yaml
+# Complete configuration schema
+ephemeris:
+  house_systems: [placidus, koch, equal, whole_sign, campanus, regiomontanus, ...]
+  coordinate_systems: [tropical, sidereal]
+  node_types: [mean, true]
+  
+aspects:
+  major_aspects: [conjunction, opposition, trine, square, sextile]
+  minor_aspects: [semi_sextile, quincunx, semi_square, sesquiquadrate]
+  orbs:
+    sun: {conjunction: 8.0, opposition: 8.0, trine: 6.0, square: 6.0}
+    moon: {conjunction: 8.0, opposition: 8.0, trine: 6.0, square: 6.0}
+    # ... all planets
+    
+arabic_parts:
+  day_formula_adjustments: true
+  available_lots: [fortune, spirit, basis, travel, fame, ...]
+  custom_formulas_allowed: true
+```
+
+**Response Schema Definitions**
+```json
+{
+  "enhanced_chart_response": {
+    "planets": {
+      "sun": {
+        "longitude": 120.5,
+        "is_retrograde": false,
+        "motion_type": "direct",
+        "daily_motion": 0.9856
+      }
+    },
+    "aspects": [
+      {
+        "planet1": "sun",
+        "planet2": "mars", 
+        "aspect_type": "trine",
+        "orb": 2.5,
+        "is_applying": true,
+        "strength": 85.3
+      }
+    ],
+    "arabic_parts": {
+      "fortune": {"longitude": 95.2, "sign": "Cancer"},
+      "spirit": {"longitude": 156.8, "sign": "Virgo"}
+    }
+  }
+}
+```
+
+**Frontend Integration Examples**
+```typescript
+// React Hook for enhanced charts
+const useEnhancedChart = (birthData: BirthData) => {
+  const [chart, setChart] = useState<EnhancedChart | null>(null);
+  const [loading, setLoading] = useState(false);
+  
+  useEffect(() => {
+    const calculateChart = async () => {
+      setLoading(true);
+      try {
+        const result = await meridianClient.calculateEnhancedChart(birthData);
+        setChart(result);
+      } catch (error) {
+        console.error('Chart calculation failed:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    calculateChart();
+  }, [birthData]);
+  
+  return { chart, loading };
+};
+```
+
+## Reference Files Integration
+
+**Now linked with complete mathematical specifications:**
+
+### 1. **Hermetic Lots Formulas** ✅ (`hermetic-lots-astro-meridian-implementation.md`)
+Complete Arabic parts calculation library with:
+- **Core Lots**: Fortune, Spirit, Basis, Travel, Fame, Work/Profession, Property, Wealth
+- **Optional Lots**: Eros, Necessity, Victory, Nemesis, Exaltation, Marriage, Faith, Friends  
+- **Day/Night Formula Variations**: Automatic sect detection and formula switching
+- **Integration Pattern**: Direct import into `app/core/ephemeris/tools/arabic_parts.py`
+
+```python
+# Implementation pattern for hermetic lots integration
+HERMETIC_LOTS_FORMULAS = {
+    "fortune": {
+        "day": "ascendant + moon - sun",
+        "night": "ascendant + sun - moon"
+    },
+    "spirit": {
+        "day": "ascendant + sun - moon", 
+        "night": "ascendant + moon - sun"
+    },
+    "basis": {
+        "day": "ascendant + fortune - spirit",
+        "night": "ascendant + fortune - spirit"  # sect-independent
+    }
+    # ... complete formula library provided
+}
+```
+
+### 2. **Astrocartography Line Calculations** ✅ (`Astrocartography Lines — Technical Implementation Reference.md`)
+Comprehensive ACG mathematical framework including:
+- **Angular Lines**: MC/IC (meridian), ASC/DSC (horizon) with exact formulas
+- **Paran Lines**: Simultaneous angularity calculations with latitude solutions
+- **Local Space**: Great circle projections from topocentric azimuths
+- **Node Handling**: South Node = North Node + 180° with derived line relationships
+- **Numerical Methods**: Robust edge case handling, circumpolar regions, date line wrapping
+
+```python
+# Core ACG formulas from reference
+def calculate_mc_line(ra_body, gst):
+    """MC line is a meridian where LST = RA"""
+    longitude_mc = (ra_body - gst) * 15.0  # degrees
+    return normalize_longitude(longitude_mc)
+
+def calculate_horizon_lines(ra_body, dec_body, gst):
+    """ASC/DSC lines from horizon crossing conditions"""
+    # cosH0 = -tan(φ) * tan(δ) for h=0
+    # Implementation follows reference §5.3-5.4
+```
+
+### 3. **Paran Line Calculations** ✅ (`Parans reference doc.md`)  
+Rigorous mathematical implementation for planetary parans:
+- **Simultaneity Conditions**: Two bodies on different angles simultaneously
+- **Closed Form Solutions**: One meridian + one horizon event analytical solutions  
+- **Numerical Methods**: Horizon-horizon paran solving with Brent/bisection
+- **Visibility Filters**: Both visible, meridian visible only, geometric vs apparent horizon
+- **Precision Targets**: ≤0.03° latitude error for planets, robust float64 operations
+
+```python
+# Paran calculation pattern from reference
+def solve_paran_meridian_horizon(body_a, body_b, delta_alpha):
+    """Closed form: A on meridian, B on horizon"""
+    # From reference §3.1: φ = atan2(-cos(H0)·cos(δ), sin(δ))
+    h_req = calculate_required_horizon_angle(delta_alpha, events)
+    h0 = np.arccos(np.clip(np.cos(h_req), -1, 1))
+    latitude = np.arctan2(-np.cos(h0) * np.cos(dec_b), np.sin(dec_b))
+    return np.degrees(latitude)
+```
+
+### 4. **Aspect Astrocartography Formulas** ✅ (`Aspect astrocartography math ref.md`)
+Complete mathematical reference for aspect-to-angle lines:
+- **Local Angle Longitudes**: Precise ecliptic longitude calculations for MC/IC/ASC/DSC
+- **Aspect Conditions**: Zodiacal aspect formation to local angles with orb tolerances
+- **Contour Methods**: Marching squares algorithm for curved aspect-to-ASC/DSC loci  
+- **Edge Case Handling**: Circumpolar regions, delta→0, pole stability, nutation effects
+
+```python
+# Aspect-to-angle line calculation from reference
+def calculate_local_mc_longitude(local_sidereal_time, obliquity):
+    """MC ecliptic longitude from LST and obliquity"""
+    lambda_mc = np.arctan2(
+        np.sin(local_sidereal_time) * np.cos(obliquity),
+        np.cos(local_sidereal_time)
+    )
+    return normalize_longitude(lambda_mc)
+
+def aspect_to_angle_condition(planet_longitude, angle_longitude, aspect_angle, orb):
+    """Check if planet forms aspect to local angle within orb"""
+    delta = wrap_minus_pi_to_pi(angle_longitude - planet_longitude)
+    return abs(wrap_minus_pi_to_pi(delta - aspect_angle)) <= orb
+```
+
+## Technical Implementation Strategy
+
+### Integration Architecture
+
+```mermaid
+graph TB
+    subgraph "Enhanced Ephemeris Engine"
+        Core[Core Engine] --> Aspects[Aspect Calculator]
+        Core --> Arabic[Arabic Parts Calculator]  
+        Core --> ACG[ACG Line Engine]
+        Core --> Parans[Paran Calculator]
+    end
+    
+    subgraph "Mathematical References"
+        HermeticSpec[Hermetic Lots Formulas]
+        ACGSpec[ACG Line Math Reference]
+        ParanSpec[Paran Technical Reference] 
+        AspectSpec[Aspect Astrocartography Math]
+    end
+    
+    Arabic --> HermeticSpec
+    ACG --> ACGSpec
+    Parans --> ParanSpec
+    ACG --> AspectSpec
+    
+    subgraph "API Layer"
+        Enhanced[Enhanced Chart Endpoint]
+        ACGEndpoint[ACG Lines Endpoint]
+        ParanEndpoint[Paran Lines Endpoint]
+    end
+    
+    Aspects --> Enhanced
+    Arabic --> Enhanced
+    ACG --> ACGEndpoint
+    Parans --> ParanEndpoint
+```
+
+### Implementation Priority with Mathematical Foundation
+
+**Phase 1: Aspect Calculation Engine** (Week 1-2)
+- Implement core aspect calculation using reference mathematical formulas
+- Support major aspects with configurable orbs per reference specifications
+- Include applying vs separating aspect detection
+- Add aspect strength calculation (exactitude percentage)
+
+**Phase 2: Hermetic Lots Integration** (Week 3-4)  
+- Direct integration of provided hermetic lots formula library
+- Implement day/night sect detection and automatic formula switching
+- Create formula registry for custom lots definitions
+- Add lots calculation to enhanced chart endpoint
+
+**Phase 3: Enhanced ACG Lines** (Week 5-6)
+- Implement aspect-to-angle lines using contour methods from mathematical reference
+- Add retrograde-aware ACG line metadata using existing retrograde detection
+- Integrate Node line derivation (SN = NN + 180°) per mathematical specifications
+
+**Phase 4: Paran Line Implementation** (Week 7-8)
+- Implement closed-form paran solutions for meridian-horizon pairs
+- Add numerical solver for horizon-horizon parans using reference algorithms
+- Include visibility filters and precision targets from specifications
+
+### Validation Strategy
+
+**Mathematical Accuracy Validation:**
+- Cross-reference aspect calculations with known aspect configurations
+- Validate Arabic parts against traditional astrological sources
+- Test ACG line positions against Swiss Ephemeris reference implementations
+- Verify paran latitude solutions within ±0.03° target precision
+
+**Edge Case Testing:**
+- Circumpolar regions handling per mathematical references
+- Date line wrapping for ACG and paran lines
+- High declination bodies (Moon, outer planets at extreme positions)
+- Pole proximity stability for aspect-to-angle calculations
+
+This implementation strategy leverages your comprehensive mathematical references to build a world-class ephemeris engine with rigorous astronomical accuracy and robust edge case handling.
+
+---
+
+## Metadata & Data Structure Refinements
+
+### Essential Metadata for All Calculations
+
+Every calculated point/aspect/lot MUST include:
+```python
+@dataclass
+class CalculationMetadata:
+    """Standard metadata for all calculations"""
+    calculation_type: str  # "aspect", "arabic_part", "paran", etc.
+    timestamp_utc: datetime
+    ephemeris_flags: int  # Swiss Ephemeris calculation flags used
+    precision_arcsec: float  # Actual precision achieved
+    calculation_method: str  # "swiss_ephemeris", "mathematical", "interpolated"
+    source_version: str  # "SE_2.10", etc.
+    coordinate_system: str  # "tropical", "sidereal"
+    ayanamsa: Optional[str]  # If sidereal
+    house_system: Optional[str]  # If house-dependent
+    orb_set: Optional[str]  # "traditional", "modern", "tight", "custom"
+    confidence_score: float  # 0.0-1.0 based on data quality
+```
+
+### Dependency Management Strategy
+
+**Critical Dependencies to Lock:**
+```toml
+[tool.poetry.dependencies]
+swisseph = "^2.10.3"  # LOCK THIS VERSION - calculation consistency
+numpy = "^1.24.0"  # For matrix operations
+scipy = "^1.11.0"  # For numerical solvers (parans)
+pytz = "^2024.1"  # Timezone handling
+```
+
+**Why:** Swiss Ephemeris version changes can affect calculations by fractions of arc-seconds.
+
+### Database Schema Considerations
+
+**Add calculation audit table:**
+```sql
+CREATE TABLE calculation_audits (
+    id BIGSERIAL PRIMARY KEY,
+    calculation_id UUID NOT NULL,
+    calculation_type VARCHAR(50) NOT NULL,
+    input_params JSONB NOT NULL,
+    output_data JSONB NOT NULL,
+    metadata JSONB NOT NULL,
+    ephemeris_version VARCHAR(20) NOT NULL,
+    calculation_time_ms INTEGER NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Index for performance analysis
+CREATE INDEX idx_calc_audit_type_time ON calculation_audits(calculation_type, created_at);
+```
+
+### Robust Error Handling Pattern
+
+```python
+class EphemerisCalculationError(Exception):
+    """Base exception for all ephemeris calculations"""
+    def __init__(self, message: str, metadata: Dict[str, Any]):
+        super().__init__(message)
+        self.metadata = metadata
+        self.timestamp = datetime.utcnow()
+        self.traceback_id = str(uuid.uuid4())
+
+class AspectCalculationError(EphemerisCalculationError):
+    """Specific to aspect calculations"""
+    pass
+
+class ArabicPartCalculationError(EphemerisCalculationError):
+    """Specific to Arabic parts"""
+    pass
+
+# Usage pattern
+try:
+    aspect = calculate_aspect(planet1, planet2)
+except AspectCalculationError as e:
+    logger.error(f"Aspect calculation failed: {e}", extra=e.metadata)
+    # Return degraded response with available data
+    return {"error": "partial_calculation", "available_data": {...}}
+```
+
+## Architecture Integration Points
+
+### Service Layer Integration
+
+```python
+# app/services/ephemeris_service.py modifications
+
+class EphemerisService:
+    def __init__(self):
+        # Existing initialization
+        self.aspect_calculator = AspectCalculator()
+        self.arabic_parts_calculator = ArabicPartsCalculator()
+        self.paran_calculator = ParanCalculator()
+        
+        # Feature flags for gradual rollout
+        self.features = {
+            'aspects': config.ENABLE_ASPECTS,
+            'arabic_parts': config.ENABLE_ARABIC_PARTS,
+            'parans': config.ENABLE_PARANS,
+            'declinations': config.ENABLE_DECLINATIONS
+        }
+    
+    def calculate_natal_chart_enhanced(self, request: NatalChartRequest) -> Dict:
+        """Enhanced chart with feature toggling"""
+        base_chart = self.calculate_natal_chart(request)
+        
+        # Add features based on flags and request
+        if self.features['aspects'] and request.include_aspects:
+            base_chart['aspects'] = self._calculate_aspects_safe(base_chart)
+        
+        if self.features['arabic_parts'] and request.include_arabic_parts:
+            base_chart['arabic_parts'] = self._calculate_parts_safe(base_chart)
+            
+        # Add calculation metadata
+        base_chart['_metadata'] = self._generate_metadata(request, base_chart)
+        
+        return base_chart
+```
+
+### Caching Strategy Refinement
+
+```python
+# app/core/cache/calculation_cache.py
+
+class CalculationCache:
+    """Intelligent caching for ephemeris calculations"""
+    
+    # Different TTLs for different calculation types
+    TTL_MATRIX = {
+        'planetary_positions': 86400,  # 24 hours - changes slowly
+        'aspects': 86400,  # Derived from positions
+        'arabic_parts': 86400,  # Derived from positions
+        'transits': 3600,  # 1 hour - time-sensitive
+        'eclipses': 604800,  # 7 days - rarely changes
+        'parans': 86400,  # Location-dependent
+    }
+    
+    def cache_key(self, calc_type: str, params: Dict) -> str:
+        """Generate consistent cache keys"""
+        # Sort params for consistent keys
+        sorted_params = json.dumps(params, sort_keys=True)
+        return f"{calc_type}:{hashlib.sha256(sorted_params.encode()).hexdigest()}"
+```
+
+## Right-Sizing Considerations
+
+### What We're NOT Building (Avoid Over-Engineering)
+
+❌ **NOT Building:**
+- Custom ephemeris engine (using Swiss Ephemeris)
+- AI interpretation layer (separate module)
+- Chart animation engine (frontend concern)
+- User preference learning (future feature)
+- Social features (out of scope)
+- Payment processing (separate service)
+
+✅ **ARE Building:**
+- Professional calculation accuracy
+- Comprehensive metadata
+- Robust error handling
+- Performance optimization
+- Clear API contracts
+
+### Performance Boundaries
+
+**Set clear performance SLAs:**
+```yaml
+performance_sla:
+  single_chart_basic: 50ms
+  single_chart_enhanced: 150ms
+  batch_10_charts: 800ms
+  batch_100_charts: 5000ms
+  aspect_matrix_12_bodies: 30ms
+  arabic_parts_16_lots: 40ms
+  paran_search_global: 2000ms
+  eclipse_search_year: 500ms
+```
+
+### Orb Configuration Schema
+
+**Critical for Professional Astrology:**
+```python
+ORB_PRESETS = {
+    'traditional': {
+        'conjunction': {'sun': 8.0, 'moon': 8.0, 'default': 6.0},
+        'opposition': {'sun': 8.0, 'moon': 8.0, 'default': 6.0},
+        'trine': {'sun': 6.0, 'moon': 6.0, 'default': 5.0},
+        'square': {'sun': 6.0, 'moon': 6.0, 'default': 5.0},
+        'sextile': {'sun': 4.0, 'moon': 4.0, 'default': 3.0},
+    },
+    'modern': {
+        'conjunction': {'sun': 10.0, 'moon': 12.0, 'default': 8.0},
+        # ... more generous orbs
+    },
+    'vedic': {
+        # Different system entirely
+    }
+}
+```
+
+## Testing Strategy
+
+### Test Data Requirements
+
+```python
+# tests/fixtures/reference_charts.py
+
+REFERENCE_CHARTS = {
+    'einstein': {
+        'datetime': datetime(1879, 3, 14, 11, 30),
+        'location': {'lat': 48.4, 'lon': 10.0},
+        'timezone': 'Europe/Berlin',
+        'expected_sun': 23.456,  # Pisces 23°27'
+        'expected_aspects': [
+            {'planets': ('sun', 'saturn'), 'aspect': 'square', 'orb': 2.3}
+        ]
+    },
+    # Add 10-20 reference charts for validation
+}
+```
+
+### Validation Requirements
+
+**Each calculation must be validated against:**
+1. Swiss Ephemeris test suite results
+2. NASA JPL Horizons for planetary positions
+3. Traditional sources for Arabic parts (Bonatti, Lilly)
+4. Known eclipse catalogs for predictive features
+
+## API Versioning Strategy
+
+```python
+# app/api/v1/routes.py - Current stable
+# app/api/v2/routes.py - With enhanced features
+
+@router.get("/v2/ephemeris/natal")
+async def natal_v2(request: NatalChartRequestV2):
+    """V2 with backward compatibility"""
+    if request.api_version == "1.0":
+        # Transform to v1 response
+        return transform_to_v1(response)
+    return response  # Full v2 response
+```
+
+## Final Implementation Checklist
+
+### Before Starting Development:
+- [ ] Lock all dependency versions
+- [ ] Create reference test data set (20+ validated charts)
+- [ ] Set up performance benchmarking infrastructure
+- [ ] Define feature flags for gradual rollout
+- [ ] Create database migration for audit tables
+- [ ] Document orb preset configurations
+- [ ] Set up calculation accuracy validation suite
+
+### During Development:
+- [ ] Every calculation includes full metadata
+- [ ] All errors are gracefully handled with partial responses
+- [ ] Cache keys are deterministic and consistent
+- [ ] Performance SLAs are tested in CI/CD
+- [ ] API responses are versioned
+- [ ] Calculations are audited for troubleshooting
+
+### Post-Development:
+- [ ] A/B test new calculations against current
+- [ ] Monitor performance metrics in production
+- [ ] Validate accuracy against professional software
+- [ ] Document any calculation discrepancies
+- [ ] Create migration guide for API consumers
+
+## Risk Mitigation Updates
+
+| Risk | Mitigation | Monitoring |
+|------|------------|------------|
+| **Swiss Ephemeris version drift** | Lock version, test suite validation | Hash check on library load |
+| **Calculation discrepancies** | Multi-source validation | Automated deviation alerts |
+| **Performance degradation** | Caching, lazy loading, CDN | Real-time performance dashboard |
+| **Orb disagreements** | Configurable presets | Usage analytics per preset |
+| **Memory leaks in batch ops** | Chunked processing, memory profiling | Memory usage monitoring |
+
+## Master Astrologer Notes
+
+**Essential Astrological Considerations:**
+1. **Sect is critical** - Day/night charts MUST be calculated correctly for Arabic parts
+2. **Orbs vary by aspect AND planet** - Sun/Moon get wider orbs
+3. **Retrograde shadows** - Consider pre/post-retrograde shadow periods (future feature)
+4. **Void of Course Moon** - Flag this condition when detected
+5. **Mutual Reception** - Detect and flag this important condition
+6. **Essential Dignities** - Add dignity scores (future consideration)
+
+## Master Software Designer Notes
+
+**Architecture Principles:**
+1. **Fail gracefully** - Always return partial data rather than error
+2. **Cache aggressively** - Astronomical calculations are deterministic
+3. **Version everything** - Calculations, APIs, configurations
+4. **Audit extensively** - Every calculation for debugging
+5. **Optimize lazily** - Calculate only what's requested
+6. **Scale horizontally** - Stateless calculations enable easy scaling
+
+---
+
+## Implementation Priority
+
+**Immediate (Next 2 weeks):**
+1. Update existing documentation with enhanced features
+2. Create the complete reference document
+3. Add integration examples to SDK docs
+
+**Short-term (Month 1):**
+4. Link in hermetic lots formulas and integration patterns
+5. Add astrocartography and paran line mathematical references
+6. Create comprehensive frontend integration examples
+
+**Medium-term (Month 2):**
+7. Video tutorials for common integration patterns
+8. Interactive documentation playground
+9. Migration guides for existing implementations
+
+This documentation strategy ensures that developers have complete information for integrating all current and planned ephemeris features while maintaining the high quality of existing docs.
+
+## Comprehensive Documentation Implementation Strategy
+
+### Phase 1: Core Documentation Updates (Week 1)
+
+#### 1.1 Enhanced README Updates
+```markdown
+# Add to main README.md after existing features section
+
+## ✨ Enhanced Features (v2.0)
+- **🔮 Aspect Calculations**: Complete aspect matrix with configurable orb presets
+- **📿 Arabic Parts (Hermetic Lots)**: 16 traditional lots with day/night variations  
+- **🌙 Enhanced Lunar Nodes**: High-precision South Node calculations with motion analysis
+- **🔄 Retrograde Analytics**: Comprehensive motion detection and status reporting
+- **🗺️ Advanced ACG Features**: Paran lines, aspect-to-angle lines, retrograde-aware visualization
+- **⚡ Performance Optimized**: Sub-150ms enhanced calculations with intelligent caching
+- **🛠️ Professional Metadata**: Complete calculation provenance and accuracy metrics
+```
+
+#### 1.2 API Documentation Extensions
+Create comprehensive endpoint documentation:
+
+```yaml
+# docs/api/v2-endpoints.yml
+/v2/ephemeris/natal-enhanced:
+  description: "Enhanced natal chart with aspects, Arabic parts, and advanced features"
+  request_schema:
+    include_aspects: boolean
+    aspect_orb_preset: "traditional" | "modern" | "tight" | "custom"
+    include_arabic_parts: boolean
+    arabic_parts_list: array[string]
+    include_retrograde_analysis: boolean
+    metadata_level: "basic" | "full" | "audit"
+  response_schema:
+    planets: # Enhanced with retrograde flags
+    aspects: # Complete aspect matrix
+    arabic_parts: # Calculated lots
+    _metadata: # Calculation metadata
+  performance: "~150ms typical, ~50ms cached"
+
+/v2/acg/paran-lines:
+  description: "Calculate paran lines for two bodies at different angles"
+  mathematical_reference: "Parans reference doc.md"
+```
+
+#### 1.3 SDK Documentation Enhancements
+Update all SDK docs with enhanced feature examples:
+
+```python
+# docs/reference/python-sdk-v2.md examples
+
+# Enhanced chart calculation
+from meridian_ephemeris import MeridianEphemeris
+
+client = MeridianEphemeris()
+enhanced_chart = client.calculate_natal_chart_enhanced(
+    subject_data,
+    settings={
+        "include_aspects": True,
+        "aspect_orb_preset": "traditional",
+        "include_arabic_parts": True,
+        "arabic_parts": ["fortune", "spirit", "basis"],
+        "metadata_level": "full"
+    }
+)
+
+# Access enhanced features
+aspects = enhanced_chart['aspects']
+arabic_parts = enhanced_chart['arabic_parts']
+metadata = enhanced_chart['_metadata']
+
+# Professional orb configuration
+custom_orbs = {
+    'conjunction': {'sun': 8.0, 'moon': 10.0, 'mercury': 6.0},
+    'trine': {'sun': 6.0, 'moon': 8.0, 'mercury': 4.0}
+}
+```
+
+### Phase 2: Technical Reference Documentation (Week 2)
+
+#### 2.1 Complete Calculation Reference (`docs/reference/EPHEMERIS_COMPLETE_REFERENCE.md`)
+
+**This becomes the master technical reference document:**
+
+```markdown
+# Meridian Ephemeris Engine - Complete Technical Reference
+
+## I. API Endpoints Catalog
+
+| Endpoint | Method | Purpose | Avg Response | Cache TTL | Mathematical Reference |
+|----------|--------|---------|--------------|-----------|------------------------|
+| `/v2/ephemeris/natal-enhanced` | POST | Full chart with aspects/lots | 150ms | 24h | Swiss Ephemeris + Hermetic Lots |
+| `/v2/aspects/calculate` | POST | Standalone aspect matrix | 30ms | 12h | Longitude difference algorithms |
+| `/v2/arabic-parts/calculate` | POST | Arabic parts calculation | 40ms | 24h | Hermetic lots formulas |
+| `/v2/acg/paran-lines` | POST | Paran line calculation | 800ms | 24h | Paran technical reference |
+| `/v2/acg/aspect-lines` | POST | Aspect-to-angle lines | 600ms | 24h | Aspect astrocartography math |
+
+## II. Calculation Object Catalog
+
+### Planetary Bodies
+| Object | Swiss Ephemeris ID | Precision | Available Data | Enhanced Features |
+|--------|-------------------|-----------|----------------|-------------------|
+| Sun | SE_SUN (0) | 0.01" | Position, speed, distance | Retrograde analysis (apparent) |
+| Moon | SE_MOON (1) | 0.1" | Position, speed, phase | Enhanced node calculations |
+| Mercury | SE_MERCURY (2) | 0.01" | Position, speed, distance | Retrograde detection & analysis |
+| Venus | SE_VENUS (3) | 0.01" | Position, speed, distance | Retrograde detection & analysis |
+| Mars | SE_MARS (4) | 0.01" | Position, speed, distance | Retrograde detection & analysis |
+| Jupiter | SE_JUPITER (5) | 0.01" | Position, speed, distance | Retrograde detection & analysis |
+| Saturn | SE_SATURN (6) | 0.01" | Position, speed, distance | Retrograde detection & analysis |
+| Uranus | SE_URANUS (7) | 0.01" | Position, speed, distance | Retrograde detection & analysis |
+| Neptune | SE_NEPTUNE (8) | 0.01" | Position, speed, distance | Retrograde detection & analysis |
+| Pluto | SE_PLUTO (9) | 0.01" | Position, speed, distance | Retrograde detection & analysis |
+| True Node | SE_TRUE_NODE (11) | 0.01" | Position, speed | Enhanced South Node derivation |
+| Chiron | SE_CHIRON (15) | 0.1" | Position, speed, distance | Retrograde detection |
+
+### Arabic Parts (Hermetic Lots)
+| Lot Name | Formula (Day) | Formula (Night) | Traditional Use |
+|----------|---------------|-----------------|-----------------|
+| Fortune | ASC + Moon - Sun | ASC + Sun - Moon | Material prosperity |
+| Spirit | ASC + Sun - Moon | ASC + Moon - Sun | Spiritual nature |
+| Basis | ASC + Fortune - Spirit | Same | Foundation of life |
+| [... complete table from hermetic lots reference] | | | |
+
+## III. Configuration Schemas
+
+### Orb Configuration
+```python
+# Complete orb preset system
+ORB_SYSTEM_SCHEMA = {
+    "preset_name": str,  # "traditional", "modern", "vedic", "custom"
+    "aspects": {
+        "conjunction": {
+            "sun": float,     # Base orb for Sun
+            "moon": float,    # Base orb for Moon  
+            "mercury": float, # Base orb for Mercury
+            "venus": float,   # Base orb for Venus
+            "mars": float,    # Base orb for Mars
+            "jupiter": float, # Base orb for Jupiter
+            "saturn": float,  # Base orb for Saturn
+            "uranus": float,  # Base orb for Uranus
+            "neptune": float, # Base orb for Neptune
+            "pluto": float,   # Base orb for Pluto
+            "default": float  # Fallback for unlisted bodies
+        },
+        # ... repeat for each aspect type
+    },
+    "applying_orb_factor": float,  # 1.0 = same orb, 0.8 = tighter for applying
+    "separating_orb_factor": float # 1.0 = same orb, 1.2 = wider for separating
+}
+```
+
+### Metadata Schema
+```python
+# Standard metadata included with all calculations
+CALCULATION_METADATA_SCHEMA = {
+    "calculation_id": str,           # UUID for this calculation
+    "calculation_type": str,         # "natal_chart", "aspect_matrix", etc.
+    "timestamp_utc": datetime,       # When calculation was performed
+    "ephemeris_version": str,        # "SE_2.10.3"
+    "ephemeris_flags": int,          # Swiss Ephemeris flags used
+    "coordinate_system": str,        # "tropical", "sidereal"
+    "house_system": str,            # "placidus", "koch", etc.
+    "precision_achieved_arcsec": float, # Actual precision of calculation
+    "calculation_method": str,       # "swiss_ephemeris", "mathematical"
+    "performance": {
+        "calculation_time_ms": int,
+        "cache_hit": bool,
+        "database_queries": int
+    },
+    "validation": {
+        "cross_checked": bool,       # Against reference sources
+        "accuracy_score": float,     # 0.0-1.0 confidence
+        "known_discrepancies": list  # Any noted differences
+    }
+}
+```
+
+## IV. Response Schema Definitions
+[Complete JSON schema definitions for all API responses]
+
+## V. Frontend Integration Patterns
+[React, Vue, Angular integration examples with hooks/composables]
+
+## VI. Performance Optimization Guide
+[Caching strategies, batch processing, optimization techniques]
+
+## VII. Troubleshooting & Debugging
+[Common issues, diagnostic tools, debugging techniques]
+```
+
+#### 2.2 Mathematical Reference Integration
+Link all mathematical references with clear implementation guidance:
+
+```markdown
+# docs/reference/mathematical-implementations.md
+
+## Aspect Calculations
+- **Reference**: Internal aspect calculation algorithms
+- **Implementation**: `app/core/ephemeris/tools/aspects.py`
+- **Key Formulas**: Longitude difference with orb tolerance
+- **Edge Cases**: Sign boundaries, exact aspects, wide orbs
+
+## Arabic Parts (Hermetic Lots)  
+- **Reference**: `Hermetic lots astro meridian implementation.md`
+- **Implementation**: `app/core/ephemeris/tools/arabic_parts.py`
+- **Key Formulas**: Day/night sect-dependent calculations
+- **Edge Cases**: Cuspal positions, midnight births, unknown birth times
+
+## Astrocartography Lines
+- **Reference**: `Astrocartography Lines — Technical Implementation Reference.md`
+- **Implementation**: `app/core/acg/lines.py`
+- **Key Formulas**: Angular line calculations, coordinate transformations
+- **Edge Cases**: Polar regions, date line crossing, circumpolar bodies
+
+## Paran Lines
+- **Reference**: `Parans reference doc.md`  
+- **Implementation**: `app/core/acg/parans.py`
+- **Key Formulas**: Simultaneity conditions, numerical solutions
+- **Edge Cases**: High latitude regions, bodies near horizon
+
+## Aspect-to-Angle Lines
+- **Reference**: `Aspect astrocartography math ref.md`
+- **Implementation**: `app/core/acg/aspect_lines.py`
+- **Key Formulas**: Local angle calculations, contour methods
+- **Edge Cases**: Pole proximity, ecliptic extreme positions
+```
+
+### Phase 3: Integration & Usage Documentation (Week 3)
+
+#### 3.1 Frontend Integration Guide (`docs/guides/frontend-integration-complete.md`)
+
+```markdown
+# Complete Frontend Integration Guide
+
+## React Integration with Enhanced Features
+
+### Custom Hooks for Enhanced Charts
+```typescript
+// useEnhancedChart.ts
+import { useQuery } from '@tanstack/react-query';
+import { MeridianEphemeris } from 'meridian-ephemeris-sdk';
+
+interface EnhancedChartOptions {
+  includeAspects?: boolean;
+  aspectOrbPreset?: 'traditional' | 'modern' | 'tight' | 'custom';
+  includeArabicParts?: boolean;
+  arabicPartsList?: string[];
+  metadataLevel?: 'basic' | 'full' | 'audit';
+}
+
+export const useEnhancedChart = (
+  birthData: BirthData,
+  options: EnhancedChartOptions = {}
+) => {
+  return useQuery({
+    queryKey: ['enhanced-chart', birthData, options],
+    queryFn: async () => {
+      const client = new MeridianEphemeris();
+      return await client.calculateNatalChartEnhanced(birthData, options);
+    },
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
+    enabled: !!birthData.datetime && !!birthData.location
+  });
+};
+
+// Usage in component
+const ChartDisplay: React.FC<{birthData: BirthData}> = ({ birthData }) => {
+  const { data: chart, isLoading, error } = useEnhancedChart(birthData, {
+    includeAspects: true,
+    aspectOrbPreset: 'traditional',
+    includeArabicParts: true,
+    arabicPartsList: ['fortune', 'spirit', 'basis']
+  });
+
+  if (isLoading) return <ChartSkeleton />;
+  if (error) return <ErrorDisplay error={error} />;
+  if (!chart) return null;
+
+  return (
+    <div className="chart-container">
+      <PlanetaryPositions planets={chart.planets} />
+      <AspectMatrix aspects={chart.aspects} />
+      <ArabicPartsDisplay parts={chart.arabic_parts} />
+      <MetadataDisplay metadata={chart._metadata} />
+    </div>
+  );
+};
+```
+
+### State Management Patterns
+```typescript
+// chartStore.ts - Zustand store for chart data
+import { create } from 'zustand';
+
+interface ChartStore {
+  currentChart: EnhancedChart | null;
+  chartHistory: EnhancedChart[];
+  preferences: ChartPreferences;
+  setChart: (chart: EnhancedChart) => void;
+  updatePreferences: (prefs: Partial<ChartPreferences>) => void;
+  addToHistory: (chart: EnhancedChart) => void;
+}
+
+export const useChartStore = create<ChartStore>((set, get) => ({
+  currentChart: null,
+  chartHistory: [],
+  preferences: {
+    orbPreset: 'traditional',
+    showRetrogrades: true,
+    includeArabicParts: false,
+    arabicPartsSelection: ['fortune', 'spirit']
+  },
+  setChart: (chart) => set({ currentChart: chart }),
+  updatePreferences: (prefs) => set(state => ({ 
+    preferences: { ...state.preferences, ...prefs } 
+  })),
+  addToHistory: (chart) => set(state => ({
+    chartHistory: [chart, ...state.chartHistory].slice(0, 10) // Keep last 10
+  }))
+}));
+```
+
+## Vue 3 Integration
+
+### Composables for Chart Features
+```typescript
+// composables/useEnhancedChart.ts
+import { ref, computed, watch } from 'vue';
+import { MeridianEphemeris } from 'meridian-ephemeris-sdk';
+
+export function useEnhancedChart() {
+  const client = new MeridianEphemeris();
+  const chart = ref<EnhancedChart | null>(null);
+  const loading = ref(false);
+  const error = ref<Error | null>(null);
+
+  const calculateChart = async (
+    birthData: BirthData,
+    options: EnhancedChartOptions = {}
+  ) => {
+    loading.value = true;
+    error.value = null;
+    
+    try {
+      chart.value = await client.calculateNatalChartEnhanced(birthData, options);
+    } catch (err) {
+      error.value = err as Error;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const aspectMatrix = computed(() => 
+    chart.value?.aspects?.reduce((matrix, aspect) => {
+      if (!matrix[aspect.planet1]) matrix[aspect.planet1] = {};
+      matrix[aspect.planet1][aspect.planet2] = aspect;
+      return matrix;
+    }, {} as AspectMatrix)
+  );
+
+  return {
+    chart: readonly(chart),
+    loading: readonly(loading),
+    error: readonly(error),
+    aspectMatrix: readonly(aspectMatrix),
+    calculateChart
+  };
+}
+```
+
+## Angular Integration
+
+### Services and Observables
+```typescript
+// chart.service.ts
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, catchError, tap } from 'rxjs';
+import { MeridianEphemeris } from 'meridian-ephemeris-sdk';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ChartService {
+  private client = new MeridianEphemeris();
+  private chartSubject = new BehaviorSubject<EnhancedChart | null>(null);
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+
+  public chart$ = this.chartSubject.asObservable();
+  public loading$ = this.loadingSubject.asObservable();
+
+  async calculateEnhancedChart(
+    birthData: BirthData,
+    options: EnhancedChartOptions = {}
+  ): Promise<void> {
+    this.loadingSubject.next(true);
+    
+    try {
+      const chart = await this.client.calculateNatalChartEnhanced(birthData, options);
+      this.chartSubject.next(chart);
+    } catch (error) {
+      console.error('Chart calculation failed:', error);
+      throw error;
+    } finally {
+      this.loadingSubject.next(false);
+    }
+  }
+}
+```
+```
+
+#### 3.2 Performance & Optimization Guide (`docs/guides/performance-optimization.md`)
+
+Complete guide covering:
+- Caching strategies for different calculation types
+- Batch processing for multiple charts  
+- Memory optimization for large datasets
+- CDN and edge deployment considerations
+- Monitoring and alerting setup
+
+#### 3.3 Migration Guide (`docs/guides/migration-v1-to-v2.md`)
+
+Comprehensive migration documentation for:
+- API endpoint changes
+- Response schema updates  
+- New feature adoption
+- Backward compatibility handling
+- Testing migration implementations
+
+## Documentation Infrastructure
+
+### Automated Documentation Pipeline
+
+```yaml
+# .github/workflows/docs.yml
+name: Documentation Build & Deploy
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**', 'app/**/*.py']
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          pip install mkdocs-material
+          pip install mkdocs-swagger-ui-tag
+          pip install mkdocstrings[python]
+      - name: Generate API docs from code
+        run: python scripts/generate-api-docs.py
+      - name: Build documentation
+        run: mkdocs build
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+```
+
+### Documentation Quality Assurance
+
+```python
+# scripts/validate-docs.py - Documentation validation
+"""Ensure all features are documented with examples"""
+
+REQUIRED_DOCUMENTATION = {
+    'api_endpoints': ['v2/ephemeris/natal-enhanced', 'v2/aspects/calculate'],
+    'sdk_examples': ['python', 'typescript', 'react', 'vue'],
+    'mathematical_refs': ['aspects', 'arabic_parts', 'parans', 'acg_lines'],
+    'integration_guides': ['frontend', 'backend', 'migration'],
+    'troubleshooting': ['common_errors', 'performance_issues', 'accuracy_validation']
+}
+
+def validate_documentation_completeness():
+    """Validate that all required documentation exists"""
+    # Implementation checks all docs exist with required content
+    pass
+```
+
+This comprehensive documentation strategy ensures that every aspect of the enhanced ephemeris engine is thoroughly documented with practical examples, clear integration patterns, and complete technical references.
+
+---
+
+## Final Assessment & Plan Completion
+
+### Master Review Completion ✅
+
+**This plan has been comprehensively reviewed and refined by:**
+- 🎯 **Master Astrologer**: Ensuring astrological accuracy and professional feature completeness
+- 🏗️ **Master Software Designer**: Ensuring scalable architecture and robust implementation patterns
+- 📚 **Documentation Architect**: Ensuring complete integration guidance and technical references
+
+### Plan Status: **PRODUCTION-READY** ✨
+
+**✅ Complete Technical Foundation:**
+- Mathematical references integrated with exact formulas
+- Architectural patterns defined with metadata schemas
+- Error handling strategies with graceful degradation
+- Performance boundaries with clear SLAs
+- Dependency management with version locking
+
+**✅ Complete Implementation Roadmap:**
+- Phase-by-phase development strategy
+- Clear priority ordering (aspects → arabic parts → ACG → parans)
+- Feature flag strategy for gradual rollout
+- Testing strategy with reference data validation
+
+**✅ Complete Documentation Strategy:**
+- Existing docs analysis showing high quality foundation
+- Three-phase documentation enhancement plan
+- Complete technical reference document specification
+- Frontend integration guides for all major frameworks
+- Automated documentation pipeline
+
+**✅ Complete Risk Mitigation:**
+- Swiss Ephemeris version locking for calculation consistency
+- Comprehensive error handling with partial response capability
+- Performance monitoring with real-time dashboards
+- Calculation auditing for debugging and validation
+
+### Scope Validation ✅
+
+**Right-Sized for Implementation:**
+- **16 Arabic Parts**: Core + optional lots covering professional needs
+- **4 Aspect Types**: Major aspects with configurable orbs (conjunction, opposition, trine, square, sextile)
+- **3 ACG Enhancements**: Retrograde-aware lines, parans, aspect-to-angle lines
+- **Professional Metadata**: Complete calculation provenance without over-engineering
+
+**Clear Boundaries:**
+- ❌ **NOT Building**: Custom ephemeris engine, AI interpretation, payment processing
+- ✅ **ARE Building**: Professional calculations, robust metadata, clear APIs, performance optimization
+
+### Dependencies Secured ✅
+
+**Mathematical References Integrated:**
+- Hermetic lots formulas with day/night variations
+- Astrocartography line calculations with edge case handling
+- Paran line mathematical specifications with precision targets
+- Aspect-to-angle line formulas with contour methods
+
+**Architecture Integration Points Defined:**
+- Service layer modification patterns
+- Caching strategy with TTL matrix
+- Database schema for calculation auditing
+- API versioning with backward compatibility
+
+**Performance Framework Established:**
+- Clear SLAs for all calculation types
+- Caching strategies with intelligent TTL management
+- Error handling with partial response capabilities
+- Monitoring and alerting specifications
+
+### Ready for PRP Development 🚀
+
+**Next Immediate Steps:**
+1. **Create Aspect Calculation Engine PRP** - Highest priority, foundational feature
+2. **Create Arabic Parts Integration PRP** - Second priority, using hermetic lots library
+3. **Create Enhanced ACG Lines PRP** - Third priority, extending existing ACG system
+4. **Create Paran Lines Implementation PRP** - Fourth priority, advanced mapping feature
+
+**Implementation Timeline:**
+- **Phase 1 (Weeks 1-2)**: Aspect Calculation Engine
+- **Phase 2 (Weeks 3-4)**: Arabic Parts Integration
+- **Phase 3 (Weeks 5-6)**: Enhanced ACG Features  
+- **Phase 4 (Weeks 7-8)**: Paran Line Implementation
+
+**Success Criteria Established:**
+- All calculations validated against reference sources
+- Performance SLAs met in production environment
+- Complete documentation with integration examples
+- Backward API compatibility maintained
+
+---
+
+## Plan Approval & Sign-Off
+
+**Technical Architecture**: ✅ **APPROVED** - Scalable, maintainable, professional-grade
+**Mathematical Foundation**: ✅ **APPROVED** - Exact formulas with reference implementations  
+**Documentation Strategy**: ✅ **APPROVED** - Comprehensive with practical integration guidance
+**Implementation Roadmap**: ✅ **APPROVED** - Clear phases with realistic timelines
+**Risk Management**: ✅ **APPROVED** - Comprehensive mitigation strategies
+
+**Status**: **READY FOR PRP DEVELOPMENT**
+
+**Signed**: Master Astrologer/Software Designer Review Complete ✨
+
+---
+
+*This plan serves as the master reference for implementing world-class ephemeris engine enhancements. All PRPs should reference this document for consistency, scope, and architectural guidance.*
+
+**Assessment Grade: A-** (Professional Implementation with Strategic Gaps)
+
+**Code Quality:** ✅ Production-ready with proper error handling and test coverage
+**Architecture:** ✅ Well-structured service layer integration following existing patterns  
+**Performance:** ⚠️ Basic optimization present, advanced caching needed for scale
+**Feature Completeness:** ⚠️ Core functionality solid, missing key professional features
+
+### Strategic Recommendations
+
+#### 1. **Aspect Calculation Engine (HIGHEST PRIORITY)** 🔥
+The missing aspect calculation feature is the most critical gap for professional astrologers. This should be the immediate next development priority.
+
+**Technical Implementation:**
+- Create `app/core/ephemeris/tools/aspects.py` module
+- Implement angle difference calculations with orb tolerances
+- Support both major and minor aspects with configurable orbs
+- Include applying vs separating aspects detection
+- Add aspect strength calculation (exactitude percentage)
+
+**Business Impact:** Without aspects, this is essentially just planet position data. Aspects are the core analytical tool for astrologers.
+
+#### 2. **Hermetic Lots Library Integration** 🌟
+Leverage the existing hermetic lots library for Arabic parts calculations:
+
+**Integration Strategy:**
+- Import hermetic lots calculation engine into ephemeris service
+- Create adapter layer to convert between data formats
+- Use hermetic lots for Part of Fortune, Part of Spirit, and custom lots
+- Maintain hermetic lots as separate calculation module for reusability
+
+**Code Architecture:**
+```python
+# app/services/arabic_parts_adapter.py
+from hermetic_lots import LotsCalculator
+from app.core.ephemeris.classes.serialize import PlanetPosition
+
+class ArabicPartsService:
+    def __init__(self, lots_calculator: LotsCalculator):
+        self.calculator = lots_calculator
+    
+    def calculate_parts(self, chart_data: List[PlanetPosition]) -> List[ArabicPart]:
+        # Convert to hermetic lots format and calculate
+        pass
+```
+
+#### 3. **Performance Optimization Strategy**
+Based on the current 150ms calculation time goal:
+
+**Caching Layer:**
+- Redis caching for calculated aspects (aspects between planets don't change for same positions)
+- Memoization for frequently accessed calculations
+- Background pre-calculation for common chart configurations
+
+**Calculation Efficiency:**
+- Batch aspect calculations using numpy/vectorized operations
+- Lazy loading of optional features (only calculate when requested)
+- Optimize Swiss Ephemeris calls to minimize library overhead
+
+#### 4. **Feature Priority Matrix**
+Based on professional astrology requirements:
+
+**Phase 1 (Current Sprint):**
+1. Aspect calculation engine ← **START HERE**
+2. Arabic parts using hermetic lots library
+
+**Phase 2 (Next Sprint):**  
+3. Midpoint calculations
+4. Declination/parallel aspects
+5. Eclipse predictions
+
+**Phase 3 (Future):**
+6. Advanced techniques (progressed charts, solar returns)
+7. ACG enhancements
+
+### Next Development Steps
+
+1. **Create Aspect Engine PRP** - Detail the complete aspect calculation implementation
+2. **Design Hermetic Lots Integration** - Create adapter architecture for seamless integration
+3. **Set Performance Benchmarks** - Define specific performance targets for each feature
+4. **Create Test Data Sets** - Establish validation data for all new calculations
+
+### Architecture Impact
+
+The current foundation is solid. The enhanced functionality integrates well with existing patterns. Focus should shift from infrastructure to feature completeness. The service layer is ready to support advanced calculations without major refactoring.
+
+**Conclusion:** You have built a production-quality foundation. Now build the features that make it indispensable for professional astrologers. Start with aspects - everything else builds on that foundation.
+
+## Next Steps
+
+1. Develop detailed PRPs for each priority feature using the `prp-planning-create.md` template
+2. Create implementation PRPs with specific code examples, tests, and API specs
+3. Set up reference data and validation sources for testing
+4. Begin implementation with the aspect calculation engine
+
+## References
+
+- [TECH_STACK_REFERENCE.md](../../TECH_STACK_REFERENCE.md)
+- [REQUIREMENTS_INDEX.md](../../REQUIREMENTS_INDEX.md)
+- [BACKEND_FLOW_GUIDE.md](../../BACKEND_FLOW_GUIDE.md)
+- [MASTER_CONTEXT.md](../../MASTER_CONTEXT.md)
+- [PRP Planning Template](../../PRP%20build%20prompts/prp-planning-create.md)

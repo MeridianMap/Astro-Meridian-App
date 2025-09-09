@@ -24,14 +24,14 @@ import threading
 
 from .subject import Subject, SubjectData
 from ..tools.ephemeris import get_planet, get_houses, get_angles, ChartAngles
-from ..classes.serialize import PlanetPosition, HouseSystem
+from ..tools.ephemeris import PlanetPosition, HouseSystem
 from ..tools.position import (
     angular_separation, get_closest_aspect_angle, get_position_summary,
     is_in_same_sign, is_in_same_element, is_in_same_modality
 )
 from ..const import (
     SwePlanets, MODERN_PLANETS, MAJOR_ASTEROIDS, LUNAR_NODES,
-    LILITH_POINTS, HouseSystems, PLANET_NAMES
+    LILITH_POINTS, HouseSystems, PLANET_NAMES, get_planet_name
 )
 from ..settings import settings
 
@@ -331,8 +331,8 @@ class NatalChart:
                     aspects.append(AspectData(
                         object1_id=obj1_id,
                         object2_id=obj2_id,
-                        object1_name=PLANET_NAMES.get(obj1_id, f"Object {obj1_id}"),
-                        object2_name=PLANET_NAMES.get(obj2_id, f"Object {obj2_id}"),
+                        object1_name=get_planet_name(obj1_id),
+                        object2_name=get_planet_name(obj2_id),
                         aspect_name=aspect_name,
                         angle=aspect_info['angle'],
                         orb=orb,

@@ -18,7 +18,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from ..const import normalize_longitude
-from ..classes.serialize import PlanetPosition
+from ..tools.ephemeris import PlanetPosition
 
 
 class AspectType(Enum):
@@ -356,14 +356,9 @@ class AspectCalculator:
             return future_diff_from_exact < current_diff_from_exact
     
     def _get_planet_name(self, planet_id: int) -> str:
-        """Convert planet ID to name."""
-        # Mapping from Swiss Ephemeris IDs to planet names
-        planet_names = {
-            0: 'sun', 1: 'moon', 2: 'mercury', 3: 'venus', 4: 'mars',
-            5: 'jupiter', 6: 'saturn', 7: 'uranus', 8: 'neptune', 9: 'pluto',
-            11: 'true_node', 15: 'chiron'
-        }
-        return planet_names.get(planet_id, f'planet_{planet_id}')
+        """Convert planet ID to name using consistent naming."""
+        from ..const import get_planet_name
+        return get_planet_name(planet_id)
     
     def calculate_aspect_matrix(self, positions: List[PlanetPosition]) -> AspectMatrix:
         """
@@ -681,9 +676,9 @@ class BatchAspectCalculator:
         return results
     
     def _get_planet_name(self, planet_id: int) -> str:
-        """Get planet name from ID."""
-        from ..const import PLANET_NAMES
-        return PLANET_NAMES.get(planet_id, f"Planet_{planet_id}")
+        """Get planet name from ID using consistent naming."""
+        from ..const import get_planet_name
+        return get_planet_name(planet_id)
     
     def calculate_batch_aspects_parallel(self, position_batches: List[List[PlanetPosition]]) -> List[AspectMatrix]:
         """

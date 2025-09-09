@@ -212,7 +212,8 @@ async def calculate_natal_chart_enhanced(
             include_arabic_parts=request.include_arabic_parts,
             arabic_parts_selection=request.arabic_parts_selection,
             include_all_traditional_parts=request.include_all_traditional_parts,
-            custom_arabic_formulas=request.custom_arabic_formulas
+            custom_arabic_formulas=request.custom_arabic_formulas,
+            include_dignities=request.include_dignities
         )
         
         # Format response according to enhanced schema
@@ -343,19 +344,51 @@ def _format_enhanced_response(result_dict: dict, metadata_level: str) -> NatalCh
                 traditional_source=part_data.get('traditional_source', '')
             )
         
+        # Convert formulas_used from dict to list (schema expects list)
+        formulas_used_dict = arabic_parts_data.get('formulas_used', {})
+        formulas_used_list = list(formulas_used_dict.keys()) if isinstance(formulas_used_dict, dict) else []
+        
         arabic_parts_response = ArabicPartsResponse(
             sect_determination=sect_response,
             arabic_parts=formatted_parts,
-            formulas_used=arabic_parts_data.get('formulas_used', []),
+            formulas_used=formulas_used_list,
             calculation_time_ms=arabic_parts_data.get('calculation_time_ms', 0.0),
             total_parts_calculated=arabic_parts_data.get('total_parts_calculated', 0)
         )
     
+    # Format planets properly with enhanced data
+    from ..api.models.schemas import PlanetResponse, EssentialDignityInfo
+    formatted_planets = {}
+    
+    for planet_name, planet_data in result_dict.get('planets', {}).items():
+        # Create essential dignity info if present
+        dignity_info = None
+        if 'essential_dignities' in planet_data and planet_data['essential_dignities']:
+            dignity_info = EssentialDignityInfo(**planet_data['essential_dignities'])
+        
+        # Create properly formatted planet response
+        formatted_planet = PlanetResponse(
+            name=planet_data.get('name', planet_name),
+            longitude=planet_data.get('longitude'),
+            latitude=planet_data.get('latitude'),
+            distance=planet_data.get('distance'),
+            longitude_speed=planet_data.get('longitude_speed'),
+            is_retrograde=planet_data.get('is_retrograde', False),
+            motion_type=planet_data.get('motion_type', 'direct'),
+            sign_name=planet_data.get('sign_name'),
+            sign_longitude=planet_data.get('sign_longitude'),
+            house_number=planet_data.get('house_number'),
+            element=planet_data.get('element'),
+            modality=planet_data.get('modality'),
+            essential_dignities=dignity_info
+        )
+        formatted_planets[planet_name] = formatted_planet
+
     # Build enhanced response
     enhanced_response = NatalChartEnhancedResponse(
         success=result_dict.get('success', True),
         subject=result_dict['subject'],
-        planets=result_dict['planets'],
+        planets=formatted_planets,
         houses=result_dict['houses'],
         angles=result_dict['angles'],
         aspects=enhanced_aspects,
@@ -547,6 +580,100 @@ async def get_supported_objects():
             }
         }
     }
+
+
+def _format_enhanced_response(result_dict: dict, metadata_level: str) -> NatalChartEnhancedResponse:
+    """
+    Format the enhanced chart calculation result into the proper response schema.
+    
+    Args:
+        result_dict: Raw result dictionary from service
+        metadata_level: Level of metadata detail to include
+        
+    Returns:
+        Formatted enhanced response
+    """
+    # Extract base natal chart data
+    success = result_dict.get('success', True)
+    subject = result_dict.get('subject', {})
+    planets = result_dict.get('planets', {})
+    houses = result_dict.get('houses', {})
+    angles = result_dict.get('angles', {})
+    aspects = result_dict.get('aspects', [])
+    
+    # Extract enhanced features
+    arabic_parts_data = result_dict.get('arabic_parts', {})
+    
+    # Extract calculation metadata
+    calculation_time = result_dict.get('calculation_time')
+    aspect_matrix_data = result_dict.get('aspect_matrix', {})
+    
+    # Determine features included based on what's in the result
+    features_included = []
+    if aspects:
+        features_included.append('aspects')
+    if arabic_parts_data:
+        features_included.append('arabic_parts')
+    if result_dict.get('include_dignities'):
+        features_included.append('dignities')
+    if result_dict.get('include_retrograde_analysis'):
+        features_included.append('retrograde_analysis')
+    
+    # Format Arabic parts data into proper response structure or None
+    arabic_parts = None
+    if arabic_parts_data and isinstance(arabic_parts_data, dict):
+        # If there's Arabic parts data, try to format it properly
+        # For now, if we don't have proper sect determination data, set to None
+        if 'sect_determination' in arabic_parts_data and 'arabic_parts' in arabic_parts_data:
+            try:
+                arabic_parts = ArabicPartsResponse(**arabic_parts_data)
+            except Exception:
+                # If validation fails, set to None rather than crash
+                arabic_parts = None
+    
+    # Create calculation metadata based on level
+    metadata = CalculationMetadata(
+        calculation_time=calculation_time,
+        features_included=features_included
+    )
+    
+    # Add additional metadata based on level
+    if metadata_level in ['full', 'audit']:
+        metadata.aspect_calculation_time_ms = aspect_matrix_data.get('calculation_time_ms')
+        metadata.orb_system_used = aspect_matrix_data.get('orb_config_used')
+        
+    if metadata_level == 'audit':
+        # Add comprehensive performance metrics for audit level
+        metadata.performance_metrics = {
+            'total_calculation_time_ms': (calculation_time or 0) * 1000,
+            'aspect_count': len(aspects),
+            'arabic_parts_count': len(arabic_parts_data) if isinstance(arabic_parts_data, dict) and 'arabic_parts' in arabic_parts_data else 0
+        }
+    
+    # Create aspect matrix response if available
+    aspect_matrix = None
+    if aspect_matrix_data:
+        aspect_matrix = AspectMatrixResponse(
+            total_aspects=aspect_matrix_data.get('total_aspects', len(aspects)),
+            major_aspects=aspect_matrix_data.get('major_aspects', 0),
+            minor_aspects=aspect_matrix_data.get('minor_aspects', 0),
+            orb_config_used=aspect_matrix_data.get('orb_config_used', 'unknown'),
+            calculation_time_ms=aspect_matrix_data.get('calculation_time_ms', 0.0)
+        )
+    
+    # Create enhanced response
+    return NatalChartEnhancedResponse(
+        success=success,
+        subject=subject,
+        planets=planets,
+        houses=houses,
+        angles=angles,
+        aspects=aspects,
+        aspect_matrix=aspect_matrix,
+        arabic_parts=arabic_parts,
+        calculation_metadata=metadata,
+        chart_type="natal_enhanced"
+    )
 
 
 # Note: Exception handlers are defined in main.py for the full application

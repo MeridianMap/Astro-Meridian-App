@@ -29,7 +29,7 @@ from .arabic_parts_models import (
     CalculationMethod, ChartSect, BatchArabicPartsRequest, BatchArabicPartsResult
 )
 from .sect_calculator import SectCalculator, SectAnalysisData, determine_chart_sect
-from ..classes.serialize import PlanetPosition, HouseSystem, ChartData
+from ..tools.ephemeris import PlanetPosition, HouseSystem, ChartData
 from ..classes.cache import get_global_cache
 from ..classes.redis_cache import get_redis_cache, cache_result
 from ..const import normalize_longitude
@@ -602,8 +602,8 @@ class ArabicPartsCalculator:
                 chart_data.houses.imum_coeli
             ],
             "requested_lots": sorted(request.get_all_requested_lots()),
-            "calculation_method": request.calculation_method.value if request.calculation_method else "traditional",
-            "house_system": request.house_system.value if request.house_system else "placidus",
+            "calculation_method": request.calculation_method.value if hasattr(request.calculation_method, 'value') else request.calculation_method,
+            "house_system": request.house_system.value if hasattr(request.house_system, 'value') else request.house_system,
             "custom_formulas": request.custom_formulas or {}
         }
         

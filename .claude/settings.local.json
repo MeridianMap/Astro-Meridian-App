@@ -1,23 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir:*)",
-      "Bash(python:*)",
-      "Bash(pip install:*)",
-      "Bash(venvScriptspython -m pytest tests/core/ephemeris/tools/test_predictive.py -v)",
-      "Bash(venv\\Scripts\\python -m pytest tests/core/ephemeris/tools/test_predictive.py -v)",
-      "Bash(source:*)",
       "Bash(find:*)",
-      "Bash(venvScripts:*)",
-      "Bash(\"venv/Scripts/python.exe\" -m pip install scipy)",
-      "Bash(\"venv/Scripts/python.exe\" -c \"import scipy; print(f''scipy version: {scipy.__version__}'')\")",
-      "Bash(\"venv/Scripts/python.exe\" -m app.main)",
-      "Bash(\"venv/Scripts/python.exe\" test_main_minimal.py)",
-      "Bash(\"venv/Scripts/python.exe\" -m pip install requests)",
-      "Bash(\"venv/Scripts/python.exe\" \"../PRPS CONSTRUCTION MAGIC/Ephemeris Build/ephemeris_build/SAMPLE_OUTPUT_VALIDATION_AND_FIXES/test_live_api.py\")",
-      "Bash(\"C:\\Users\\jacks\\OneDrive\\Desktop\\MERIDIAN\\Meridian DEV\\ASTRO MERIDIAN APP V1.0\\backend\\venv\\Scripts\\python.exe\" test_live_api.py)",
-      "Bash(\"C:\\Users\\jacks\\OneDrive\\Desktop\\MERIDIAN\\Meridian DEV\\ASTRO MERIDIAN APP V1.0\\backend\\venv\\Scripts\\python.exe\" -c \"\nimport requests\ndata = {\n    ''subject'': {\n        ''name'': ''Test Subject'',\n        ''datetime'': {''iso_string'': ''1990-06-15T14:30:00-04:00''},\n        ''coordinates'': {''latitude'': 40.7128, ''longitude'': -74.0060},\n        ''timezone'': {''name'': ''America/New_York''}\n    },\n    ''configuration'': {\n        ''house_system'': ''P''\n    }\n}\nresponse = requests.post(''http://localhost:8000/ephemeris/natal'', json=data)\nprint(f''Status: {response.status_code}'')\nprint(f''Response: {response.text}'')\n\")",
-      "WebSearch"
+      "Bash(python:*)",
+      "WebFetch(domain:www.astro.com)",
+      "WebSearch",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": [],

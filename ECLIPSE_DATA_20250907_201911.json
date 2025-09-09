@@ -1,0 +1,22 @@
+﻿{
+    "success":  true,
+    "eclipses":  {
+                     "solar":  [
+
+                               ],
+                     "lunar":  [
+
+                               ]
+                 },
+    "total_count":  0,
+    "search_range_years":  1.0,
+    "metadata":  {
+                     "calculation_type":  "eclipse_range_search",
+                     "processing_time_ms":  16.798000000000002,
+                     "search_range_years":  1.0,
+                     "nasa_validated":  true,
+                     "accuracy_statement":  null,
+                     "performance_note":  "Found 0 eclipses in 17ms",
+                     "cache_status":  null
+                 }
+}

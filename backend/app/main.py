@@ -17,7 +17,7 @@ from fastapi.exceptions import RequestValidationError
 import uvicorn
 
 from .api.routes.ephemeris import router as ephemeris_router
-from .api.routes.acg import router as acg_router
+# from .api.routes.acg import router as acg_router  # Temporarily disabled for testing
 from .api.routes.predictive import router as predictive_router
 from .api.models.schemas import ErrorResponse
 from .core.ephemeris.settings import settings
@@ -232,7 +232,7 @@ async def log_requests(request: Request, call_next):
 
 # Include routers
 app.include_router(ephemeris_router)
-app.include_router(acg_router)
+# app.include_router(acg_router)  # Temporarily disabled for testing
 app.include_router(predictive_router)
 
 

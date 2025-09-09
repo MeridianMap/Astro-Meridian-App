@@ -1,0 +1,2703 @@
+{
+  "test_metadata": {
+    "timestamp": "2025-09-05T14:10:18.820387",
+    "test_case": "June 15, 1990, 2:30 PM EDT, NYC",
+    "server_url": "http://localhost:8000",
+    "description": "Authentic API samples from running Meridian Ephemeris system"
+  },
+  "basic_natal": {
+    "status": "SUCCESS",
+    "data": {
+      "success": true,
+      "subject": {
+        "name": "Test Subject",
+        "datetime": "1990-06-15T14:30:00-04:00",
+        "julian_day": 2448058.2708333335,
+        "latitude": 40.7128,
+        "longitude": -74.00599999999997,
+        "altitude": 0.0,
+        "timezone_name": "America/New_York",
+        "utc_offset": null
+      },
+      "planets": {
+        "Jupiter": {
+          "name": "Jupiter",
+          "longitude": 105.9482619199308,
+          "latitude": 0.18589992874238115,
+          "distance": 6.142213803214582,
+          "longitude_speed": 0.21488327654139994,
+          "sign_name": "Cancer",
+          "sign_longitude": 15.9482619199308,
+          "house_number": 10,
+          "element": "Water",
+          "modality": "Cardinal"
+        },
+        "Chiron": {
+          "name": "Chiron",
+          "longitude": 106.0880310036315,
+          "latitude": -6.265979520042427,
+          "distance": 11.929638859483576,
+          "longitude_speed": 0.1003639141572421,
+          "sign_name": "Cancer",
+          "sign_longitude": 16.0880310036315,
+          "house_number": 10,
+          "element": "Water",
+          "modality": "Cardinal"
+        },
+        "Uranus": {
+          "name": "Uranus",
+          "longitude": 278.1546059527975,
+          "latitude": -0.3238732539166714,
+          "distance": 18.421515769948343,
+          "longitude_speed": -0.038297271203191485,
+          "sign_name": "Capricorn",
+          "sign_longitude": 8.15460595279751,
+          "house_number": 3,
+          "element": "Earth",
+          "modality": "Cardinal"
+        },
+        "Moon": {
+          "name": "Moon",
+          "longitude": 348.162365463909,
+          "latitude": 3.067911225257871,
+          "distance": 0.0025508417291149983,
+          "longitude_speed": 15.477956771405843,
+          "sign_name": "Pisces",
+          "sign_longitude": 18.162365463908998,
+          "house_number": 5,
+          "element": "Water",
+          "modality": "Mutable"
+        },
+        "Mars": {
+          "name": "Mars",
+          "longitude": 11.234160864844053,
+          "latitude": -1.9873798202321462,
+          "distance": 1.2775566453548362,
+          "longitude_speed": 0.7189826830700241,
+          "sign_name": "Aries",
+          "sign_longitude": 11.234160864844053,
+          "house_number": 6,
+          "element": "Fire",
+          "modality": "Cardinal"
+        },
+        "Object 18": {
+          "name": "Object 18",
+          "longitude": 76.13381614844894,
+          "latitude": -23.959820935229388,
+          "distance": 3.1468342247509713,
+          "longitude_speed": 0.576054036827145,
+          "sign_name": "Gemini",
+          "sign_longitude": 16.133816148448943,
+          "house_number": 9,
+          "element": "Air",
+          "modality": "Mutable"
+        },
+        "Mercury": {
+          "name": "Mercury",
+          "longitude": 66.15589797848531,
+          "latitude": -1.6150150099147171,
+          "distance": 1.1159726141108974,
+          "longitude_speed": 1.7201494508611859,
+          "sign_name": "Gemini",
+          "sign_longitude": 6.155897978485314,
+          "house_number": 8,
+          "element": "Air",
+          "modality": "Mutable"
+        },
+        "Object 19": {
+          "name": "Object 19",
+          "longitude": 220.2996433077378,
+          "latitude": 15.148568764535865,
+          "distance": 2.568971636033948,
+          "longitude_speed": -0.09851792711401686,
+          "sign_name": "Scorpio",
+          "sign_longitude": 10.299643307737796,
+          "house_number": 1,
+          "element": "Water",
+          "modality": "Fixed"
+        },
+        "Saturn": {
+          "name": "Saturn",
+          "longitude": 294.01590471617146,
+          "latitude": 0.11614994866708657,
+          "distance": 9.117538794995262,
+          "longitude_speed": -0.05768892066271292,
+          "sign_name": "Capricorn",
+          "sign_longitude": 24.015904716171462,
+          "house_number": 4,
+          "element": "Earth",
+          "modality": "Cardinal"
+        },
+        "Venus": {
+          "name": "Venus",
+          "longitude": 49.09465689059391,
+          "latitude": -1.9416804905375338,
+          "distance": 1.2564690487969685,
+          "longitude_speed": 1.1708675638999466,
+          "sign_name": "Taurus",
+          "sign_longitude": 19.09465689059391,
+          "house_number": 8,
+          "element": "Earth",
+          "modality": "Fixed"
+        },
+        "Pluto": {
+          "name": "Pluto",
+          "longitude": 225.39608787145914,
+          "latitude": 15.85193835735814,
+          "distance": 28.892136114440287,
+          "longitude_speed": -0.01950618596424647,
+          "sign_name": "Scorpio",
+          "sign_longitude": 15.396087871459144,
+          "house_number": 2,
+          "element": "Water",
+          "modality": "Fixed"
+        },
+        "Object 17": {
+          "name": "Object 17",
+          "longitude": 117.99298669168056,
+          "latitude": 6.274634393097141,
+          "distance": 3.342378597399397,
+          "longitude_speed": 0.4229038998460055,
+          "sign_name": "Cancer",
+          "sign_longitude": 27.992986691680557,
+          "house_number": 10,
+          "element": "Water",
+          "modality": "Cardinal"
+        },
+        "Neptune": {
+          "name": "Neptune",
+          "longitude": 283.7102243976802,
+          "latitude": 0.8762085856697986,
+          "distance": 29.246279531694345,
+          "longitude_speed": -0.024651729404467915,
+          "sign_name": "Capricorn",
+          "sign_longitude": 13.710224397680179,
+          "house_number": 3,
+          "element": "Earth",
+          "modality": "Cardinal"
+        },
+        "Sun": {
+          "name": "Sun",
+          "longitude": 84.38753136315658,
+          "latitude": -0.0006035666293238158,
+          "distance": 1.0157536032251395,
+          "longitude_speed": 0.9443275497034165,
+          "sign_name": "Gemini",
+          "sign_longitude": 24.387531363156583,
+          "house_number": 9,
+          "element": "Air",
+          "modality": "Mutable"
+        },
+        "Object 20": {
+          "name": "Object 20",
+          "longitude": 34.91585168768069,
+          "latitude": -5.860586225452756,
+          "distance": 2.9927515857386253,
+          "longitude_speed": 0.40162230813933775,
+          "sign_name": "Taurus",
+          "sign_longitude": 4.915851687680693,
+          "house_number": 7,
+          "element": "Earth",
+          "modality": "Fixed"
+        },
+        "North Node (Mean)": {
+          "name": "North Node (Mean)",
+          "longitude": 309.6835375618736,
+          "latitude": 0.0,
+          "distance": 0.00256955528979999,
+          "longitude_speed": -0.052971454636008275,
+          "sign_name": "Aquarius",
+          "sign_longitude": 9.683537561873607,
+          "house_number": 4,
+          "element": "Air",
+          "modality": "Fixed"
+        },
+        "North Node (True)": {
+          "name": "North Node (True)",
+          "longitude": 308.1249689313414,
+          "latitude": 0.0,
+          "distance": 0.00262889491560777,
+          "longitude_speed": 0.00709231989020509,
+          "sign_name": "Aquarius",
+          "sign_longitude": 8.124968931341414,
+          "house_number": 4,
+          "element": "Air",
+          "modality": "Fixed"
+        },
+        "Lilith (Mean)": {
+          "name": "Lilith (Mean)",
+          "longitude": 234.98165087827766,
+          "latitude": -4.964002557790773,
+          "distance": 0.0027106251317225464,
+          "longitude_speed": 0.11195831589816407,
+          "sign_name": "Scorpio",
+          "sign_longitude": 24.981650878277662,
+          "house_number": 2,
+          "element": "Water",
+          "modality": "Fixed"
+        },
+        "Lilith (True)": {
+          "name": "Lilith (True)",
+          "longitude": 259.2668645908239,
+          "latitude": -3.893686552349398,
+          "distance": 0.002681148942133562,
+          "longitude_speed": 0.5768945018979821,
+          "sign_name": "Sagittarius",
+          "sign_longitude": 19.2668645908239,
+          "house_number": 3,
+          "element": "Fire",
+          "modality": "Mutable"
+        }
+      },
+      "houses": {
+        "system": "P",
+        "cusps": [
+          193.6954086349381,
+          220.77125800103693,
+          251.9193149156714,
+          285.922096222,
+          319.30542379034597,
+          348.90271332309237,
+          13.695408634938076,
+          40.77125800103693,
+          71.91931491567141,
+          105.92209622200001,
+          139.30542379034597,
+          168.90271332309237
+        ]
+      },
+      "angles": {
+        "ascendant": 193.6954086349381,
+        "midheaven": 105.92209622200001,
+        "descendant": 13.695408634938076,
+        "imum_coeli": 285.922096222
+      },
+      "aspects": [
+        {
+          "object1": "Jupiter",
+          "object2": "Chiron",
+          "aspect": "Conjunction",
+          "angle": 0.0,
+          "orb": 0.13976908370068486,
+          "applying": null
+        },
+        {
+          "object1": "Jupiter",
+          "object2": "Uranus",
+          "aspect": "Opposition",
+          "angle": 180.0,
+          "orb": 7.793655967133304,
+          "applying": true
+        },
+        {
+          "object1": "Jupiter",
+          "object2": "Moon",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 2.214103543978183,
+          "applying": true
+        },
+        {
+          "object1": "Jupiter",
+          "object2": "Mars",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 4.7141010550867435,
+          "applying": false
+        },
+        {
+          "object1": "Jupiter",
+          "object2": "Object 19",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 5.64861861219299,
+          "applying": true
+        },
+        {
+          "object1": "Jupiter",
+          "object2": "Venus",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 3.14639497066311,
+          "applying": true
+        },
+        {
+          "object1": "Jupiter",
+          "object2": "Pluto",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 0.5521740484716702,
+          "applying": true
+        },
+        {
+          "object1": "Jupiter",
+          "object2": "Neptune",
+          "aspect": "Opposition",
+          "angle": 180.0,
+          "orb": 2.238037522250636,
+          "applying": true
+        },
+        {
+          "object1": "Chiron",
+          "object2": "Uranus",
+          "aspect": "Opposition",
+          "angle": 180.0,
+          "orb": 7.933425050833989,
+          "applying": true
+        },
+        {
+          "object1": "Chiron",
+          "object2": "Moon",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 2.0743344602774982,
+          "applying": true
+        },
+        {
+          "object1": "Chiron",
+          "object2": "Mars",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 4.853870138787443,
+          "applying": false
+        },
+        {
+          "object1": "Chiron",
+          "object2": "Object 19",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 5.788387695893704,
+          "applying": true
+        },
+        {
+          "object1": "Chiron",
+          "object2": "Saturn",
+          "aspect": "Opposition",
+          "angle": 180.0,
+          "orb": 7.927873712539963,
+          "applying": true
+        },
+        {
+          "object1": "Chiron",
+          "object2": "Venus",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 3.0066258869624107,
+          "applying": true
+        },
+        {
+          "object1": "Chiron",
+          "object2": "Pluto",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 0.691943132172355,
+          "applying": true
+        },
+        {
+          "object1": "Chiron",
+          "object2": "Neptune",
+          "aspect": "Opposition",
+          "angle": 180.0,
+          "orb": 2.3778066059513208,
+          "applying": true
+        },
+        {
+          "object1": "Uranus",
+          "object2": "Mars",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 3.0795549120465466,
+          "applying": false
+        },
+        {
+          "object1": "Uranus",
+          "object2": "Object 19",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 2.1450373549402855,
+          "applying": true
+        },
+        {
+          "object1": "Uranus",
+          "object2": "Neptune",
+          "aspect": "Conjunction",
+          "angle": 0.0,
+          "orb": 5.555618444882668,
+          "applying": null
+        },
+        {
+          "object1": "Uranus",
+          "object2": "Object 20",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 3.2387542651168246,
+          "applying": true
+        },
+        {
+          "object1": "Moon",
+          "object2": "Object 18",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 2.0285493154600545,
+          "applying": true
+        },
+        {
+          "object1": "Moon",
+          "object2": "Object 19",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 7.862722156171202,
+          "applying": false
+        },
+        {
+          "object1": "Moon",
+          "object2": "Saturn",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 5.853539252262465,
+          "applying": true
+        },
+        {
+          "object1": "Moon",
+          "object2": "Venus",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 0.9322914266849125,
+          "applying": false
+        },
+        {
+          "object1": "Moon",
+          "object2": "Pluto",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 2.7662775924498533,
+          "applying": false
+        },
+        {
+          "object1": "Moon",
+          "object2": "Neptune",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 4.452141066228819,
+          "applying": false
+        },
+        {
+          "object1": "Moon",
+          "object2": "Sun",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 6.2251658992475996,
+          "applying": false
+        },
+        {
+          "object1": "Moon",
+          "object2": "Lilith (Mean)",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 6.8192854143686645,
+          "applying": true
+        },
+        {
+          "object1": "Moon",
+          "object2": "Lilith (True)",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 1.1044991269149023,
+          "applying": true
+        },
+        {
+          "object1": "Mars",
+          "object2": "Object 18",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 4.899655283604886,
+          "applying": false
+        },
+        {
+          "object1": "Mars",
+          "object2": "Mercury",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 5.078262886358743,
+          "applying": true
+        },
+        {
+          "object1": "Mars",
+          "object2": "Neptune",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 2.476063532836122,
+          "applying": true
+        },
+        {
+          "object1": "Mars",
+          "object2": "North Node (Mean)",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 1.5506233029704504,
+          "applying": false
+        },
+        {
+          "object1": "Mars",
+          "object2": "North Node (True)",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 3.1091919335026432,
+          "applying": false
+        },
+        {
+          "object1": "Object 18",
+          "object2": "North Node (Mean)",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 6.450278586575337,
+          "applying": false
+        },
+        {
+          "object1": "Object 18",
+          "object2": "Lilith (True)",
+          "aspect": "Opposition",
+          "angle": 180.0,
+          "orb": 3.1330484423749567,
+          "applying": true
+        },
+        {
+          "object1": "Mercury",
+          "object2": "North Node (Mean)",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 3.527639583388293,
+          "applying": true
+        },
+        {
+          "object1": "Mercury",
+          "object2": "North Node (True)",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 1.9690709528561001,
+          "applying": true
+        },
+        {
+          "object1": "Object 19",
+          "object2": "Pluto",
+          "aspect": "Conjunction",
+          "angle": 0.0,
+          "orb": 5.09644456372132,
+          "applying": null
+        },
+        {
+          "object1": "Object 19",
+          "object2": "Neptune",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 3.4105810899424114,
+          "applying": false
+        },
+        {
+          "object1": "Object 19",
+          "object2": "Object 20",
+          "aspect": "Opposition",
+          "angle": 180.0,
+          "orb": 5.38379162005711,
+          "applying": true
+        },
+        {
+          "object1": "Object 19",
+          "object2": "North Node (Mean)",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 0.6161057458641608,
+          "applying": true
+        },
+        {
+          "object1": "Object 19",
+          "object2": "North Node (True)",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 2.1746743763964105,
+          "applying": true
+        },
+        {
+          "object1": "Saturn",
+          "object2": "Venus",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 4.921247825577552,
+          "applying": true
+        },
+        {
+          "object1": "Saturn",
+          "object2": "Object 17",
+          "aspect": "Opposition",
+          "angle": 180.0,
+          "orb": 3.977081975509094,
+          "applying": true
+        },
+        {
+          "object1": "Saturn",
+          "object2": "Lilith (Mean)",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 0.9657461621061998,
+          "applying": true
+        },
+        {
+          "object1": "Venus",
+          "object2": "Pluto",
+          "aspect": "Opposition",
+          "angle": 180.0,
+          "orb": 3.6985690191347658,
+          "applying": true
+        },
+        {
+          "object1": "Venus",
+          "object2": "Neptune",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 5.3844324929137315,
+          "applying": false
+        },
+        {
+          "object1": "Venus",
+          "object2": "Lilith (Mean)",
+          "aspect": "Opposition",
+          "angle": 180.0,
+          "orb": 5.886993987683752,
+          "applying": true
+        },
+        {
+          "object1": "Pluto",
+          "object2": "Neptune",
+          "aspect": "Sextile",
+          "angle": 60.0,
+          "orb": 1.6858634737789657,
+          "applying": true
+        },
+        {
+          "object1": "Pluto",
+          "object2": "North Node (Mean)",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 5.712550309585538,
+          "applying": true
+        },
+        {
+          "object1": "Object 17",
+          "object2": "Object 20",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 6.922864996000129,
+          "applying": true
+        },
+        {
+          "object1": "Object 17",
+          "object2": "Lilith (Mean)",
+          "aspect": "Trine",
+          "angle": 120.0,
+          "orb": 3.0113358134028942,
+          "applying": true
+        },
+        {
+          "object1": "Sun",
+          "object2": "Lilith (True)",
+          "aspect": "Opposition",
+          "angle": 180.0,
+          "orb": 5.120666772332697,
+          "applying": true
+        },
+        {
+          "object1": "Object 20",
+          "object2": "North Node (Mean)",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 4.767685874192921,
+          "applying": true
+        },
+        {
+          "object1": "Object 20",
+          "object2": "North Node (True)",
+          "aspect": "Square",
+          "angle": 90.0,
+          "orb": 3.209117243660728,
+          "applying": true
+        },
+        {
+          "object1": "North Node (Mean)",
+          "object2": "North Node (True)",
+          "aspect": "Conjunction",
+          "angle": 0.0,
+          "orb": 1.5585686305321929,
+          "applying": null
+        }
+      ],
+      "calculation_time": "2025-09-05T14:10:20.874229",
+      "chart_type": "natal"
+    },
+    "analysis": {
+      "total_planets": 19,
+      "planet_names": [
+        "Jupiter",
+        "Chiron",
+        "Uranus",
+        "Moon",
+        "Mars",
+        "Object 18",
+        "Mercury",
+        "Object 19",
+        "Saturn",
+        "Venus",
+        "Pluto",
+        "Object 17",
+        "Neptune",
+        "Sun",
+        "Object 20",
+        "North Node (Mean)",
+        "North Node (True)",
+        "Lilith (Mean)",
+        "Lilith (True)"
+      ],
+      "sun_longitude": 84.38753136315658,
+      "house_system": "P",
+      "calculation_time": "2025-09-05T14:10:20.874229",
+      "response_size_kb": 12.2314453125
+    }
+  },
+  "enhanced_natal": {
+    "status": "SUCCESS",
+    "data": {
+      "success": true,
+      "subject": {
+        "name": "Enhanced Test Subject",
+        "datetime": "1990-06-15T14:30:00-04:00",
+        "julian_day": 2448058.2708333335,
+        "latitude": 40.7128,
+        "longitude": -74.00599999999997,
+        "altitude": 0.0,
+        "timezone_name": "America/New_York",
+        "utc_offset": null
+      },
+      "planets": {
+        "Mars": {
+          "name": "Mars",
+          "longitude": 11.234160864844053,
+          "latitude": -1.9873798202321462,
+          "distance": 1.2775566453548362,
+          "longitude_speed": 0.7189826830700241,
+          "sign_name": "Aries",
+          "sign_longitude": 11.234160864844053,
+          "house_number": 6,
+          "element": "Fire",
+          "modality": "Cardinal"
+        },
+        "Venus": {
+          "name": "Venus",
+          "longitude": 49.09465689059391,
+          "latitude": -1.9416804905375338,
+          "distance": 1.2564690487969685,
+          "longitude_speed": 1.1708675638999466,
+          "sign_name": "Taurus",
+          "sign_longitude": 19.09465689059391,
+          "house_number": 8,
+          "element": "Earth",
+          "modality": "Fixed"
+        },
+        "Object 18": {
+          "name": "Object 18",
+          "longitude": 76.13381614844894,
+          "latitude": -23.959820935229388,
+          "distance": 3.1468342247509713,
+          "longitude_speed": 0.576054036827145,
+          "sign_name": "Gemini",
+          "sign_longitude": 16.133816148448943,
+          "house_number": 9,
+          "element": "Air",
+          "modality": "Mutable"
+        },
+        "Moon": {
+          "name": "Moon",
+          "longitude": 348.162365463909,
+          "latitude": 3.067911225257871,
+          "distance": 0.0025508417291149983,
+          "longitude_speed": 15.477956771405843,
+          "sign_name": "Pisces",
+          "sign_longitude": 18.162365463908998,
+          "house_number": 5,
+          "element": "Water",
+          "modality": "Mutable"
+        },
+        "Neptune": {
+          "name": "Neptune",
+          "longitude": 283.7102243976802,
+          "latitude": 0.8762085856697986,
+          "distance": 29.246279531694345,
+          "longitude_speed": -0.024651729404467915,
+          "sign_name": "Capricorn",
+          "sign_longitude": 13.710224397680179,
+          "house_number": 3,
+          "element": "Earth",
+          "modality": "Cardinal"
+        },
+        "Sun": {
+          "name": "Sun",
+          "longitude": 84.38753136315658,
+          "latitude": -0.0006035666293238158,
+          "distance": 1.0157536032251395,
+          "longitude_speed": 0.9443275497034165,
+          "sign_name": "Gemini",
+          "sign_longitude": 24.387531363156583,
+          "house_number": 9,
+          "element": "Air",
+          "modality": "Mutable"
+        },
+        "Object 20": {
+          "name": "Object 20",
+          "longitude": 34.91585168768069,
+          "latitude": -5.860586225452756,
+          "distance": 2.9927515857386253,
+          "longitude_speed": 0.40162230813933775,
+          "sign_name": "Taurus",
+          "sign_longitude": 4.915851687680693,
+          "house_number": 7,
+          "element": "Earth",
+          "modality": "Fixed"
+        },
+        "Saturn": {
+          "name": "Saturn",
+          "longitude": 294.01590471617146,
+          "latitude": 0.11614994866708657,
+          "distance": 9.117538794995262,
+          "longitude_speed": -0.05768892066271292,
+          "sign_name": "Capricorn",
+          "sign_longitude": 24.015904716171462,
+          "house_number": 4,
+          "element": "Earth",
+          "modality": "Cardinal"
+        },
+        "Pluto": {
+          "name": "Pluto",
+          "longitude": 225.39608787145914,
+          "latitude": 15.85193835735814,
+          "distance": 28.892136114440287,
+          "longitude_speed": -0.01950618596424647,
+          "sign_name": "Scorpio",
+          "sign_longitude": 15.396087871459144,
+          "house_number": 2,
+          "element": "Water",
+          "modality": "Fixed"
+        },
+        "Uranus": {
+          "name": "Uranus",
+          "longitude": 278.1546059527975,
+          "latitude": -0.3238732539166714,
+          "distance": 18.421515769948343,
+          "longitude_speed": -0.038297271203191485,
+          "sign_name": "Capricorn",
+          "sign_longitude": 8.15460595279751,
+          "house_number": 3,
+          "element": "Earth",
+          "modality": "Cardinal"
+        },
+        "Jupiter": {
+          "name": "Jupiter",
+          "longitude": 105.9482619199308,
+          "latitude": 0.18589992874238115,
+          "distance": 6.142213803214582,
+          "longitude_speed": 0.21488327654139994,
+          "sign_name": "Cancer",
+          "sign_longitude": 15.9482619199308,
+          "house_number": 10,
+          "element": "Water",
+          "modality": "Cardinal"
+        },
+        "Object 19": {
+          "name": "Object 19",
+          "longitude": 220.2996433077378,
+          "latitude": 15.148568764535865,
+          "distance": 2.568971636033948,
+          "longitude_speed": -0.09851792711401686,
+          "sign_name": "Scorpio",
+          "sign_longitude": 10.299643307737796,
+          "house_number": 1,
+          "element": "Water",
+          "modality": "Fixed"
+        },
+        "Chiron": {
+          "name": "Chiron",
+          "longitude": 106.0880310036315,
+          "latitude": -6.265979520042427,
+          "distance": 11.929638859483576,
+          "longitude_speed": 0.1003639141572421,
+          "sign_name": "Cancer",
+          "sign_longitude": 16.0880310036315,
+          "house_number": 10,
+          "element": "Water",
+          "modality": "Cardinal"
+        },
+        "Mercury": {
+          "name": "Mercury",
+          "longitude": 66.15589797848531,
+          "latitude": -1.6150150099147171,
+          "distance": 1.1159726141108974,
+          "longitude_speed": 1.7201494508611859,
+          "sign_name": "Gemini",
+          "sign_longitude": 6.155897978485314,
+          "house_number": 8,
+          "element": "Air",
+          "modality": "Mutable"
+        },
+        "Object 17": {
+          "name": "Object 17",
+          "longitude": 117.99298669168056,
+          "latitude": 6.274634393097141,
+          "distance": 3.342378597399397,
+          "longitude_speed": 0.4229038998460055,
+          "sign_name": "Cancer",
+          "sign_longitude": 27.992986691680557,
+          "house_number": 10,
+          "element": "Water",
+          "modality": "Cardinal"
+        },
+        "North Node (Mean)": {
+          "name": "North Node (Mean)",
+          "longitude": 309.6835375618736,
+          "latitude": 0.0,
+          "distance": 0.00256955528979999,
+          "longitude_speed": -0.052971454636008275,
+          "sign_name": "Aquarius",
+          "sign_longitude": 9.683537561873607,
+          "house_number": 4,
+          "element": "Air",
+          "modality": "Fixed"
+        },
+        "North Node (True)": {
+          "name": "North Node (True)",
+          "longitude": 308.1249689313414,
+          "latitude": 0.0,
+          "distance": 0.00262889491560777,
+          "longitude_speed": 0.00709231989020509,
+          "sign_name": "Aquarius",
+          "sign_longitude": 8.124968931341414,
+          "house_number": 4,
+          "element": "Air",
+          "modality": "Fixed"
+        },
+        "Lilith (Mean)": {
+          "name": "Lilith (Mean)",
+          "longitude": 234.98165087827766,
+          "latitude": -4.964002557790773,
+          "distance": 0.0027106251317225464,
+          "longitude_speed": 0.11195831589816407,
+          "sign_name": "Scorpio",
+          "sign_longitude": 24.981650878277662,
+          "house_number": 2,
+          "element": "Water",
+          "modality": "Fixed"
+        },
+        "Lilith (True)": {
+          "name": "Lilith (True)",
+          "longitude": 259.2668645908239,
+          "latitude": -3.893686552349398,
+          "distance": 0.002681148942133562,
+          "longitude_speed": 0.5768945018979821,
+          "sign_name": "Sagittarius",
+          "sign_longitude": 19.2668645908239,
+          "house_number": 3,
+          "element": "Fire",
+          "modality": "Mutable"
+        }
+      },
+      "houses": {
+        "system": "P",
+        "cusps": [
+          193.6954086349381,
+          220.77125800103693,
+          251.9193149156714,
+          285.922096222,
+          319.30542379034597,
+          348.90271332309237,
+          13.695408634938076,
+          40.77125800103693,
+          71.91931491567141,
+          105.92209622200001,
+          139.30542379034597,
+          168.90271332309237
+        ]
+      },
+      "angles": {
+        "ascendant": 193.6954086349381,
+        "midheaven": 105.92209622200001,
+        "descendant": 13.695408634938076,
+        "imum_coeli": 285.922096222
+      },
+      "aspects": [
+        {
+          "object1": "Mars",
+          "object2": "Neptune",
+          "aspect": "Square",
+          "angle": 87.52,
+          "orb": 2.48,
+          "applying": true,
+          "strength": 0.505,
+          "exact_angle": 90.0,
+          "orb_percentage": 49.5
+        },
+        {
+          "object1": "Mars",
+          "object2": "Uranus",
+          "aspect": "Square",
+          "angle": 93.08,
+          "orb": 3.08,
+          "applying": false,
+          "strength": 0.384,
+          "exact_angle": 90.0,
+          "orb_percentage": 61.6
+        },
+        {
+          "object1": "Mars",
+          "object2": "Jupiter",
+          "aspect": "Square",
+          "angle": 94.71,
+          "orb": 4.71,
+          "applying": true,
+          "strength": 0.057,
+          "exact_angle": 90.0,
+          "orb_percentage": 94.3
+        },
+        {
+          "object1": "Mars",
+          "object2": "Sun",
+          "aspect": "Quincunx",
+          "angle": 150.93,
+          "orb": 0.93,
+          "applying": false,
+          "strength": 0.533,
+          "exact_angle": 150.0,
+          "orb_percentage": 46.7
+        },
+        {
+          "object1": "Mars",
+          "object2": "Chiron",
+          "aspect": "Square",
+          "angle": 94.85,
+          "orb": 4.85,
+          "applying": true,
+          "strength": 0.029,
+          "exact_angle": 90.0,
+          "orb_percentage": 97.1
+        },
+        {
+          "object1": "Mars",
+          "object2": "Planet 10",
+          "aspect": "Sextile",
+          "angle": 61.55,
+          "orb": 1.55,
+          "applying": false,
+          "strength": 0.557,
+          "exact_angle": 60.0,
+          "orb_percentage": 44.3
+        },
+        {
+          "object1": "Mars",
+          "object2": "True Node",
+          "aspect": "Sextile",
+          "angle": 63.11,
+          "orb": 3.11,
+          "applying": false,
+          "strength": 0.112,
+          "exact_angle": 60.0,
+          "orb_percentage": 88.8
+        },
+        {
+          "object1": "Mars",
+          "object2": "Planet 12",
+          "aspect": "Sesquiquadrate",
+          "angle": 136.25,
+          "orb": 1.25,
+          "applying": false,
+          "strength": 0.165,
+          "exact_angle": 135.0,
+          "orb_percentage": 83.5
+        },
+        {
+          "object1": "Venus",
+          "object2": "Moon",
+          "aspect": "Sextile",
+          "angle": 60.93,
+          "orb": 0.93,
+          "applying": false,
+          "strength": 0.767,
+          "exact_angle": 60.0,
+          "orb_percentage": 23.3
+        },
+        {
+          "object1": "Venus",
+          "object2": "Saturn",
+          "aspect": "Trine",
+          "angle": 115.08,
+          "orb": 4.92,
+          "applying": true,
+          "strength": 0.016,
+          "exact_angle": 120.0,
+          "orb_percentage": 98.4
+        },
+        {
+          "object1": "Venus",
+          "object2": "Pluto",
+          "aspect": "Opposition",
+          "angle": 176.3,
+          "orb": 3.7,
+          "applying": false,
+          "strength": 0.384,
+          "exact_angle": 180.0,
+          "orb_percentage": 61.6
+        },
+        {
+          "object1": "Venus",
+          "object2": "Jupiter",
+          "aspect": "Sextile",
+          "angle": 56.85,
+          "orb": 3.15,
+          "applying": false,
+          "strength": 0.101,
+          "exact_angle": 60.0,
+          "orb_percentage": 89.9
+        },
+        {
+          "object1": "Venus",
+          "object2": "Chiron",
+          "aspect": "Sextile",
+          "angle": 56.99,
+          "orb": 3.01,
+          "applying": false,
+          "strength": 0.141,
+          "exact_angle": 60.0,
+          "orb_percentage": 85.9
+        },
+        {
+          "object1": "Venus",
+          "object2": "Planet 12",
+          "aspect": "Opposition",
+          "angle": 174.11,
+          "orb": 5.89,
+          "applying": true,
+          "strength": 0.019,
+          "exact_angle": 180.0,
+          "orb_percentage": 98.1
+        },
+        {
+          "object1": "Venus",
+          "object2": "Planet 13",
+          "aspect": "Quincunx",
+          "angle": 149.83,
+          "orb": 0.17,
+          "applying": false,
+          "strength": 0.885,
+          "exact_angle": 150.0,
+          "orb_percentage": 11.5
+        },
+        {
+          "object1": "Sun",
+          "object2": "Moon",
+          "aspect": "Square",
+          "angle": 87.97,
+          "orb": 2.03,
+          "applying": false,
+          "strength": 0.662,
+          "exact_angle": 90.0,
+          "orb_percentage": 33.8
+        },
+        {
+          "object1": "Sun",
+          "object2": "Pluto",
+          "aspect": "Quincunx",
+          "angle": 149.26,
+          "orb": 0.74,
+          "applying": false,
+          "strength": 0.631,
+          "exact_angle": 150.0,
+          "orb_percentage": 36.9
+        },
+        {
+          "object1": "Sun",
+          "object2": "Jupiter",
+          "aspect": "Semi Sextile",
+          "angle": 29.81,
+          "orb": 0.19,
+          "applying": false,
+          "strength": 0.907,
+          "exact_angle": 30.0,
+          "orb_percentage": 9.3
+        },
+        {
+          "object1": "Sun",
+          "object2": "Chiron",
+          "aspect": "Semi Sextile",
+          "angle": 29.95,
+          "orb": 0.05,
+          "applying": false,
+          "strength": 0.977,
+          "exact_angle": 30.0,
+          "orb_percentage": 2.3
+        },
+        {
+          "object1": "Sun",
+          "object2": "Planet 13",
+          "aspect": "Opposition",
+          "angle": 176.87,
+          "orb": 3.13,
+          "applying": false,
+          "strength": 0.608,
+          "exact_angle": 180.0,
+          "orb_percentage": 39.2
+        },
+        {
+          "object1": "Moon",
+          "object2": "Sun",
+          "aspect": "Semi Square",
+          "angle": 46.75,
+          "orb": 1.75,
+          "applying": false,
+          "strength": 0.123,
+          "exact_angle": 45.0,
+          "orb_percentage": 87.7
+        },
+        {
+          "object1": "Moon",
+          "object2": "Pluto",
+          "aspect": "Trine",
+          "angle": 122.77,
+          "orb": 2.77,
+          "applying": false,
+          "strength": 0.539,
+          "exact_angle": 120.0,
+          "orb_percentage": 46.1
+        },
+        {
+          "object1": "Moon",
+          "object2": "Jupiter",
+          "aspect": "Trine",
+          "angle": 117.79,
+          "orb": 2.21,
+          "applying": false,
+          "strength": 0.631,
+          "exact_angle": 120.0,
+          "orb_percentage": 36.9
+        },
+        {
+          "object1": "Moon",
+          "object2": "Chiron",
+          "aspect": "Trine",
+          "angle": 117.93,
+          "orb": 2.07,
+          "applying": false,
+          "strength": 0.654,
+          "exact_angle": 120.0,
+          "orb_percentage": 34.6
+        },
+        {
+          "object1": "Moon",
+          "object2": "Planet 13",
+          "aspect": "Square",
+          "angle": 88.9,
+          "orb": 1.1,
+          "applying": false,
+          "strength": 0.816,
+          "exact_angle": 90.0,
+          "orb_percentage": 18.4
+        },
+        {
+          "object1": "Neptune",
+          "object2": "Pluto",
+          "aspect": "Sextile",
+          "angle": 58.31,
+          "orb": 1.69,
+          "applying": false,
+          "strength": 0.438,
+          "exact_angle": 60.0,
+          "orb_percentage": 56.2
+        },
+        {
+          "object1": "Neptune",
+          "object2": "Jupiter",
+          "aspect": "Opposition",
+          "angle": 177.76,
+          "orb": 2.24,
+          "applying": false,
+          "strength": 0.627,
+          "exact_angle": 180.0,
+          "orb_percentage": 37.3
+        },
+        {
+          "object1": "Neptune",
+          "object2": "Sun",
+          "aspect": "Sextile",
+          "angle": 63.41,
+          "orb": 3.41,
+          "applying": false,
+          "strength": 0.147,
+          "exact_angle": 60.0,
+          "orb_percentage": 85.3
+        },
+        {
+          "object1": "Neptune",
+          "object2": "Chiron",
+          "aspect": "Opposition",
+          "angle": 177.62,
+          "orb": 2.38,
+          "applying": false,
+          "strength": 0.524,
+          "exact_angle": 180.0,
+          "orb_percentage": 47.6
+        },
+        {
+          "object1": "Sun",
+          "object2": "Saturn",
+          "aspect": "Quincunx",
+          "angle": 150.37,
+          "orb": 0.37,
+          "applying": false,
+          "strength": 0.814,
+          "exact_angle": 150.0,
+          "orb_percentage": 18.6
+        },
+        {
+          "object1": "Sun",
+          "object2": "Sun",
+          "aspect": "Sesquiquadrate",
+          "angle": 135.91,
+          "orb": 0.91,
+          "applying": true,
+          "strength": 0.544,
+          "exact_angle": 135.0,
+          "orb_percentage": 45.6
+        },
+        {
+          "object1": "Sun",
+          "object2": "Planet 10",
+          "aspect": "Sesquiquadrate",
+          "angle": 134.7,
+          "orb": 0.3,
+          "applying": false,
+          "strength": 0.852,
+          "exact_angle": 135.0,
+          "orb_percentage": 14.8
+        },
+        {
+          "object1": "Sun",
+          "object2": "True Node",
+          "aspect": "Sesquiquadrate",
+          "angle": 136.26,
+          "orb": 1.26,
+          "applying": false,
+          "strength": 0.369,
+          "exact_angle": 135.0,
+          "orb_percentage": 63.1
+        },
+        {
+          "object1": "Sun",
+          "object2": "Planet 12",
+          "aspect": "Quincunx",
+          "angle": 150.59,
+          "orb": 0.59,
+          "applying": true,
+          "strength": 0.703,
+          "exact_angle": 150.0,
+          "orb_percentage": 29.7
+        },
+        {
+          "object1": "Sun",
+          "object2": "Planet 13",
+          "aspect": "Opposition",
+          "angle": 174.88,
+          "orb": 5.12,
+          "applying": false,
+          "strength": 0.36,
+          "exact_angle": 180.0,
+          "orb_percentage": 64.0
+        },
+        {
+          "object1": "Sun",
+          "object2": "Uranus",
+          "aspect": "Trine",
+          "angle": 116.76,
+          "orb": 3.24,
+          "applying": true,
+          "strength": 0.46,
+          "exact_angle": 120.0,
+          "orb_percentage": 54.0
+        },
+        {
+          "object1": "Sun",
+          "object2": "Sun",
+          "aspect": "Opposition",
+          "angle": 174.62,
+          "orb": 5.38,
+          "applying": true,
+          "strength": 0.327,
+          "exact_angle": 180.0,
+          "orb_percentage": 67.3
+        },
+        {
+          "object1": "Sun",
+          "object2": "Mercury",
+          "aspect": "Semi Sextile",
+          "angle": 31.24,
+          "orb": 1.24,
+          "applying": false,
+          "strength": 0.38,
+          "exact_angle": 30.0,
+          "orb_percentage": 62.0
+        },
+        {
+          "object1": "Sun",
+          "object2": "Planet 10",
+          "aspect": "Square",
+          "angle": 85.23,
+          "orb": 4.77,
+          "applying": true,
+          "strength": 0.205,
+          "exact_angle": 90.0,
+          "orb_percentage": 79.5
+        },
+        {
+          "object1": "Sun",
+          "object2": "True Node",
+          "aspect": "Square",
+          "angle": 86.79,
+          "orb": 3.21,
+          "applying": true,
+          "strength": 0.465,
+          "exact_angle": 90.0,
+          "orb_percentage": 53.5
+        },
+        {
+          "object1": "Sun",
+          "object2": "Planet 13",
+          "aspect": "Sesquiquadrate",
+          "angle": 135.65,
+          "orb": 0.65,
+          "applying": true,
+          "strength": 0.676,
+          "exact_angle": 135.0,
+          "orb_percentage": 32.4
+        },
+        {
+          "object1": "Saturn",
+          "object2": "Sun",
+          "aspect": "Opposition",
+          "angle": 176.02,
+          "orb": 3.98,
+          "applying": false,
+          "strength": 0.503,
+          "exact_angle": 180.0,
+          "orb_percentage": 49.7
+        },
+        {
+          "object1": "Saturn",
+          "object2": "Planet 12",
+          "aspect": "Sextile",
+          "angle": 59.03,
+          "orb": 0.97,
+          "applying": false,
+          "strength": 0.724,
+          "exact_angle": 60.0,
+          "orb_percentage": 27.6
+        },
+        {
+          "object1": "Pluto",
+          "object2": "Jupiter",
+          "aspect": "Trine",
+          "angle": 119.45,
+          "orb": 0.55,
+          "applying": false,
+          "strength": 0.89,
+          "exact_angle": 120.0,
+          "orb_percentage": 11.0
+        },
+        {
+          "object1": "Pluto",
+          "object2": "Sun",
+          "aspect": "Conjunction",
+          "angle": 5.1,
+          "orb": 5.1,
+          "applying": false,
+          "strength": 0.363,
+          "exact_angle": 0.0,
+          "orb_percentage": 63.7
+        },
+        {
+          "object1": "Pluto",
+          "object2": "Chiron",
+          "aspect": "Trine",
+          "angle": 119.31,
+          "orb": 0.69,
+          "applying": false,
+          "strength": 0.827,
+          "exact_angle": 120.0,
+          "orb_percentage": 17.3
+        },
+        {
+          "object1": "Uranus",
+          "object2": "Sun",
+          "aspect": "Sextile",
+          "angle": 57.85,
+          "orb": 2.15,
+          "applying": true,
+          "strength": 0.464,
+          "exact_angle": 60.0,
+          "orb_percentage": 53.6
+        },
+        {
+          "object1": "Uranus",
+          "object2": "True Node",
+          "aspect": "Semi Sextile",
+          "angle": 29.97,
+          "orb": 0.03,
+          "applying": true,
+          "strength": 0.97,
+          "exact_angle": 30.0,
+          "orb_percentage": 3.0
+        },
+        {
+          "object1": "Jupiter",
+          "object2": "Sun",
+          "aspect": "Trine",
+          "angle": 114.35,
+          "orb": 5.65,
+          "applying": false,
+          "strength": 0.059,
+          "exact_angle": 120.0,
+          "orb_percentage": 94.1
+        },
+        {
+          "object1": "Jupiter",
+          "object2": "Chiron",
+          "aspect": "Conjunction",
+          "angle": 0.14,
+          "orb": 0.14,
+          "applying": true,
+          "strength": 0.977,
+          "exact_angle": 0.0,
+          "orb_percentage": 2.3
+        },
+        {
+          "object1": "Sun",
+          "object2": "Chiron",
+          "aspect": "Trine",
+          "angle": 114.21,
+          "orb": 5.79,
+          "applying": false,
+          "strength": 0.035,
+          "exact_angle": 120.0,
+          "orb_percentage": 96.5
+        },
+        {
+          "object1": "Sun",
+          "object2": "Planet 10",
+          "aspect": "Square",
+          "angle": 89.38,
+          "orb": 0.62,
+          "applying": true,
+          "strength": 0.897,
+          "exact_angle": 90.0,
+          "orb_percentage": 10.3
+        },
+        {
+          "object1": "Sun",
+          "object2": "True Node",
+          "aspect": "Square",
+          "angle": 87.83,
+          "orb": 2.17,
+          "applying": true,
+          "strength": 0.638,
+          "exact_angle": 90.0,
+          "orb_percentage": 36.2
+        },
+        {
+          "object1": "Mercury",
+          "object2": "Planet 10",
+          "aspect": "Trine",
+          "angle": 116.47,
+          "orb": 3.53,
+          "applying": true,
+          "strength": 0.294,
+          "exact_angle": 120.0,
+          "orb_percentage": 70.6
+        },
+        {
+          "object1": "Mercury",
+          "object2": "True Node",
+          "aspect": "Trine",
+          "angle": 118.03,
+          "orb": 1.97,
+          "applying": true,
+          "strength": 0.606,
+          "exact_angle": 120.0,
+          "orb_percentage": 39.4
+        },
+        {
+          "object1": "Sun",
+          "object2": "Planet 12",
+          "aspect": "Trine",
+          "angle": 116.99,
+          "orb": 3.01,
+          "applying": false,
+          "strength": 0.498,
+          "exact_angle": 120.0,
+          "orb_percentage": 50.2
+        },
+        {
+          "object1": "Planet 10",
+          "object2": "True Node",
+          "aspect": "Conjunction",
+          "angle": 1.56,
+          "orb": 1.56,
+          "applying": true,
+          "strength": 0.74,
+          "exact_angle": 0.0,
+          "orb_percentage": 26.0
+        }
+      ],
+      "aspect_matrix": {
+        "total_aspects": 57,
+        "major_aspects": 42,
+        "minor_aspects": 15,
+        "orb_config_used": "traditional",
+        "calculation_time_ms": 3.000020980834961
+      },
+      "calculation_metadata": {
+        "calculation_time": 0.011516094207763672,
+        "aspect_calculation_time_ms": 3.000020980834961,
+        "orb_system_used": "traditional",
+        "features_included": [
+          "aspects"
+        ],
+        "performance_metrics": null
+      },
+      "retrograde_analysis": null,
+      "arabic_parts": null,
+      "chart_type": "natal_enhanced"
+    },
+    "analysis": {
+      "enhanced_planets": 19,
+      "aspects_count": 57,
+      "arabic_parts_count": 0,
+      "response_size_kb": 14.9736328125
+    }
+  },
+  "api_info": {
+    "/ephemeris/house-systems": {
+      "status": "SUCCESS",
+      "data": {
+        "house_systems": {
+          "P": "Placidus",
+          "K": "Koch",
+          "O": "Porphyry",
+          "R": "Regiomontanus",
+          "C": "Campanus",
+          "E": "Equal House",
+          "W": "Whole Sign"
+        },
+        "default": "P",
+        "description": "Supported house calculation systems"
+      }
+    },
+    "/ephemeris/supported-objects": {
+      "status": "SUCCESS",
+      "data": {
+        "planets": {
+          "ids": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "names": [
+            "Sun",
+            "Moon",
+            "Mercury",
+            "Venus",
+            "Mars",
+            "Jupiter",
+            "Saturn",
+            "Uranus",
+            "Neptune",
+            "Pluto"
+          ]
+        },
+        "asteroids": {
+          "ids": [
+            15,
+            17,
+            18,
+            19,
+            20
+          ],
+          "names": [
+            "Chiron",
+            "Asteroid 17",
+            "Asteroid 18",
+            "Asteroid 19",
+            "Asteroid 20"
+          ]
+        },
+        "nodes": {
+          "ids": [
+            10,
+            11
+          ],
+          "names": [
+            "North Node (Mean)",
+            "North Node (True)"
+          ]
+        },
+        "lilith": {
+          "ids": [
+            12,
+            13
+          ],
+          "names": [
+            "Lilith (Mean)",
+            "Lilith (True)"
+          ]
+        },
+        "configuration": {
+          "default_includes": {
+            "planets": true,
+            "asteroids": true,
+            "nodes": true,
+            "lilith": true
+          }
+        }
+      }
+    },
+    "/ephemeris/schemas/natal-request": {
+      "status": "SUCCESS",
+      "data": {
+        "schema": {
+          "$defs": {
+            "ChartConfiguration": {
+              "additionalProperties": false,
+              "description": "Configuration options for chart calculation.",
+              "properties": {
+                "house_system": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/HouseSystemEnum"
+                    }
+                  ],
+                  "default": "P",
+                  "description": "House system to use for calculations"
+                },
+                "include_asteroids": {
+                  "default": true,
+                  "description": "Include major asteroids",
+                  "title": "Include Asteroids",
+                  "type": "boolean"
+                },
+                "include_nodes": {
+                  "default": true,
+                  "description": "Include lunar nodes",
+                  "title": "Include Nodes",
+                  "type": "boolean"
+                },
+                "include_lilith": {
+                  "default": true,
+                  "description": "Include Lilith points",
+                  "title": "Include Lilith",
+                  "type": "boolean"
+                },
+                "parallel_processing": {
+                  "default": true,
+                  "description": "Use parallel processing for performance",
+                  "title": "Parallel Processing",
+                  "type": "boolean"
+                },
+                "aspect_orbs": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": {
+                        "type": "number"
+                      },
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Custom aspect orb settings in degrees",
+                  "title": "Aspect Orbs"
+                }
+              },
+              "title": "ChartConfiguration",
+              "type": "object"
+            },
+            "CoordinateInput": {
+              "additionalProperties": false,
+              "description": "Flexible coordinate input supporting multiple formats.",
+              "examples": [
+                {
+                  "decimal": 40.7128
+                },
+                {
+                  "dms": "40\u00b042'46\"N"
+                },
+                {
+                  "components": {
+                    "degrees": 40,
+                    "direction": "N",
+                    "minutes": 42,
+                    "seconds": 46
+                  }
+                }
+              ],
+              "properties": {
+                "decimal": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Decimal degrees (-90 to 90 for lat, -180 to 180 for lon)",
+                  "title": "Decimal"
+                },
+                "dms": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Degrees, minutes, seconds string (e.g., '40\u00b042'46\"N')",
+                  "title": "Dms"
+                },
+                "components": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "string"
+                          }
+                        ]
+                      },
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Separate degree components with direction",
+                  "title": "Components"
+                }
+              },
+              "title": "CoordinateInput",
+              "type": "object"
+            },
+            "DateTimeInput": {
+              "additionalProperties": false,
+              "description": "Flexible datetime input supporting multiple formats.",
+              "examples": [
+                {
+                  "iso_string": "2000-01-01T12:00:00"
+                },
+                {
+                  "iso_string": "2000-01-01T12:00:00Z"
+                },
+                {
+                  "julian_day": 2451545.0
+                },
+                {
+                  "components": {
+                    "day": 1,
+                    "hour": 12,
+                    "minute": 0,
+                    "month": 1,
+                    "second": 0,
+                    "year": 2000
+                  }
+                }
+              ],
+              "properties": {
+                "iso_string": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "ISO 8601 datetime string",
+                  "title": "Iso String"
+                },
+                "julian_day": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Julian Day Number",
+                  "title": "Julian Day"
+                },
+                "components": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": {
+                        "type": "integer"
+                      },
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Separate datetime components",
+                  "title": "Components"
+                }
+              },
+              "title": "DateTimeInput",
+              "type": "object"
+            },
+            "HouseSystemEnum": {
+              "description": "Supported house systems.",
+              "enum": [
+                "P",
+                "K",
+                "O",
+                "R",
+                "C",
+                "E",
+                "W"
+              ],
+              "title": "HouseSystemEnum",
+              "type": "string"
+            },
+            "SubjectRequest": {
+              "additionalProperties": false,
+              "description": "Request model for subject birth data.",
+              "example": {
+                "altitude": 100.0,
+                "datetime": {
+                  "iso_string": "1990-06-15T14:30:00"
+                },
+                "latitude": {
+                  "decimal": 40.7128
+                },
+                "longitude": {
+                  "decimal": -74.006
+                },
+                "name": "John Doe",
+                "timezone": {
+                  "name": "America/New_York"
+                }
+              },
+              "properties": {
+                "name": {
+                  "description": "Subject name or identifier",
+                  "maxLength": 255,
+                  "minLength": 1,
+                  "title": "Name",
+                  "type": "string"
+                },
+                "datetime": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DateTimeInput"
+                    }
+                  ],
+                  "description": "Birth datetime in various formats"
+                },
+                "latitude": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/CoordinateInput"
+                    }
+                  ],
+                  "description": "Birth latitude"
+                },
+                "longitude": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/CoordinateInput"
+                    }
+                  ],
+                  "description": "Birth longitude"
+                },
+                "altitude": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": 0.0,
+                  "description": "Altitude in meters above sea level",
+                  "title": "Altitude"
+                },
+                "timezone": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/TimezoneInput"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Timezone information"
+                }
+              },
+              "required": [
+                "name",
+                "datetime",
+                "latitude",
+                "longitude"
+              ],
+              "title": "SubjectRequest",
+              "type": "object"
+            },
+            "TimezoneInput": {
+              "additionalProperties": false,
+              "description": "Flexible timezone input supporting multiple formats.",
+              "examples": [
+                {
+                  "name": "America/New_York"
+                },
+                {
+                  "utc_offset": -5.0
+                },
+                {
+                  "auto_detect": true
+                }
+              ],
+              "properties": {
+                "name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "IANA timezone name (e.g., 'America/New_York')",
+                  "title": "Name"
+                },
+                "utc_offset": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "UTC offset in hours (e.g., -5.0)",
+                  "title": "Utc Offset"
+                },
+                "auto_detect": {
+                  "anyOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": false,
+                  "description": "Auto-detect timezone from coordinates",
+                  "title": "Auto Detect"
+                }
+              },
+              "title": "TimezoneInput",
+              "type": "object"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Complete request for natal chart calculation.",
+          "example": {
+            "configuration": {
+              "house_system": "P",
+              "include_asteroids": true
+            },
+            "subject": {
+              "datetime": {
+                "iso_string": "1990-06-15T14:30:00"
+              },
+              "latitude": {
+                "decimal": 40.7128
+              },
+              "longitude": {
+                "decimal": -74.006
+              },
+              "name": "John Doe",
+              "timezone": {
+                "name": "America/New_York"
+              }
+            }
+          },
+          "properties": {
+            "subject": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/SubjectRequest"
+                }
+              ],
+              "description": "Subject birth data"
+            },
+            "configuration": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/ChartConfiguration"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": {
+                "house_system": "P",
+                "include_asteroids": true,
+                "include_nodes": true,
+                "include_lilith": true,
+                "parallel_processing": true,
+                "aspect_orbs": null
+              },
+              "description": "Chart calculation configuration"
+            }
+          },
+          "required": [
+            "subject"
+          ],
+          "title": "NatalChartRequest",
+          "type": "object"
+        },
+        "examples": {
+          "basic": {
+            "subject": {
+              "name": "John Doe",
+              "datetime": {
+                "iso_string": "1990-06-15T14:30:00"
+              },
+              "latitude": {
+                "decimal": 40.7128
+              },
+              "longitude": {
+                "decimal": -74.006
+              },
+              "timezone": {
+                "name": "America/New_York"
+              }
+            }
+          },
+          "dms_coordinates": {
+            "subject": {
+              "name": "Jane Smith",
+              "datetime": {
+                "iso_string": "1985-03-21T09:15:00Z"
+              },
+              "latitude": {
+                "dms": "51\u00b030'26\"N"
+              },
+              "longitude": {
+                "dms": "0\u00b07'39\"W"
+              },
+              "timezone": {
+                "name": "Europe/London"
+              }
+            },
+            "configuration": {
+              "house_system": "K",
+              "include_asteroids": false
+            }
+          },
+          "component_format": {
+            "subject": {
+              "name": "Test Subject",
+              "datetime": {
+                "components": {
+                  "year": 2000,
+                  "month": 12,
+                  "day": 25,
+                  "hour": 18,
+                  "minute": 30
+                }
+              },
+              "latitude": {
+                "components": {
+                  "degrees": 34,
+                  "minutes": 3,
+                  "seconds": 8,
+                  "direction": "N"
+                }
+              },
+              "longitude": {
+                "components": {
+                  "degrees": 118,
+                  "minutes": 14,
+                  "seconds": 37,
+                  "direction": "W"
+                }
+              },
+              "timezone": {
+                "utc_offset": -8.0
+              }
+            }
+          },
+          "julian_day": {
+            "subject": {
+              "name": "Historical Figure",
+              "datetime": {
+                "julian_day": 2451545.0
+              },
+              "latitude": {
+                "decimal": 48.8566
+              },
+              "longitude": {
+                "decimal": 2.3522
+              },
+              "timezone": {
+                "name": "Europe/Paris"
+              }
+            },
+            "configuration": {
+              "house_system": "P",
+              "aspect_orbs": {
+                "Conjunction": 10.0,
+                "Opposition": 10.0,
+                "Trine": 8.0,
+                "Square": 8.0,
+                "Sextile": 6.0
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ephemeris/schemas/natal-response": {
+      "status": "SUCCESS",
+      "data": {
+        "schema": {
+          "$defs": {
+            "AnglesResponse": {
+              "additionalProperties": true,
+              "description": "Chart angles data in response.",
+              "properties": {
+                "ascendant": {
+                  "description": "Ascendant longitude in degrees",
+                  "title": "Ascendant",
+                  "type": "number"
+                },
+                "midheaven": {
+                  "description": "Midheaven longitude in degrees",
+                  "title": "Midheaven",
+                  "type": "number"
+                },
+                "descendant": {
+                  "description": "Descendant longitude in degrees",
+                  "title": "Descendant",
+                  "type": "number"
+                },
+                "imum_coeli": {
+                  "description": "Imum Coeli longitude in degrees",
+                  "title": "Imum Coeli",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "ascendant",
+                "midheaven",
+                "descendant",
+                "imum_coeli"
+              ],
+              "title": "AnglesResponse",
+              "type": "object"
+            },
+            "AspectResponse": {
+              "additionalProperties": true,
+              "description": "Aspect relationship data in response.",
+              "properties": {
+                "object1": {
+                  "description": "First object name",
+                  "title": "Object1",
+                  "type": "string"
+                },
+                "object2": {
+                  "description": "Second object name",
+                  "title": "Object2",
+                  "type": "string"
+                },
+                "aspect": {
+                  "description": "Aspect name",
+                  "title": "Aspect",
+                  "type": "string"
+                },
+                "angle": {
+                  "description": "Exact angle in degrees",
+                  "title": "Angle",
+                  "type": "number"
+                },
+                "orb": {
+                  "description": "Orb from exact aspect",
+                  "title": "Orb",
+                  "type": "number"
+                },
+                "applying": {
+                  "anyOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Whether aspect is applying",
+                  "title": "Applying"
+                }
+              },
+              "required": [
+                "object1",
+                "object2",
+                "aspect",
+                "angle",
+                "orb"
+              ],
+              "title": "AspectResponse",
+              "type": "object"
+            },
+            "HousesResponse": {
+              "additionalProperties": true,
+              "description": "House system data in response.",
+              "properties": {
+                "system": {
+                  "description": "House system code",
+                  "title": "System",
+                  "type": "string"
+                },
+                "cusps": {
+                  "description": "House cusp longitudes in degrees",
+                  "items": {
+                    "type": "number"
+                  },
+                  "title": "Cusps",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "system",
+                "cusps"
+              ],
+              "title": "HousesResponse",
+              "type": "object"
+            },
+            "PlanetResponse": {
+              "additionalProperties": true,
+              "description": "Planet position data in response.",
+              "properties": {
+                "name": {
+                  "description": "Planet name",
+                  "title": "Name",
+                  "type": "string"
+                },
+                "longitude": {
+                  "description": "Ecliptic longitude in degrees",
+                  "title": "Longitude",
+                  "type": "number"
+                },
+                "latitude": {
+                  "description": "Ecliptic latitude in degrees",
+                  "title": "Latitude",
+                  "type": "number"
+                },
+                "distance": {
+                  "description": "Distance from Earth",
+                  "title": "Distance",
+                  "type": "number"
+                },
+                "longitude_speed": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Longitude speed in degrees/day",
+                  "title": "Longitude Speed"
+                },
+                "sign_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Zodiac sign name",
+                  "title": "Sign Name"
+                },
+                "sign_longitude": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Longitude within sign",
+                  "title": "Sign Longitude"
+                },
+                "house_number": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "House number (1-12)",
+                  "title": "House Number"
+                },
+                "element": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Element (Fire, Earth, Air, Water)",
+                  "title": "Element"
+                },
+                "modality": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Modality (Cardinal, Fixed, Mutable)",
+                  "title": "Modality"
+                }
+              },
+              "required": [
+                "name",
+                "longitude",
+                "latitude",
+                "distance"
+              ],
+              "title": "PlanetResponse",
+              "type": "object"
+            },
+            "SubjectResponse": {
+              "additionalProperties": true,
+              "description": "Normalized subject data in response.",
+              "properties": {
+                "name": {
+                  "description": "Subject name",
+                  "title": "Name",
+                  "type": "string"
+                },
+                "datetime": {
+                  "description": "ISO format datetime",
+                  "title": "Datetime",
+                  "type": "string"
+                },
+                "julian_day": {
+                  "description": "Julian Day Number",
+                  "title": "Julian Day",
+                  "type": "number"
+                },
+                "latitude": {
+                  "description": "Latitude in decimal degrees",
+                  "title": "Latitude",
+                  "type": "number"
+                },
+                "longitude": {
+                  "description": "Longitude in decimal degrees",
+                  "title": "Longitude",
+                  "type": "number"
+                },
+                "altitude": {
+                  "description": "Altitude in meters",
+                  "title": "Altitude",
+                  "type": "number"
+                },
+                "timezone_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "Timezone name if available",
+                  "title": "Timezone Name"
+                },
+                "utc_offset": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "description": "UTC offset in hours",
+                  "title": "Utc Offset"
+                }
+              },
+              "required": [
+                "name",
+                "datetime",
+                "julian_day",
+                "latitude",
+                "longitude",
+                "altitude"
+              ],
+              "title": "SubjectResponse",
+              "type": "object"
+            }
+          },
+          "additionalProperties": true,
+          "description": "Complete natal chart response.",
+          "example": {
+            "calculation_time": "2024-01-01T12:00:00Z",
+            "planets": {
+              "Sun": {
+                "house_number": 10,
+                "longitude": 84.5,
+                "sign_name": "Gemini"
+              }
+            },
+            "subject": {
+              "datetime": "1990-06-15T14:30:00-04:00",
+              "latitude": 40.7128,
+              "longitude": -74.006,
+              "name": "John Doe"
+            },
+            "success": true
+          },
+          "properties": {
+            "success": {
+              "description": "Whether calculation succeeded",
+              "title": "Success",
+              "type": "boolean"
+            },
+            "subject": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/SubjectResponse"
+                }
+              ],
+              "description": "Normalized subject data"
+            },
+            "planets": {
+              "additionalProperties": {
+                "$ref": "#/$defs/PlanetResponse"
+              },
+              "description": "Planet positions by name",
+              "title": "Planets",
+              "type": "object"
+            },
+            "houses": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/HousesResponse"
+                }
+              ],
+              "description": "House system data"
+            },
+            "angles": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/AnglesResponse"
+                }
+              ],
+              "description": "Chart angles"
+            },
+            "aspects": {
+              "description": "Aspect relationships",
+              "items": {
+                "$ref": "#/$defs/AspectResponse"
+              },
+              "title": "Aspects",
+              "type": "array"
+            },
+            "calculation_time": {
+              "description": "When calculation was performed",
+              "title": "Calculation Time",
+              "type": "string"
+            },
+            "chart_type": {
+              "default": "natal",
+              "description": "Type of chart",
+              "title": "Chart Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "success",
+            "subject",
+            "planets",
+            "houses",
+            "angles",
+            "aspects",
+            "calculation_time"
+          ],
+          "title": "NatalChartResponse",
+          "type": "object"
+        },
+        "description": "Complete natal chart data with all calculated positions and relationships"
+      }
+    }
+  }
+}
