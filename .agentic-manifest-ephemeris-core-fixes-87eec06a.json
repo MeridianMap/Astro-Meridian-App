@@ -1,0 +1,1530 @@
+{
+  "generated_at": "2025-09-09T10:40:46.677453",
+  "project_name": "Meridian Ephemeris API",
+  "branch": "ephemeris-core-fixes",
+  "commit_hash": "87eec06a",
+  "total_lines_of_code": 31746,
+  "complexity_score": 456,
+  "existing_modules": {
+    "main": {
+      "path": "backend\\app\\main.py",
+      "size": 13763,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T18:22:07.424774"
+    },
+    "enhanced_acg_models": {
+      "path": "backend\\app\\api\\models\\enhanced_acg_models.py",
+      "size": 11399,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.211030"
+    },
+    "paran_models": {
+      "path": "backend\\app\\core\\acg\\paran_models.py",
+      "size": 19219,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.222618"
+    },
+    "predictive_schemas": {
+      "path": "backend\\app\\api\\models\\predictive_schemas.py",
+      "size": 20319,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.212028"
+    },
+    "schemas": {
+      "path": "backend\\app\\api\\models\\schemas.py",
+      "size": 32651,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T13:37:04.184827"
+    },
+    "acg": {
+      "path": "backend\\app\\api\\routes\\acg.py",
+      "size": 38566,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.214151"
+    },
+    "ephemeris": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\ephemeris.py",
+      "size": 19510,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T14:42:07.790427"
+    },
+    "parans": {
+      "path": "backend\\app\\api\\routes\\parans.py",
+      "size": 23646,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.216425"
+    },
+    "predictive": {
+      "path": "backend\\app\\api\\routes\\predictive.py",
+      "size": 33412,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.217427"
+    },
+    "acg_cache": {
+      "path": "backend\\app\\core\\acg\\acg_cache.py",
+      "size": 22739,
+      "purpose": "unknown",
+      "last_modified": "2025-08-14T15:22:33.039342"
+    },
+    "acg_core": {
+      "path": "backend\\app\\core\\acg\\acg_core.py",
+      "size": 42013,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T07:55:33.414981"
+    },
+    "acg_metadata": {
+      "path": "backend\\app\\core\\acg\\acg_metadata.py",
+      "size": 23245,
+      "purpose": "unknown",
+      "last_modified": "2025-08-15T10:36:48.578410"
+    },
+    "acg_natal_integration": {
+      "path": "backend\\app\\core\\acg\\acg_natal_integration.py",
+      "size": 14838,
+      "purpose": "unknown",
+      "last_modified": "2025-08-15T10:36:48.578410"
+    },
+    "acg_utils": {
+      "path": "backend\\app\\core\\acg\\acg_utils.py",
+      "size": 18095,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T08:37:23.888419"
+    },
+    "aspect_lines": {
+      "path": "backend\\app\\core\\acg\\aspect_lines.py",
+      "size": 25574,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.217427"
+    },
+    "enhanced_metadata": {
+      "path": "backend\\app\\core\\acg\\enhanced_metadata.py",
+      "size": 20050,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.218425"
+    },
+    "filters": {
+      "path": "backend\\app\\core\\acg\\filters.py",
+      "size": 27140,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.219930"
+    },
+    "numerical_solver": {
+      "path": "backend\\app\\core\\acg\\numerical_solver.py",
+      "size": 24458,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.219930"
+    },
+    "paran_calculator": {
+      "path": "backend\\app\\core\\acg\\paran_calculator.py",
+      "size": 29717,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T18:11:09.949236"
+    },
+    "paran_math": {
+      "path": "backend\\app\\core\\acg\\paran_math.py",
+      "size": 22541,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.221410"
+    },
+    "performance": {
+      "path": "backend\\app\\core\\acg\\performance.py",
+      "size": 21027,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.223625"
+    },
+    "retrograde_integration": {
+      "path": "backend\\app\\core\\acg\\retrograde_integration.py",
+      "size": 19192,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.224624"
+    },
+    "visualization": {
+      "path": "backend\\app\\core\\acg\\visualization.py",
+      "size": 27762,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.225624"
+    },
+    "const": {
+      "path": "backend\\app\\core\\ephemeris\\const.py",
+      "size": 8976,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T21:43:26.848171"
+    },
+    "settings": {
+      "path": "backend\\app\\core\\ephemeris\\settings.py",
+      "size": 7271,
+      "purpose": "unknown",
+      "last_modified": "2025-08-12T11:32:22.883287"
+    },
+    "swiss_ephemeris_adapter": {
+      "path": "backend\\app\\core\\ephemeris\\adapters\\swiss_ephemeris_adapter.py",
+      "size": 7670,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T13:23:37.051553"
+    },
+    "acg_line_calculator": {
+      "path": "backend\\app\\core\\ephemeris\\calculators\\acg_line_calculator.py",
+      "size": 23432,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T13:28:08.689537"
+    },
+    "hermetic_lots_calculator": {
+      "path": "backend\\app\\core\\ephemeris\\calculators\\hermetic_lots_calculator.py",
+      "size": 26859,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T13:30:18.732401"
+    },
+    "natal": {
+      "path": "backend\\app\\core\\ephemeris\\charts\\natal.py",
+      "size": 19447,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T14:32:44.304607"
+    },
+    "subject": {
+      "path": "backend\\app\\core\\ephemeris\\charts\\subject.py",
+      "size": 12611,
+      "purpose": "unknown",
+      "last_modified": "2025-09-06T14:16:39.300346"
+    },
+    "cache": {
+      "path": "backend\\app\\core\\ephemeris\\classes\\cache.py",
+      "size": 10151,
+      "purpose": "unknown",
+      "last_modified": "2025-08-15T10:36:48.598831"
+    },
+    "redis_cache": {
+      "path": "backend\\app\\core\\ephemeris\\classes\\redis_cache.py",
+      "size": 15432,
+      "purpose": "unknown",
+      "last_modified": "2025-08-12T11:32:13.757290"
+    },
+    "dignity_loader": {
+      "path": "backend\\app\\core\\ephemeris\\data\\dignity_loader.py",
+      "size": 19736,
+      "purpose": "unknown",
+      "last_modified": "2025-09-06T15:02:04.487360"
+    },
+    "planet_data": {
+      "path": "backend\\app\\core\\ephemeris\\models\\planet_data.py",
+      "size": 9225,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T13:24:45.412621"
+    },
+    "arabic_parts": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\arabic_parts.py",
+      "size": 40128,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T14:42:12.730239"
+    },
+    "arabic_parts_formulas": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\arabic_parts_formulas.py",
+      "size": 21254,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.227624"
+    },
+    "arabic_parts_models": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\arabic_parts_models.py",
+      "size": 19429,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.227624"
+    },
+    "aspects": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\aspects.py",
+      "size": 32477,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T14:33:28.460861"
+    },
+    "batch": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\batch.py",
+      "size": 12938,
+      "purpose": "unknown",
+      "last_modified": "2025-08-15T10:36:48.578410"
+    },
+    "convert": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\convert.py",
+      "size": 14351,
+      "purpose": "unknown",
+      "last_modified": "2025-08-11T19:24:20.612504"
+    },
+    "date": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\date.py",
+      "size": 14848,
+      "purpose": "unknown",
+      "last_modified": "2025-08-11T17:50:59.221545"
+    },
+    "dignities": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\dignities.py",
+      "size": 21665,
+      "purpose": "unknown",
+      "last_modified": "2025-09-06T14:14:01.965272"
+    },
+    "eclipse_calculator": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\eclipse_calculator.py",
+      "size": 31113,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.228625"
+    },
+    "fixed_stars": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\fixed_stars.py",
+      "size": 21055,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T20:30:16.206474"
+    },
+    "orb_systems": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\orb_systems.py",
+      "size": 16335,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.229624"
+    },
+    "position": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\position.py",
+      "size": 15183,
+      "purpose": "unknown",
+      "last_modified": "2025-08-11T18:12:48.062791"
+    },
+    "predictive_models": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\predictive_models.py",
+      "size": 34818,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.230625"
+    },
+    "predictive_optimization": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\predictive_optimization.py",
+      "size": 36971,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.230625"
+    },
+    "predictive_search": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\predictive_search.py",
+      "size": 42465,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.231624"
+    },
+    "sect_calculator": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\sect_calculator.py",
+      "size": 23768,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T14:41:26.061771"
+    },
+    "transit_calculator": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\transit_calculator.py",
+      "size": 31386,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.233501"
+    },
+    "validation": {
+      "path": "backend\\app\\core\\ephemeris\\tools\\validation.py",
+      "size": 32571,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.233501"
+    },
+    "metrics": {
+      "path": "backend\\app\\core\\monitoring\\metrics.py",
+      "size": 15289,
+      "purpose": "unknown",
+      "last_modified": "2025-08-13T18:53:55.331742"
+    },
+    "advanced_cache": {
+      "path": "backend\\app\\core\\performance\\advanced_cache.py",
+      "size": 24950,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.234501"
+    },
+    "async_processing": {
+      "path": "backend\\app\\core\\performance\\async_processing.py",
+      "size": 31898,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.235501"
+    },
+    "batch_optimizer": {
+      "path": "backend\\app\\core\\performance\\batch_optimizer.py",
+      "size": 29372,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.235501"
+    },
+    "ephemeris_optimizer": {
+      "path": "backend\\app\\core\\performance\\ephemeris_optimizer.py",
+      "size": 27998,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.236625"
+    },
+    "memory_optimizer": {
+      "path": "backend\\app\\core\\performance\\memory_optimizer.py",
+      "size": 31027,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.236625"
+    },
+    "monitoring": {
+      "path": "backend\\app\\core\\performance\\monitoring.py",
+      "size": 29049,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.236625"
+    },
+    "optimizations": {
+      "path": "backend\\app\\core\\performance\\optimizations.py",
+      "size": 15159,
+      "purpose": "unknown",
+      "last_modified": "2025-08-12T11:43:55.286803"
+    },
+    "production_optimization": {
+      "path": "backend\\app\\core\\performance\\production_optimization.py",
+      "size": 41979,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.236625"
+    },
+    "chart_calculation_service": {
+      "path": "backend\\app\\services\\chart_calculation_service.py",
+      "size": 13506,
+      "purpose": "unknown",
+      "last_modified": "2025-09-07T13:26:14.993234"
+    },
+    "ephemeris_service": {
+      "path": "backend\\app\\services\\ephemeris_service.py",
+      "size": 73278,
+      "purpose": "unknown",
+      "last_modified": "2025-09-09T08:05:36.303137"
+    },
+    "predictive_service": {
+      "path": "backend\\app\\services\\predictive_service.py",
+      "size": 30813,
+      "purpose": "unknown",
+      "last_modified": "2025-09-05T10:07:00.240658"
+    }
+  },
+  "test_files": [
+    {
+      "name": "test_edge_cases",
+      "path": "backend\\tests\\test_edge_cases.py",
+      "size": 17654,
+      "tests_module": "edge_cases"
+    },
+    {
+      "name": "test_fixed_stars_legacy",
+      "path": "backend\\tests\\test_fixed_stars_legacy.py",
+      "size": 4660,
+      "tests_module": "fixed_stars_legacy"
+    },
+    {
+      "name": "test_main_extended",
+      "path": "backend\\tests\\test_main_extended.py",
+      "size": 14607,
+      "tests_module": "main_extended"
+    },
+    {
+      "name": "test_acg",
+      "path": "backend\\tests\\api\\routes\\test_acg.py",
+      "size": 21632,
+      "tests_module": "acg"
+    },
+    {
+      "name": "test_arabic_parts_activation",
+      "path": "backend\\tests\\api\\routes\\test_arabic_parts_activation.py",
+      "size": 12372,
+      "tests_module": "arabic_parts_activation"
+    },
+    {
+      "name": "test_critical_fixes",
+      "path": "backend\\tests\\api\\routes\\test_critical_fixes.py",
+      "size": 7808,
+      "tests_module": "critical_fixes"
+    },
+    {
+      "name": "test_dallas_snapshot",
+      "path": "backend\\tests\\api\\routes\\test_dallas_snapshot.py",
+      "size": 3024,
+      "tests_module": "dallas_snapshot"
+    },
+    {
+      "name": "test_enhanced_ephemeris",
+      "path": "backend\\tests\\api\\routes\\test_enhanced_ephemeris.py",
+      "size": 19910,
+      "tests_module": "enhanced_ephemeris"
+    },
+    {
+      "name": "test_ephemeris",
+      "path": "backend\\tests\\api\\routes\\test_ephemeris.py",
+      "size": 18641,
+      "tests_module": "ephemeris"
+    },
+    {
+      "name": "test_nomenclature_consistency",
+      "path": "backend\\tests\\api\\routes\\test_nomenclature_consistency.py",
+      "size": 8382,
+      "tests_module": "nomenclature_consistency"
+    },
+    {
+      "name": "test_predictive",
+      "path": "backend\\tests\\api\\routes\\test_predictive.py",
+      "size": 28870,
+      "tests_module": "predictive"
+    },
+    {
+      "name": "test_retrograde_indicators",
+      "path": "backend\\tests\\api\\routes\\test_retrograde_indicators.py",
+      "size": 8705,
+      "tests_module": "retrograde_indicators"
+    },
+    {
+      "name": "test_aspect_performance",
+      "path": "backend\\tests\\benchmarks\\test_aspect_performance.py",
+      "size": 16341,
+      "tests_module": "aspect_performance"
+    },
+    {
+      "name": "test_performance",
+      "path": "backend\\tests\\benchmarks\\test_performance.py",
+      "size": 15963,
+      "tests_module": "performance"
+    },
+    {
+      "name": "test_acg_cache",
+      "path": "backend\\tests\\core\\acg\\test_acg_cache.py",
+      "size": 18086,
+      "tests_module": "acg_cache"
+    },
+    {
+      "name": "test_acg_core",
+      "path": "backend\\tests\\core\\acg\\test_acg_core.py",
+      "size": 16553,
+      "tests_module": "acg_core"
+    },
+    {
+      "name": "test_acg_metadata",
+      "path": "backend\\tests\\core\\acg\\test_acg_metadata.py",
+      "size": 20009,
+      "tests_module": "acg_metadata"
+    },
+    {
+      "name": "test_acg_natal_integration",
+      "path": "backend\\tests\\core\\acg\\test_acg_natal_integration.py",
+      "size": 14534,
+      "tests_module": "acg_natal_integration"
+    },
+    {
+      "name": "test_enhanced_acg",
+      "path": "backend\\tests\\core\\acg\\test_enhanced_acg.py",
+      "size": 31905,
+      "tests_module": "enhanced_acg"
+    },
+    {
+      "name": "test_aspect_naming_fixes",
+      "path": "backend\\tests\\core\\ephemeris\\test_aspect_naming_fixes.py",
+      "size": 11193,
+      "tests_module": "aspect_naming_fixes"
+    },
+    {
+      "name": "test_const",
+      "path": "backend\\tests\\core\\ephemeris\\test_const.py",
+      "size": 11081,
+      "tests_module": "const"
+    },
+    {
+      "name": "test_dignities_fixes",
+      "path": "backend\\tests\\core\\ephemeris\\test_dignities_fixes.py",
+      "size": 11573,
+      "tests_module": "dignities_fixes"
+    },
+    {
+      "name": "test_settings",
+      "path": "backend\\tests\\core\\ephemeris\\test_settings.py",
+      "size": 8585,
+      "tests_module": "settings"
+    },
+    {
+      "name": "test_integration",
+      "path": "backend\\tests\\core\\ephemeris\\charts\\test_integration.py",
+      "size": 9992,
+      "tests_module": "integration"
+    },
+    {
+      "name": "test_natal",
+      "path": "backend\\tests\\core\\ephemeris\\charts\\test_natal.py",
+      "size": 19490,
+      "tests_module": "natal"
+    },
+    {
+      "name": "test_subject",
+      "path": "backend\\tests\\core\\ephemeris\\charts\\test_subject.py",
+      "size": 13510,
+      "tests_module": "subject"
+    },
+    {
+      "name": "test_cache",
+      "path": "backend\\tests\\core\\ephemeris\\classes\\test_cache.py",
+      "size": 14099,
+      "tests_module": "cache"
+    },
+    {
+      "name": "test_serialize_extended",
+      "path": "backend\\tests\\core\\ephemeris\\classes\\test_serialize_extended.py",
+      "size": 22514,
+      "tests_module": "serialize_extended"
+    },
+    {
+      "name": "test_arabic_parts",
+      "path": "backend\\tests\\core\\ephemeris\\tools\\test_arabic_parts.py",
+      "size": 28159,
+      "tests_module": "arabic_parts"
+    },
+    {
+      "name": "test_aspects",
+      "path": "backend\\tests\\core\\ephemeris\\tools\\test_aspects.py",
+      "size": 26066,
+      "tests_module": "aspects"
+    },
+    {
+      "name": "test_convert",
+      "path": "backend\\tests\\core\\ephemeris\\tools\\test_convert.py",
+      "size": 12611,
+      "tests_module": "convert"
+    },
+    {
+      "name": "test_date",
+      "path": "backend\\tests\\core\\ephemeris\\tools\\test_date.py",
+      "size": 15061,
+      "tests_module": "date"
+    },
+    {
+      "name": "test_enhanced_calculations",
+      "path": "backend\\tests\\core\\ephemeris\\tools\\test_enhanced_calculations.py",
+      "size": 19493,
+      "tests_module": "enhanced_calculations"
+    },
+    {
+      "name": "test_ephemeris",
+      "path": "backend\\tests\\core\\ephemeris\\tools\\test_ephemeris.py",
+      "size": 20716,
+      "tests_module": "ephemeris"
+    },
+    {
+      "name": "test_position",
+      "path": "backend\\tests\\core\\ephemeris\\tools\\test_position.py",
+      "size": 20678,
+      "tests_module": "position"
+    },
+    {
+      "name": "test_predictive",
+      "path": "backend\\tests\\core\\ephemeris\\tools\\test_predictive.py",
+      "size": 31989,
+      "tests_module": "predictive"
+    },
+    {
+      "name": "test_production_performance",
+      "path": "backend\\tests\\integration\\test_production_performance.py",
+      "size": 14478,
+      "tests_module": "production_performance"
+    },
+    {
+      "name": "test_remediation_validation",
+      "path": "backend\\tests\\integration\\test_remediation_validation.py",
+      "size": 17744,
+      "tests_module": "remediation_validation"
+    },
+    {
+      "name": "test_performance_optimization",
+      "path": "backend\\tests\\performance\\test_performance_optimization.py",
+      "size": 30060,
+      "tests_module": "performance_optimization"
+    },
+    {
+      "name": "test_enhanced_service",
+      "path": "backend\\tests\\services\\test_enhanced_service.py",
+      "size": 5538,
+      "tests_module": "enhanced_service"
+    },
+    {
+      "name": "test_ephemeris_service",
+      "path": "backend\\tests\\services\\test_ephemeris_service.py",
+      "size": 14307,
+      "tests_module": "ephemeris_service"
+    }
+  ],
+  "data_files": [
+    {
+      "name": ".agentic-manifest.json",
+      "path": ".agentic-manifest.json",
+      "size": 44205,
+      "type": "json"
+    },
+    {
+      "name": "ECLIPSE_DATA_20250907_201911.json",
+      "path": "ECLIPSE_DATA_20250907_201911.json",
+      "size": 706,
+      "type": "json"
+    },
+    {
+      "name": "FINAL_API_OUTPUT_20250907_153632.json",
+      "path": "FINAL_API_OUTPUT_20250907_153632.json",
+      "size": 1347,
+      "type": "json"
+    },
+    {
+      "name": "settings.local.json",
+      "path": ".claude\\settings.local.json",
+      "size": 253,
+      "type": "json"
+    },
+    {
+      "name": "settings.json",
+      "path": ".vscode\\settings.json",
+      "size": 496,
+      "type": "json"
+    },
+    {
+      "name": "tasks.json",
+      "path": ".vscode\\tasks.json",
+      "size": 825,
+      "type": "json"
+    },
+    {
+      "name": "authentic_api_samples.json",
+      "path": "archive\\PRPS CONSTRUCTION MAGIC\\BUILD RESOURCES\\authentic_api_samples.json",
+      "size": 80866,
+      "type": "json"
+    },
+    {
+      "name": "essential_dignities_database.json",
+      "path": "archive\\PRPS CONSTRUCTION MAGIC\\BUILD RESOURCES\\Astrological Reference\\essential_dignities_database.json",
+      "size": 13585,
+      "type": "json"
+    },
+    {
+      "name": "openapi.json",
+      "path": "backend\\openapi.json",
+      "size": 37061,
+      "type": "json"
+    },
+    {
+      "name": "working_fixed_stars.json",
+      "path": "backend\\data\\working_fixed_stars.json",
+      "size": 247,
+      "type": "json"
+    },
+    {
+      "name": "status.json",
+      "path": "backend\\htmlcov\\status.json",
+      "size": 13027,
+      "type": "json"
+    },
+    {
+      "name": "report.json",
+      "path": "backend\\test-reports\\report.json",
+      "size": 21673,
+      "type": "json"
+    },
+    {
+      "name": "immanuel_reference.json",
+      "path": "backend\\tests\\fixtures\\immanuel_reference.json",
+      "size": 2728,
+      "type": "json"
+    },
+    {
+      "name": "reference_fixtures.json",
+      "path": "backend\\tests\\fixtures\\reference_fixtures.json",
+      "size": 3496,
+      "type": "json"
+    },
+    {
+      "name": "test_case_templates.json",
+      "path": "backend\\tests\\fixtures\\test_case_templates.json",
+      "size": 2562,
+      "type": "json"
+    },
+    {
+      "name": "package-lock.json",
+      "path": "meridian-frontend\\package-lock.json",
+      "size": 116160,
+      "type": "json"
+    },
+    {
+      "name": "package.json",
+      "path": "meridian-frontend\\package.json",
+      "size": 687,
+      "type": "json"
+    },
+    {
+      "name": "tsconfig.app.json",
+      "path": "meridian-frontend\\tsconfig.app.json",
+      "size": 702,
+      "type": "json"
+    },
+    {
+      "name": "tsconfig.json",
+      "path": "meridian-frontend\\tsconfig.json",
+      "size": 119,
+      "type": "json"
+    },
+    {
+      "name": "tsconfig.node.json",
+      "path": "meridian-frontend\\tsconfig.node.json",
+      "size": 630,
+      "type": "json"
+    },
+    {
+      "name": "meridian-overview.json",
+      "path": "monitoring\\grafana\\dashboards\\meridian-overview.json",
+      "size": 14681,
+      "type": "json"
+    },
+    {
+      "name": "authentic_api_samples.json",
+      "path": "PRPS CONSTRUCTION MAGIC\\BUILD RESOURCES\\authentic_api_samples.json",
+      "size": 80866,
+      "type": "json"
+    },
+    {
+      "name": "essential_dignities_database.json",
+      "path": "PRPS CONSTRUCTION MAGIC\\BUILD RESOURCES\\Astrological Reference\\essential_dignities_database.json",
+      "size": 13585,
+      "type": "json"
+    },
+    {
+      "name": "api_snapshot_20250907T051129Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "path": "reference\\snapshots\\api_snapshot_20250907T051129Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "size": 9324184,
+      "type": "json"
+    },
+    {
+      "name": "api_snapshot_20250907T135238Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "path": "reference\\snapshots\\api_snapshot_20250907T135238Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "size": 55038,
+      "type": "json"
+    },
+    {
+      "name": "api_snapshot_20250907T135457Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "path": "reference\\snapshots\\api_snapshot_20250907T135457Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "size": 9032402,
+      "type": "json"
+    },
+    {
+      "name": "api_snapshot_20250907T140217Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "path": "reference\\snapshots\\api_snapshot_20250907T140217Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "size": 9032398,
+      "type": "json"
+    },
+    {
+      "name": "API_SNAPSHOT_20250907T145421Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "path": "reference\\snapshots\\API_SNAPSHOT_20250907T145421Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "size": 983,
+      "type": "json"
+    },
+    {
+      "name": "API_SNAPSHOT_20250907T145746Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "path": "reference\\snapshots\\API_SNAPSHOT_20250907T145746Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "size": 983,
+      "type": "json"
+    },
+    {
+      "name": "API_SNAPSHOT_20250907T162247Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "path": "reference\\snapshots\\API_SNAPSHOT_20250907T162247Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "size": 983,
+      "type": "json"
+    },
+    {
+      "name": "API_SNAPSHOT_20250907T162430Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "path": "reference\\snapshots\\API_SNAPSHOT_20250907T162430Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "size": 983,
+      "type": "json"
+    },
+    {
+      "name": "API_SNAPSHOT_20250907T163748Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "path": "reference\\snapshots\\API_SNAPSHOT_20250907T163748Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "size": 3647,
+      "type": "json"
+    },
+    {
+      "name": "API_SNAPSHOT_20250907T164059Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "path": "reference\\snapshots\\API_SNAPSHOT_20250907T164059Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "size": 27251,
+      "type": "json"
+    },
+    {
+      "name": "API_SNAPSHOT_20250907T164957Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "path": "reference\\snapshots\\API_SNAPSHOT_20250907T164957Z_ENHANCED_NATAL_DALLAS_19870715.json",
+      "size": 27251,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T143108Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T143108Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "size": 9032162,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T143341Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T143341Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "size": 9032176,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T143536Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T143536Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "size": 9032175,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T143550Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T143550Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "size": 9032175,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T143618Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T143618Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "size": 9032174,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T143706Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T143706Z_19900615T183000Z_ephemeris-verification-test_p40.7128_m74.0060.json",
+      "size": 9032386,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T143822Z.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T143822Z.json",
+      "size": 9767611,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T143847Z.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T143847Z.json",
+      "size": 9767609,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T143940Z.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T143940Z.json",
+      "size": 9767609,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T144748Z.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T144748Z.json",
+      "size": 9767609,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T145322Z.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T145322Z.json",
+      "size": 9767610,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T145520Z.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T145520Z.json",
+      "size": 9767849,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_20250907T150045Z.json",
+      "path": "reference\\snapshots\\REAL_API_20250907T150045Z.json",
+      "size": 9767613,
+      "type": "json"
+    },
+    {
+      "name": "REAL_API_latest.json",
+      "path": "reference\\snapshots\\REAL_API_latest.json",
+      "size": 9767613,
+      "type": "json"
+    },
+    {
+      "name": "bounds_egyptian.csv",
+      "path": "archive\\PRPS CONSTRUCTION MAGIC\\BUILD RESOURCES\\Astrological Reference\\bounds_egyptian.csv",
+      "size": 1213,
+      "type": "csv"
+    },
+    {
+      "name": "decans_chaldean.csv",
+      "path": "archive\\PRPS CONSTRUCTION MAGIC\\BUILD RESOURCES\\Astrological Reference\\decans_chaldean.csv",
+      "size": 720,
+      "type": "csv"
+    },
+    {
+      "name": "essential_dignities_planets.csv",
+      "path": "archive\\PRPS CONSTRUCTION MAGIC\\BUILD RESOURCES\\Astrological Reference\\essential_dignities_planets.csv",
+      "size": 657,
+      "type": "csv"
+    },
+    {
+      "name": "triplicity_rulers_dorothean.csv",
+      "path": "archive\\PRPS CONSTRUCTION MAGIC\\BUILD RESOURCES\\Astrological Reference\\triplicity_rulers_dorothean.csv",
+      "size": 240,
+      "type": "csv"
+    },
+    {
+      "name": "interpretation_master_features.csv",
+      "path": "archive\\PRPS CONSTRUCTION MAGIC\\Interpretation Library Plan\\interpretation_master_features.csv",
+      "size": 903267,
+      "type": "csv"
+    },
+    {
+      "name": "bounds_egyptian.csv",
+      "path": "PRPS CONSTRUCTION MAGIC\\BUILD RESOURCES\\Astrological Reference\\bounds_egyptian.csv",
+      "size": 1213,
+      "type": "csv"
+    },
+    {
+      "name": "decans_chaldean.csv",
+      "path": "PRPS CONSTRUCTION MAGIC\\BUILD RESOURCES\\Astrological Reference\\decans_chaldean.csv",
+      "size": 720,
+      "type": "csv"
+    },
+    {
+      "name": "essential_dignities_planets.csv",
+      "path": "PRPS CONSTRUCTION MAGIC\\BUILD RESOURCES\\Astrological Reference\\essential_dignities_planets.csv",
+      "size": 657,
+      "type": "csv"
+    },
+    {
+      "name": "triplicity_rulers_dorothean.csv",
+      "path": "PRPS CONSTRUCTION MAGIC\\BUILD RESOURCES\\Astrological Reference\\triplicity_rulers_dorothean.csv",
+      "size": 240,
+      "type": "csv"
+    },
+    {
+      "name": "interpretation_master_features.csv",
+      "path": "PRPS CONSTRUCTION MAGIC\\Interpretation Library Plan\\interpretation_master_features.csv",
+      "size": 903267,
+      "type": "csv"
+    },
+    {
+      "name": "astexo.csv",
+      "path": "reference\\Astrolog\\astexo.csv",
+      "size": 465030,
+      "type": "csv"
+    },
+    {
+      "name": "junit.xml",
+      "path": "backend\\test-reports\\junit.xml",
+      "size": 1777,
+      "type": "xml"
+    }
+  ],
+  "config_files": [
+    {
+      "name": "docker-compose.yml",
+      "path": "docker-compose.yml",
+      "type": "configuration"
+    },
+    {
+      "name": "mkdocs.yml",
+      "path": "mkdocs.yml",
+      "type": "configuration"
+    },
+    {
+      "name": "docker-compose.yml",
+      "path": "docker-compose.yml",
+      "type": "configuration"
+    },
+    {
+      "name": "Dockerfile",
+      "path": "Dockerfile",
+      "type": "configuration"
+    },
+    {
+      "name": "requirements-prod.txt",
+      "path": "requirements-prod.txt",
+      "type": "configuration"
+    }
+  ],
+  "api_routes": [
+    {
+      "name": "acg",
+      "path": "backend\\app\\api\\routes\\acg.py"
+    },
+    {
+      "name": "ephemeris",
+      "path": "backend\\app\\api\\routes\\ephemeris.py"
+    },
+    {
+      "name": "parans",
+      "path": "backend\\app\\api\\routes\\parans.py"
+    },
+    {
+      "name": "predictive",
+      "path": "backend\\app\\api\\routes\\predictive.py"
+    }
+  ],
+  "recent_changes": [
+    "87eec06 Save current state: Enhanced generate-manifest script and import fixes",
+    "5d2deaa docs: Add comprehensive ephemeris core fixes PRPs",
+    "3fe98a5 update before more enhancement/fixes",
+    "1e5d478 Update architecture documentation and ephemeris features",
+    "1772e1f added multiple enhancements to the backend, aspects, hermetic lots, angle aspect lines, parans, etc",
+    "d12998e feat: Enhanced ephemeris functionality with retrograde detection and South Node calculations",
+    "563dd4b tests: fix houses error handling by disabling caching; ensure green suite",
+    "3dcbca7 implemented acg system",
+    "16f8f02 pre acg build",
+    "6499bcf documentation"
+  ],
+  "architecture_quality": {
+    "total_modules": 64,
+    "api_routes": 0,
+    "test_coverage": 0.0,
+    "avg_file_size": 24043.109375,
+    "redundancy_indicators": [
+      {
+        "base": "enhanced_acg_models",
+        "similar": [
+          "acg"
+        ]
+      },
+      {
+        "base": "predictive_schemas",
+        "similar": [
+          "schemas",
+          "predictive"
+        ]
+      },
+      {
+        "base": "schemas",
+        "similar": [
+          "predictive_schemas"
+        ]
+      },
+      {
+        "base": "acg",
+        "similar": [
+          "enhanced_acg_models",
+          "acg_cache",
+          "acg_core",
+          "acg_metadata",
+          "acg_natal_integration",
+          "acg_utils",
+          "acg_line_calculator"
+        ]
+      },
+      {
+        "base": "ephemeris",
+        "similar": [
+          "swiss_ephemeris_adapter",
+          "ephemeris_optimizer",
+          "ephemeris_service"
+        ]
+      },
+      {
+        "base": "predictive",
+        "similar": [
+          "predictive_schemas",
+          "predictive_models",
+          "predictive_optimization",
+          "predictive_search",
+          "predictive_service"
+        ]
+      },
+      {
+        "base": "acg_cache",
+        "similar": [
+          "acg",
+          "cache"
+        ]
+      },
+      {
+        "base": "acg_core",
+        "similar": [
+          "acg"
+        ]
+      },
+      {
+        "base": "acg_metadata",
+        "similar": [
+          "acg"
+        ]
+      },
+      {
+        "base": "acg_natal_integration",
+        "similar": [
+          "acg",
+          "natal"
+        ]
+      },
+      {
+        "base": "acg_utils",
+        "similar": [
+          "acg"
+        ]
+      },
+      {
+        "base": "swiss_ephemeris_adapter",
+        "similar": [
+          "ephemeris"
+        ]
+      },
+      {
+        "base": "acg_line_calculator",
+        "similar": [
+          "acg"
+        ]
+      },
+      {
+        "base": "natal",
+        "similar": [
+          "acg_natal_integration"
+        ]
+      },
+      {
+        "base": "cache",
+        "similar": [
+          "acg_cache",
+          "redis_cache",
+          "advanced_cache"
+        ]
+      },
+      {
+        "base": "redis_cache",
+        "similar": [
+          "cache"
+        ]
+      },
+      {
+        "base": "arabic_parts",
+        "similar": [
+          "arabic_parts_formulas",
+          "arabic_parts_models"
+        ]
+      },
+      {
+        "base": "arabic_parts_formulas",
+        "similar": [
+          "arabic_parts"
+        ]
+      },
+      {
+        "base": "arabic_parts_models",
+        "similar": [
+          "arabic_parts"
+        ]
+      },
+      {
+        "base": "batch",
+        "similar": [
+          "batch_optimizer"
+        ]
+      },
+      {
+        "base": "predictive_models",
+        "similar": [
+          "predictive"
+        ]
+      },
+      {
+        "base": "predictive_optimization",
+        "similar": [
+          "predictive"
+        ]
+      },
+      {
+        "base": "predictive_search",
+        "similar": [
+          "predictive"
+        ]
+      },
+      {
+        "base": "advanced_cache",
+        "similar": [
+          "cache"
+        ]
+      },
+      {
+        "base": "batch_optimizer",
+        "similar": [
+          "batch"
+        ]
+      },
+      {
+        "base": "ephemeris_optimizer",
+        "similar": [
+          "ephemeris"
+        ]
+      },
+      {
+        "base": "ephemeris_service",
+        "similar": [
+          "ephemeris"
+        ]
+      },
+      {
+        "base": "predictive_service",
+        "similar": [
+          "predictive"
+        ]
+      }
+    ],
+    "large_files": [
+      {
+        "name": "main",
+        "size": 13763
+      },
+      {
+        "name": "enhanced_acg_models",
+        "size": 11399
+      },
+      {
+        "name": "paran_models",
+        "size": 19219
+      },
+      {
+        "name": "predictive_schemas",
+        "size": 20319
+      },
+      {
+        "name": "schemas",
+        "size": 32651
+      },
+      {
+        "name": "acg",
+        "size": 38566
+      },
+      {
+        "name": "ephemeris",
+        "size": 19510
+      },
+      {
+        "name": "parans",
+        "size": 23646
+      },
+      {
+        "name": "predictive",
+        "size": 33412
+      },
+      {
+        "name": "acg_cache",
+        "size": 22739
+      },
+      {
+        "name": "acg_core",
+        "size": 42013
+      },
+      {
+        "name": "acg_metadata",
+        "size": 23245
+      },
+      {
+        "name": "acg_natal_integration",
+        "size": 14838
+      },
+      {
+        "name": "acg_utils",
+        "size": 18095
+      },
+      {
+        "name": "aspect_lines",
+        "size": 25574
+      },
+      {
+        "name": "enhanced_metadata",
+        "size": 20050
+      },
+      {
+        "name": "filters",
+        "size": 27140
+      },
+      {
+        "name": "numerical_solver",
+        "size": 24458
+      },
+      {
+        "name": "paran_calculator",
+        "size": 29717
+      },
+      {
+        "name": "paran_math",
+        "size": 22541
+      },
+      {
+        "name": "performance",
+        "size": 21027
+      },
+      {
+        "name": "retrograde_integration",
+        "size": 19192
+      },
+      {
+        "name": "visualization",
+        "size": 27762
+      },
+      {
+        "name": "const",
+        "size": 8976
+      },
+      {
+        "name": "settings",
+        "size": 7271
+      },
+      {
+        "name": "swiss_ephemeris_adapter",
+        "size": 7670
+      },
+      {
+        "name": "acg_line_calculator",
+        "size": 23432
+      },
+      {
+        "name": "hermetic_lots_calculator",
+        "size": 26859
+      },
+      {
+        "name": "natal",
+        "size": 19447
+      },
+      {
+        "name": "subject",
+        "size": 12611
+      },
+      {
+        "name": "cache",
+        "size": 10151
+      },
+      {
+        "name": "redis_cache",
+        "size": 15432
+      },
+      {
+        "name": "dignity_loader",
+        "size": 19736
+      },
+      {
+        "name": "planet_data",
+        "size": 9225
+      },
+      {
+        "name": "arabic_parts",
+        "size": 40128
+      },
+      {
+        "name": "arabic_parts_formulas",
+        "size": 21254
+      },
+      {
+        "name": "arabic_parts_models",
+        "size": 19429
+      },
+      {
+        "name": "aspects",
+        "size": 32477
+      },
+      {
+        "name": "batch",
+        "size": 12938
+      },
+      {
+        "name": "convert",
+        "size": 14351
+      },
+      {
+        "name": "date",
+        "size": 14848
+      },
+      {
+        "name": "dignities",
+        "size": 21665
+      },
+      {
+        "name": "eclipse_calculator",
+        "size": 31113
+      },
+      {
+        "name": "fixed_stars",
+        "size": 21055
+      },
+      {
+        "name": "orb_systems",
+        "size": 16335
+      },
+      {
+        "name": "position",
+        "size": 15183
+      },
+      {
+        "name": "predictive_models",
+        "size": 34818
+      },
+      {
+        "name": "predictive_optimization",
+        "size": 36971
+      },
+      {
+        "name": "predictive_search",
+        "size": 42465
+      },
+      {
+        "name": "sect_calculator",
+        "size": 23768
+      },
+      {
+        "name": "transit_calculator",
+        "size": 31386
+      },
+      {
+        "name": "validation",
+        "size": 32571
+      },
+      {
+        "name": "metrics",
+        "size": 15289
+      },
+      {
+        "name": "advanced_cache",
+        "size": 24950
+      },
+      {
+        "name": "async_processing",
+        "size": 31898
+      },
+      {
+        "name": "batch_optimizer",
+        "size": 29372
+      },
+      {
+        "name": "ephemeris_optimizer",
+        "size": 27998
+      },
+      {
+        "name": "memory_optimizer",
+        "size": 31027
+      },
+      {
+        "name": "monitoring",
+        "size": 29049
+      },
+      {
+        "name": "optimizations",
+        "size": 15159
+      },
+      {
+        "name": "production_optimization",
+        "size": 41979
+      },
+      {
+        "name": "chart_calculation_service",
+        "size": 13506
+      },
+      {
+        "name": "ephemeris_service",
+        "size": 73278
+      },
+      {
+        "name": "predictive_service",
+        "size": 30813
+      }
+    ]
+  },
+  "architecture_rules": {
+    "single_source_of_truth": true,
+    "modify_not_create": true,
+    "proper_locations": {
+      "code": "backend/app/",
+      "tests": "backend/tests/",
+      "data": "backend/data/",
+      "docs": "docs/",
+      "scripts": "scripts/"
+    }
+  },
+  "critical_files": {
+    "main_api": "backend/app/main.py",
+    "swiss_eph": "Swiss Eph Library Files/",
+    "fixed_stars": "backend/data/working_fixed_stars.json",
+    "documentation": "CLAUDE.md"
+  }
+}
