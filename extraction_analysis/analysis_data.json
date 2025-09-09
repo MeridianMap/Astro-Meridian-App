@@ -1,0 +1,621 @@
+{
+  "summary": {
+    "total_files_analyzed": 4,
+    "high_value_components": 33,
+    "medium_value_components": 4,
+    "bloat_components": 0,
+    "extraction_candidates": [
+      "get_planet",
+      "get_houses",
+      "get_fixed_star",
+      "normalize_geojson_coordinates",
+      "build_ns_meridian",
+      "paran_longitude",
+      "ecl_to_eq"
+    ],
+    "rebuild_candidates": [],
+    "discard_candidates": []
+  },
+  "analyses": [
+    {
+      "file_path": "backend/app/core/ephemeris/tools/ephemeris.py",
+      "component_name": "get_planet",
+      "component_type": "integration",
+      "value_score": 5,
+      "complexity_score": 2,
+      "lines_of_code": 73,
+      "extraction_priority": "high",
+      "description": "Swiss Ephemeris integration: get_planet",
+      "code_snippet": "def get_planet(\n    planet_id: int,\n    julian_day: float,\n    flags: Optional[int] = None,\n    latitude: Optional[float] = None,\n    longitude: Optional[float] = None,\n    altitude: float = 0.0\n) -> PlanetPosition:\n    \"\"\"\n    Calculate planet position using Swiss Ephemeris.\n    \n    Args:\n        planet_id: Swiss Ephemeris planet constant\n        julian_day: Julian Day Number for calculation\n        flags: Swiss Ephemeris calculation flags\n        latitude: Observer latitude (for topocentric calculations)\n        longitude: Observer longitude (for topocentric calculations)  \n        altitude: Observer altitude in meters (default 0)\n    \n    Returns:\n        PlanetPosition object with longitude, latitude, distance, and speeds\n        \n    Raises:\n        RuntimeError: If Swiss Ephemeris calculation fails\n    \"\"\"\n    if flags is None:\n        flags = settings.swe_flags or DEFAULT_FLAGS\n    \n    # Set topocentric position if coordinates provided\n    if latitude is not None and longitude",
+      "dependencies": [
+        "import math\nfrom datetime import datetime, timezone\nfrom typing import Dict, List, Optional, Tuple, Union, Any\nfrom dataclasses import dataclass\n\nimport swisseph as swe\n\nfrom ..const import ",
+        "from ..settings import settings\nfrom ..classes.cache import cached\nfrom ..models.planet_data import PlanetData\n\n\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working Swiss Ephemeris integration pattern"
+    },
+    {
+      "file_path": "backend/app/core/ephemeris/tools/ephemeris.py",
+      "component_name": "get_houses",
+      "component_type": "integration",
+      "value_score": 5,
+      "complexity_score": 2,
+      "lines_of_code": 45,
+      "extraction_priority": "high",
+      "description": "Swiss Ephemeris integration: get_houses",
+      "code_snippet": "def get_houses(\n    julian_day: float,\n    latitude: float,\n    longitude: float,\n    house_system: str = 'P'\n) -> HouseSystem:\n    \"\"\"\n    Calculate house system using Swiss Ephemeris.\n    \n    Args:\n        julian_day: Julian Day Number for calculation\n        latitude: Observer latitude in degrees\n        longitude: Observer longitude in degrees\n        house_system: House system code (P=Placidus, K=Koch, etc.)\n    \n    Returns:\n        HouseSystem object with house cusps and angles\n        \n    Raises:\n        RuntimeError: If house calculation fails\n    \"\"\"\n    try:\n        # Validate house system\n        if house_system not in ['P', 'K', 'O', 'R', 'C', 'E', 'W', 'B', 'M', 'U', 'G', 'H', 'T', 'D', 'V', 'X', 'N', 'I']:\n            house_system = settings.get_house_system_code(house_system)\n        \n        # Calculate houses\n        house_cusps, ascmc = swe.houses(julian_day, latitude, longitude, house_system.encode('utf-8'))\n\n        # Swiss Ephemeris returns 12 cusps (1..12). Som",
+      "dependencies": [
+        "import math\nfrom datetime import datetime, timezone\nfrom typing import Dict, List, Optional, Tuple, Union, Any\nfrom dataclasses import dataclass\n\nimport swisseph as swe\n\nfrom ..const import ",
+        "from ..settings import settings\nfrom ..classes.cache import cached\nfrom ..models.planet_data import PlanetData\n\n\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working Swiss Ephemeris integration pattern"
+    },
+    {
+      "file_path": "backend/app/core/ephemeris/tools/ephemeris.py",
+      "component_name": "get_fixed_star",
+      "component_type": "integration",
+      "value_score": 5,
+      "complexity_score": 2,
+      "lines_of_code": 40,
+      "extraction_priority": "high",
+      "description": "Swiss Ephemeris integration: get_fixed_star",
+      "code_snippet": "def get_fixed_star(\n    star_name: str,\n    julian_day: float\n) -> Dict[str, Union[float, str]]:\n    \"\"\"\n    Calculate fixed star position using Swiss Ephemeris.\n    \n    Args:\n        star_name: Name of the fixed star\n        julian_day: Julian Day Number for calculation\n    \n    Returns:\n        Dictionary with star position data\n        \n    Raises:\n        RuntimeError: If star calculation fails\n    \"\"\"\n    try:\n        # Swiss Ephemeris fixed star calculation\n        result = swe.fixstar_ut(star_name, julian_day, DEFAULT_FLAGS)\n        \n        if len(result[0]) < 6:\n            raise RuntimeError(f\"Failed to calculate position for star: {star_name}\")\n        \n        star_data = result[0]\n        star_info = result[1] if len(result) > 1 else \"\"\n        \n        return {\n            'longitude': normalize_longitude(star_data[0]),\n            'latitude': star_data[1],\n            'distance': star_data[2],\n            'longitude_speed': star_data[3],\n            'latitude_speed': st",
+      "dependencies": [
+        "import math\nfrom datetime import datetime, timezone\nfrom typing import Dict, List, Optional, Tuple, Union, Any\nfrom dataclasses import dataclass\n\nimport swisseph as swe\n\nfrom ..const import ",
+        "from ..settings import settings\nfrom ..classes.cache import cached\nfrom ..models.planet_data import PlanetData\n\n\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working Swiss Ephemeris integration pattern"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_utils.py",
+      "component_name": "normalize_geojson_coordinates",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 22,
+      "extraction_priority": "high",
+      "description": "ACG utility function: normalize_geojson_coordinates",
+      "code_snippet": "def normalize_geojson_coordinates(coordinates):\n    \"\"\"\n    Normalize coordinates for GeoJSON compliance.\n    Ensures all longitudes are within [-180, 180] range.\n    \n    Args:\n        coordinates: GeoJSON coordinate structure (nested lists)\n        \n    Returns:\n        Normalized coordinates with proper longitude wrapping\n    \"\"\"\n    if isinstance(coordinates, (list, tuple)):\n        if len(coordinates) == 2 and all(isinstance(x, (int, float)) for x in coordinates):\n            # This is a [longitude, latitude] pair\n            lon, lat = coordinates\n            normalized_lon = wrap_pm180(np.array([lon]))[0]\n            return [float(normalized_lon), float(lat)]\n        else:\n            # This is a nested structure, recurse\n            return [normalize_geojson_coordinates(coord) for ",
+      "dependencies": [
+        "import numpy as np\nimport math\nfrom typing import Tuple, List, Dict, Any, Optional\nfrom datetime import datetime\nimport swisseph as swe\nimport logging\n\nlogger "
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Proven coordinate transformation utility"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_utils.py",
+      "component_name": "build_ns_meridian",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 16,
+      "extraction_priority": "high",
+      "description": "ACG utility function: build_ns_meridian",
+      "code_snippet": "def build_ns_meridian(lon_deg: float, n_samples: int = 721) -> np.ndarray:\n    \"\"\"\n    Build a north-south meridian line for MC/IC lines.\n    \n    Args:\n        lon_deg: Meridian longitude in degrees\n        n_samples: Number of latitude samples\n        \n    Returns:\n        Nx2 array of [longitude, latitude] coordinates\n    \"\"\"\n    lats = np.linspace(-89.9, 89.9, n_samples)\n    # Convert longitude to [-180, 180) for GeoJSON compatibility\n    lon_normalized = ((lon_deg + 540) % 360) - 180\n    lons = np.full_like(lats, lon_normalized)\n    return np.column_stack([lons, lats])",
+      "dependencies": [
+        "import numpy as np\nimport math\nfrom typing import Tuple, List, Dict, Any, Optional\nfrom datetime import datetime\nimport swisseph as swe\nimport logging\n\nlogger "
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Proven coordinate transformation utility"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_utils.py",
+      "component_name": "paran_longitude",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 16,
+      "extraction_priority": "high",
+      "description": "ACG utility function: paran_longitude",
+      "code_snippet": "def paran_longitude(lst_deg_val: float, gmst_deg: float) -> float:\n    \"\"\"\n    Convert paran LST to longitude.\n    \n    Args:\n        lst_deg_val: Local Sidereal Time in degrees\n        gmst_deg: Greenwich Mean Sidereal Time in degrees\n        \n    Returns:\n        Longitude in degrees [-180, 180]\n    \"\"\"\n    lon = wrap_deg(np.array([lst_deg_val - gmst_deg]))[0]\n    # Convert to [-180, 180] for GeoJSON\n    if lon > 180:\n        lon -= 360\n    return lon",
+      "dependencies": [
+        "import numpy as np\nimport math\nfrom typing import Tuple, List, Dict, Any, Optional\nfrom datetime import datetime\nimport swisseph as swe\nimport logging\n\nlogger "
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Proven coordinate transformation utility"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_utils.py",
+      "component_name": "ecl_to_eq",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 24,
+      "extraction_priority": "high",
+      "description": "ACG utility function: ecl_to_eq",
+      "code_snippet": "def ecl_to_eq(lambda_deg: float, beta_deg: float, eps_deg: float) -> Tuple[float, float]:\n    \"\"\"\n    Convert ecliptic coordinates to equatorial coordinates.\n    \n    Args:\n        lambda_deg: Ecliptic longitude in degrees\n        beta_deg: Ecliptic latitude in degrees\n        eps_deg: True obliquity in degrees\n        \n    Returns:\n        Tuple of (right ascension, declination) in degrees\n    \"\"\"\n    lam = lambda_deg * DEG_TO_RAD\n    bet = beta_deg * DEG_TO_RAD\n    eps = eps_deg * DEG_TO_RAD\n    \n    sin_dec = np.sin(bet) * np.cos(eps) + np.cos(bet) * np.sin(eps) * np.sin(lam)\n    dec = np.arcsin(sin_dec)\n    \n    y = np.sin(lam) * np.cos(eps) - np.tan(bet) * np.sin(eps)\n    x = np.cos(lam)\n    ra = np.arctan2(y, x)\n    \n    return wrap_deg(np.array([ra * RAD_TO_DEG]))[0], dec * RAD_TO_D",
+      "dependencies": [
+        "import numpy as np\nimport math\nfrom typing import Tuple, List, Dict, Any, Optional\nfrom datetime import datetime\nimport swisseph as swe\nimport logging\n\nlogger "
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Proven coordinate transformation utility"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "get_acg_cache_manager",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 11,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: get_acg_cache_manager",
+      "code_snippet": "def get_acg_cache_manager() -> ACGCacheManager:\n    \"\"\"\n    Get the global ACG cache manager instance.\n    \n    Returns:\n        ACGCacheManager singleton instance\n    \"\"\"\n    global _acg_cache_manager\n    if _acg_cache_manager is None:\n        _acg_cache_manager = ACGCacheManager()\n    return _acg_cache_manager",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "generate_cache_key",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 40,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: generate_cache_key",
+      "code_snippet": "    def generate_cache_key(self, request: ACGRequest, suffix: str = \"\") -> str:\n        \"\"\"\n        Generate unique cache key for ACG request.\n        \n        Args:\n            request: ACG calculation request\n            suffix: Optional suffix for specialized caching\n            \n        Returns:\n            Unique cache key string\n        \"\"\"\n        try:\n            # Create deterministic representation of request\n            request_dict = {\n                'epoch': request.epoch,\n                'jd': request.jd,\n                'bodies': [\n                    {'id': body.id, 'type': body.type.value, 'number': body.number}\n                    for body in (request.bodies or [])\n                ] if request.bodies else None,\n                'options': request.options.model_dump() if r",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "get_cached_result",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 37,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: get_cached_result",
+      "code_snippet": "    def get_cached_result(self, request: ACGRequest) -> Optional[ACGResult]:\n        \"\"\"\n        Get cached ACG calculation result.\n        \n        Args:\n            request: ACG calculation request\n            \n        Returns:\n            Cached ACGResult or None if not found\n        \"\"\"\n        cache_key = self.generate_cache_key(request, \"result\")\n        \n        try:\n            # Try Redis first\n            if self.redis_cache.enabled:\n                cached_data = self.redis_cache.get(\"acg_results\", request.model_dump())\n                if cached_data:\n                    self.stats['hits'] += 1\n                    self.logger.debug(f\"ACG result cache hit (Redis): {cache_key}\")\n                    return ACGResult.model_validate(cached_data)\n            \n            # Try memory c",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "set_cached_result",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 39,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: set_cached_result",
+      "code_snippet": "    def set_cached_result(\n        self, \n        request: ACGRequest, \n        result: ACGResult,\n        ttl: Optional[int] = None\n    ) -> bool:\n        \"\"\"\n        Cache ACG calculation result.\n        \n        Args:\n            request: ACG calculation request\n            result: ACG calculation result\n            ttl: Time-to-live in seconds\n            \n        Returns:\n            True if caching successful, False otherwise\n        \"\"\"\n        cache_key = self.generate_cache_key(request, \"result\")\n        ttl = ttl or self.default_ttl\n        \n        try:\n            result_data = result.model_dump()\n            \n            # Store in Redis\n            if self.redis_cache.enabled:\n                self.redis_cache.set(\"acg_results\", request.model_dump(), result_data, ttl=ttl)\n    ",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "get_cached_body_positions",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 48,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: get_cached_body_positions",
+      "code_snippet": "    def get_cached_body_positions(\n        self, \n        bodies: List[str], \n        jd: float, \n        flags: int = None\n    ) -> Dict[str, Any]:\n        \"\"\"\n        Get cached celestial body positions.\n        \n        Args:\n            bodies: List of body IDs\n            jd: Julian Day\n            flags: Swiss Ephemeris flags\n            \n        Returns:\n            Dictionary of cached body positions\n        \"\"\"\n        if not self.enable_position_caching:\n            return {}\n        \n        cached_positions = {}\n        \n        for body_id in bodies:\n            position_key = self.generate_position_cache_key(body_id, jd, flags)\n            \n            try:\n                # Try memory cache first (faster for repeated access)\n                cached_pos = self.memory_cache.get",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "set_cached_body_positions",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 34,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: set_cached_body_positions",
+      "code_snippet": "    def set_cached_body_positions(\n        self,\n        body_positions: Dict[str, Any],\n        jd: float,\n        flags: int = None\n    ) -> None:\n        \"\"\"\n        Cache celestial body positions.\n        \n        Args:\n            body_positions: Dictionary of body_id -> position data\n            jd: Julian Day\n            flags: Swiss Ephemeris flags\n        \"\"\"\n        if not self.enable_position_caching:\n            return\n        \n        for body_id, position_data in body_positions.items():\n            position_key = self.generate_position_cache_key(body_id, jd, flags)\n            \n            try:\n                # Store in memory cache\n                self.memory_cache.put(position_key, position_data, ttl=self.short_ttl)\n                \n                # Store in Redis cache\n ",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "generate_position_cache_key",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 4,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: generate_position_cache_key",
+      "code_snippet": "    def generate_position_cache_key(self, body_id: str, jd: float, flags: int = None) -> str:\n        \"\"\"Generate cache key for body position data.\"\"\"\n        flags_str = str(flags) if flags else \"default\"\n        return f\"pos:v{self.cache_version}:{body_id}:{jd:.6f}:{flags_str}\"",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "optimize_batch_calculation",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 31,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: optimize_batch_calculation",
+      "code_snippet": "    def optimize_batch_calculation(\n        self, \n        requests: List[ACGRequest]\n    ) -> Tuple[List[ACGRequest], List[ACGResult]]:\n        \"\"\"\n        Optimize batch calculation by identifying cached results.\n        \n        Args:\n            requests: List of ACG calculation requests\n            \n        Returns:\n            Tuple of (uncached_requests, cached_results)\n        \"\"\"\n        if not self.enable_batch_optimization:\n            return requests, []\n        \n        uncached_requests = []\n        cached_results = []\n        \n        for i, request in enumerate(requests):\n            cached_result = self.get_cached_result(request)\n            if cached_result:\n                cached_results.append((i, cached_result))\n                self.logger.debug(f\"Batch item {i} served",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "warm_cache_for_common_requests",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 46,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: warm_cache_for_common_requests",
+      "code_snippet": "    def warm_cache_for_common_requests(self) -> None:\n        \"\"\"\n        Pre-warm cache with common ACG calculation requests.\n        \n        This runs in background to improve response times for typical requests.\n        \"\"\"\n        try:\n            self.logger.info(\"Starting ACG cache warming\")\n            \n            # Define common request patterns to pre-calculate\n            common_patterns = [\n                # Common time points\n                \"2000-01-01T00:00:00Z\",  # J2000 epoch\n                \"2020-01-01T00:00:00Z\",  # Recent epoch\n                datetime.utcnow().isoformat() + 'Z'  # Current time\n            ]\n            \n            # Common body sets\n            common_body_sets = [\n                [\"Sun\", \"Moon\"],  # Lights only\n                [\"Sun\", \"Moon\", \"Mercu",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "get_cache_statistics",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 46,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: get_cache_statistics",
+      "code_snippet": "    def get_cache_statistics(self) -> Dict[str, Any]:\n        \"\"\"\n        Get cache performance statistics.\n        \n        Returns:\n            Dictionary with cache statistics\n        \"\"\"\n        total_requests = self.stats['hits'] + self.stats['misses']\n        hit_rate = (self.stats['hits'] / total_requests * 100) if total_requests > 0 else 0.0\n        \n        # Get memory cache stats\n        memory_stats = {}\n        if hasattr(self.memory_cache, 'get_stats'):\n            memory_stats = self.memory_cache.get_stats()\n        \n        # Get Redis cache stats\n        redis_stats = {}\n        if self.redis_cache.enabled:\n            try:\n                redis_stats = {\n                    'enabled': True,\n                    'connected': self.redis_cache.ping(),\n                }\n      ",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "clear_cache",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 36,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: clear_cache",
+      "code_snippet": "    def clear_cache(self, pattern: str = \"acg:*\") -> int:\n        \"\"\"\n        Clear cache entries matching pattern.\n        \n        Args:\n            pattern: Cache key pattern to clear\n            \n        Returns:\n            Number of entries cleared\n        \"\"\"\n        cleared = 0\n        \n        try:\n            # Clear memory cache\n            if hasattr(self.memory_cache, 'clear_pattern'):\n                cleared += self.memory_cache.clear_pattern(pattern)\n            else:\n                # Fallback: clear all if pattern matching not available\n                if hasattr(self.memory_cache, 'clear'):\n                    self.memory_cache.clear()\n                    cleared += 1  # Approximate\n            \n            # Clear Redis cache\n            if self.redis_cache.enabled:\n    ",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "optimize_memory_usage",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 34,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: optimize_memory_usage",
+      "code_snippet": "    def optimize_memory_usage(self) -> Dict[str, Any]:\n        \"\"\"\n        Apply memory optimizations for large datasets.\n        \n        Returns:\n            Optimization results and statistics\n        \"\"\"\n        try:\n            # optimizer = MemoryOptimizations()\n            \n            # Apply optimizations\n            result = {\n                'memory_optimization': 'applied',\n                'timestamp': datetime.utcnow().isoformat(),\n                'recommendations': []\n            }\n            \n            # Check cache sizes and recommend cleanup if needed\n            total_requests = self.stats['hits'] + self.stats['misses']\n            if total_requests > 10000:  # Arbitrary threshold\n                result['recommendations'].append(\n                    \"Consider cache cle",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "precompute_common_positions",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 19,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: precompute_common_positions",
+      "code_snippet": "    def precompute_common_positions(self, days_ahead: int = 30) -> None:\n        \"\"\"\n        Pre-compute and cache body positions for upcoming dates.\n        \n        Args:\n            days_ahead: Number of days to pre-compute\n        \"\"\"\n        try:\n            self.logger.info(f\"Pre-computing positions for next {days_ahead} days\")\n            \n            # This would integrate with the ACG calculation engine\n            # to pre-compute positions for commonly requested bodies\n            # at regular intervals (daily, weekly)\n            \n            # For now, just log the intention\n            self.logger.info(\"Position pre-computation would be implemented here\")\n            \n        except Exception as e:\n            self.logger.error(f\"Position pre-computation failed: {e}\")",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.__init__",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 28,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.__init__",
+      "code_snippet": "    def __init__(self):\n        self.logger = logging.getLogger(self.__class__.__name__)\n        \n        # Cache configuration\n        self.cache_version = \"1.0.0\"\n        self.default_ttl = 3600  # 1 hour\n        self.short_ttl = 300     # 5 minutes for volatile data\n        self.long_ttl = 86400    # 24 hours for stable data\n        \n        # Initialize cache backends\n        self.redis_cache = get_redis_cache()\n        self.memory_cache = get_global_cache()\n        \n        # Cache statistics\n        self.stats = {\n            'hits': 0,\n            'misses': 0,\n            'sets': 0,\n            'errors': 0,\n            'calculation_time_saved': 0.0\n        }\n        \n        # Optimization settings\n        self.enable_batch_optimization = True\n        self.enable_position_caching = ",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.generate_cache_key",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 40,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.generate_cache_key",
+      "code_snippet": "    def generate_cache_key(self, request: ACGRequest, suffix: str = \"\") -> str:\n        \"\"\"\n        Generate unique cache key for ACG request.\n        \n        Args:\n            request: ACG calculation request\n            suffix: Optional suffix for specialized caching\n            \n        Returns:\n            Unique cache key string\n        \"\"\"\n        try:\n            # Create deterministic representation of request\n            request_dict = {\n                'epoch': request.epoch,\n                'jd': request.jd,\n                'bodies': [\n                    {'id': body.id, 'type': body.type.value, 'number': body.number}\n                    for body in (request.bodies or [])\n                ] if request.bodies else None,\n                'options': request.options.model_dump() if r",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.get_cached_result",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 37,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.get_cached_result",
+      "code_snippet": "    def get_cached_result(self, request: ACGRequest) -> Optional[ACGResult]:\n        \"\"\"\n        Get cached ACG calculation result.\n        \n        Args:\n            request: ACG calculation request\n            \n        Returns:\n            Cached ACGResult or None if not found\n        \"\"\"\n        cache_key = self.generate_cache_key(request, \"result\")\n        \n        try:\n            # Try Redis first\n            if self.redis_cache.enabled:\n                cached_data = self.redis_cache.get(\"acg_results\", request.model_dump())\n                if cached_data:\n                    self.stats['hits'] += 1\n                    self.logger.debug(f\"ACG result cache hit (Redis): {cache_key}\")\n                    return ACGResult.model_validate(cached_data)\n            \n            # Try memory c",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.set_cached_result",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 39,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.set_cached_result",
+      "code_snippet": "    def set_cached_result(\n        self, \n        request: ACGRequest, \n        result: ACGResult,\n        ttl: Optional[int] = None\n    ) -> bool:\n        \"\"\"\n        Cache ACG calculation result.\n        \n        Args:\n            request: ACG calculation request\n            result: ACG calculation result\n            ttl: Time-to-live in seconds\n            \n        Returns:\n            True if caching successful, False otherwise\n        \"\"\"\n        cache_key = self.generate_cache_key(request, \"result\")\n        ttl = ttl or self.default_ttl\n        \n        try:\n            result_data = result.model_dump()\n            \n            # Store in Redis\n            if self.redis_cache.enabled:\n                self.redis_cache.set(\"acg_results\", request.model_dump(), result_data, ttl=ttl)\n    ",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.get_cached_body_positions",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 48,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.get_cached_body_positions",
+      "code_snippet": "    def get_cached_body_positions(\n        self, \n        bodies: List[str], \n        jd: float, \n        flags: int = None\n    ) -> Dict[str, Any]:\n        \"\"\"\n        Get cached celestial body positions.\n        \n        Args:\n            bodies: List of body IDs\n            jd: Julian Day\n            flags: Swiss Ephemeris flags\n            \n        Returns:\n            Dictionary of cached body positions\n        \"\"\"\n        if not self.enable_position_caching:\n            return {}\n        \n        cached_positions = {}\n        \n        for body_id in bodies:\n            position_key = self.generate_position_cache_key(body_id, jd, flags)\n            \n            try:\n                # Try memory cache first (faster for repeated access)\n                cached_pos = self.memory_cache.get",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.set_cached_body_positions",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 34,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.set_cached_body_positions",
+      "code_snippet": "    def set_cached_body_positions(\n        self,\n        body_positions: Dict[str, Any],\n        jd: float,\n        flags: int = None\n    ) -> None:\n        \"\"\"\n        Cache celestial body positions.\n        \n        Args:\n            body_positions: Dictionary of body_id -> position data\n            jd: Julian Day\n            flags: Swiss Ephemeris flags\n        \"\"\"\n        if not self.enable_position_caching:\n            return\n        \n        for body_id, position_data in body_positions.items():\n            position_key = self.generate_position_cache_key(body_id, jd, flags)\n            \n            try:\n                # Store in memory cache\n                self.memory_cache.put(position_key, position_data, ttl=self.short_ttl)\n                \n                # Store in Redis cache\n ",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.generate_position_cache_key",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 4,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.generate_position_cache_key",
+      "code_snippet": "    def generate_position_cache_key(self, body_id: str, jd: float, flags: int = None) -> str:\n        \"\"\"Generate cache key for body position data.\"\"\"\n        flags_str = str(flags) if flags else \"default\"\n        return f\"pos:v{self.cache_version}:{body_id}:{jd:.6f}:{flags_str}\"",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.optimize_batch_calculation",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 31,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.optimize_batch_calculation",
+      "code_snippet": "    def optimize_batch_calculation(\n        self, \n        requests: List[ACGRequest]\n    ) -> Tuple[List[ACGRequest], List[ACGResult]]:\n        \"\"\"\n        Optimize batch calculation by identifying cached results.\n        \n        Args:\n            requests: List of ACG calculation requests\n            \n        Returns:\n            Tuple of (uncached_requests, cached_results)\n        \"\"\"\n        if not self.enable_batch_optimization:\n            return requests, []\n        \n        uncached_requests = []\n        cached_results = []\n        \n        for i, request in enumerate(requests):\n            cached_result = self.get_cached_result(request)\n            if cached_result:\n                cached_results.append((i, cached_result))\n                self.logger.debug(f\"Batch item {i} served",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.warm_cache_for_common_requests",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 46,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.warm_cache_for_common_requests",
+      "code_snippet": "    def warm_cache_for_common_requests(self) -> None:\n        \"\"\"\n        Pre-warm cache with common ACG calculation requests.\n        \n        This runs in background to improve response times for typical requests.\n        \"\"\"\n        try:\n            self.logger.info(\"Starting ACG cache warming\")\n            \n            # Define common request patterns to pre-calculate\n            common_patterns = [\n                # Common time points\n                \"2000-01-01T00:00:00Z\",  # J2000 epoch\n                \"2020-01-01T00:00:00Z\",  # Recent epoch\n                datetime.utcnow().isoformat() + 'Z'  # Current time\n            ]\n            \n            # Common body sets\n            common_body_sets = [\n                [\"Sun\", \"Moon\"],  # Lights only\n                [\"Sun\", \"Moon\", \"Mercu",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.get_cache_statistics",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 46,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.get_cache_statistics",
+      "code_snippet": "    def get_cache_statistics(self) -> Dict[str, Any]:\n        \"\"\"\n        Get cache performance statistics.\n        \n        Returns:\n            Dictionary with cache statistics\n        \"\"\"\n        total_requests = self.stats['hits'] + self.stats['misses']\n        hit_rate = (self.stats['hits'] / total_requests * 100) if total_requests > 0 else 0.0\n        \n        # Get memory cache stats\n        memory_stats = {}\n        if hasattr(self.memory_cache, 'get_stats'):\n            memory_stats = self.memory_cache.get_stats()\n        \n        # Get Redis cache stats\n        redis_stats = {}\n        if self.redis_cache.enabled:\n            try:\n                redis_stats = {\n                    'enabled': True,\n                    'connected': self.redis_cache.ping(),\n                }\n      ",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.clear_cache",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 36,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.clear_cache",
+      "code_snippet": "    def clear_cache(self, pattern: str = \"acg:*\") -> int:\n        \"\"\"\n        Clear cache entries matching pattern.\n        \n        Args:\n            pattern: Cache key pattern to clear\n            \n        Returns:\n            Number of entries cleared\n        \"\"\"\n        cleared = 0\n        \n        try:\n            # Clear memory cache\n            if hasattr(self.memory_cache, 'clear_pattern'):\n                cleared += self.memory_cache.clear_pattern(pattern)\n            else:\n                # Fallback: clear all if pattern matching not available\n                if hasattr(self.memory_cache, 'clear'):\n                    self.memory_cache.clear()\n                    cleared += 1  # Approximate\n            \n            # Clear Redis cache\n            if self.redis_cache.enabled:\n    ",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.optimize_memory_usage",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 34,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.optimize_memory_usage",
+      "code_snippet": "    def optimize_memory_usage(self) -> Dict[str, Any]:\n        \"\"\"\n        Apply memory optimizations for large datasets.\n        \n        Returns:\n            Optimization results and statistics\n        \"\"\"\n        try:\n            # optimizer = MemoryOptimizations()\n            \n            # Apply optimizations\n            result = {\n                'memory_optimization': 'applied',\n                'timestamp': datetime.utcnow().isoformat(),\n                'recommendations': []\n            }\n            \n            # Check cache sizes and recommend cleanup if needed\n            total_requests = self.stats['hits'] + self.stats['misses']\n            if total_requests > 10000:  # Arbitrary threshold\n                result['recommendations'].append(\n                    \"Consider cache cle",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/acg/acg_cache.py",
+      "component_name": "ACGCacheManager.precompute_common_positions",
+      "component_type": "pattern",
+      "value_score": 4,
+      "complexity_score": 2,
+      "lines_of_code": 19,
+      "extraction_priority": "medium",
+      "description": "Caching pattern: ACGCacheManager.precompute_common_positions",
+      "code_snippet": "    def precompute_common_positions(self, days_ahead: int = 30) -> None:\n        \"\"\"\n        Pre-compute and cache body positions for upcoming dates.\n        \n        Args:\n            days_ahead: Number of days to pre-compute\n        \"\"\"\n        try:\n            self.logger.info(f\"Pre-computing positions for next {days_ahead} days\")\n            \n            # This would integrate with the ACG calculation engine\n            # to pre-compute positions for commonly requested bodies\n            # at regular intervals (daily, weekly)\n            \n            # For now, just log the intention\n            self.logger.info(\"Position pre-computation would be implemented here\")\n            \n        except Exception as e:\n            self.logger.error(f\"Position pre-computation failed: {e}\")",
+      "dependencies": [
+        "import hashlib\nimport time\nimport pickle\nfrom datetime import datetime, timedelta\nfrom typing import Dict, List, Optional, Any, Union, Tuple\nimport logging\nimport json\nfrom dataclasses import asdict\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\nfrom .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData\nfrom ..ephemeris.classes.cache import get_global_cache\nfrom ..ephemeris.classes.redis_cache import get_redis_cache\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working caching implementation"
+    },
+    {
+      "file_path": "backend/app/core/ephemeris/tools/ephemeris.py",
+      "component_name": "julian_day_from_datetime",
+      "component_type": "integration",
+      "value_score": 3,
+      "complexity_score": 2,
+      "lines_of_code": 13,
+      "extraction_priority": "medium",
+      "description": "Swiss Ephemeris integration: julian_day_from_datetime",
+      "code_snippet": "def julian_day_from_datetime(dt: datetime) -> float:\n    \"\"\"Convert datetime to Julian Day Number.\"\"\"\n    # Convert to UTC if timezone-aware\n    if dt.tzinfo is not None:\n        dt = dt.astimezone(timezone.utc)\n    \n    # SwissEph expects separate date/time components\n    year = dt.year\n    month = dt.month\n    day = dt.day\n    hour = dt.hour + dt.minute/60.0 + dt.second/3600.0 + dt.microsecond/3600000000.0\n    \n    return swe.julday(year, month, day, hour)",
+      "dependencies": [
+        "import math\nfrom datetime import datetime, timezone\nfrom typing import Dict, List, Optional, Tuple, Union, Any\nfrom dataclasses import dataclass\n\nimport swisseph as swe\n\nfrom ..const import ",
+        "from ..settings import settings\nfrom ..classes.cache import cached\nfrom ..models.planet_data import PlanetData\n\n\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working Swiss Ephemeris integration pattern"
+    },
+    {
+      "file_path": "backend/app/core/ephemeris/tools/ephemeris.py",
+      "component_name": "datetime_from_julian_day",
+      "component_type": "integration",
+      "value_score": 3,
+      "complexity_score": 2,
+      "lines_of_code": 16,
+      "extraction_priority": "medium",
+      "description": "Swiss Ephemeris integration: datetime_from_julian_day",
+      "code_snippet": "def datetime_from_julian_day(jd: float) -> datetime:\n    \"\"\"Convert Julian Day Number to datetime.\"\"\"\n    year, month, day, hour = swe.revjul(jd)\n    \n    # Convert fractional hour to hour, minute, second, microsecond\n    hour_int = int(hour)\n    minute_float = (hour - hour_int) * 60\n    minute_int = int(minute_float)\n    second_float = (minute_float - minute_int) * 60\n    second_int = int(second_float)\n    microsecond_int = int((second_float - second_int) * 1000000)\n    \n    return datetime(\n        year, month, day, hour_int, minute_int, second_int, microsecond_int,\n        tzinfo=timezone.utc\n    )",
+      "dependencies": [
+        "import math\nfrom datetime import datetime, timezone\nfrom typing import Dict, List, Optional, Tuple, Union, Any\nfrom dataclasses import dataclass\n\nimport swisseph as swe\n\nfrom ..const import ",
+        "from ..settings import settings\nfrom ..classes.cache import cached\nfrom ..models.planet_data import PlanetData\n\n\n"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working Swiss Ephemeris integration pattern"
+    },
+    {
+      "file_path": "backend/app/services/ephemeris_service.py",
+      "component_name": "_setup_swiss_ephemeris_path",
+      "component_type": "integration",
+      "value_score": 3,
+      "complexity_score": 2,
+      "lines_of_code": 45,
+      "extraction_priority": "medium",
+      "description": "Swiss Ephemeris integration: _setup_swiss_ephemeris_path",
+      "code_snippet": "    def _setup_swiss_ephemeris_path(self):\n        \"\"\"Set up Swiss Ephemeris library path for enhanced fixed star calculations.\"\"\"\n        import os\n        import swisseph as swe\n        \n        # Find project root by looking for specific folders\n        current_dir = os.path.dirname(__file__)\n        project_root = current_dir\n        \n        # Go up directories until we find the Swiss Eph Library Files folder\n        max_levels = 10\n        for _ in range(max_levels):\n            potential_swe_path = os.path.join(project_root, \"Swiss Eph Library Files\")\n            if os.path.exists(potential_swe_path):\n                swe_lib_path = potential_swe_path\n                break\n            parent = os.path.dirname(project_root)\n            if parent == project_root:  # Reached filesystem root\n                break\n            project_root = parent\n        else:\n            # Fallback - try absolute path based on known project location\n            swe_lib_path = \"C:/Users/jacks/OneDriv",
+      "dependencies": [
+        "import time\nfrom datetime import datetime\nfrom typing import Dict, Any, Optional, Union, List\nfrom dataclasses import asdict\n\nfrom ..api.models.schemas import ",
+        "from ..core.ephemeris.charts.subject import Subject\nfrom ..core.ephemeris.charts.natal import NatalChart\nfrom ..core.ephemeris.const import PLANET_NAMES, get_sign_from_longitude, get_sign_name\nfrom ..core.ephemeris.tools.ephemeris import validate_ephemeris_files, analyze_retrograde_motion\nfrom ..core.ephemeris.tools.aspects import AspectCalculator\nfrom ..core.ephemeris.tools.orb_systems import OrbSystemManager\nfrom ..core.ephemeris.tools.arabic_parts import ArabicPartsCalculator\nfrom ..core.ephemeris.tools.arabic_parts_models import ArabicPartsRequest\nfrom ..core.ephemeris.tools.fixed_stars import FixedStarCalculator\n\n\nclass EphemerisServiceError"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working Swiss Ephemeris integration pattern"
+    },
+    {
+      "file_path": "backend/app/services/ephemeris_service.py",
+      "component_name": "EphemerisService._setup_swiss_ephemeris_path",
+      "component_type": "integration",
+      "value_score": 3,
+      "complexity_score": 2,
+      "lines_of_code": 45,
+      "extraction_priority": "medium",
+      "description": "Swiss Ephemeris integration: EphemerisService._setup_swiss_ephemeris_path",
+      "code_snippet": "    def _setup_swiss_ephemeris_path(self):\n        \"\"\"Set up Swiss Ephemeris library path for enhanced fixed star calculations.\"\"\"\n        import os\n        import swisseph as swe\n        \n        # Find project root by looking for specific folders\n        current_dir = os.path.dirname(__file__)\n        project_root = current_dir\n        \n        # Go up directories until we find the Swiss Eph Library Files folder\n        max_levels = 10\n        for _ in range(max_levels):\n            potential_swe_path = os.path.join(project_root, \"Swiss Eph Library Files\")\n            if os.path.exists(potential_swe_path):\n                swe_lib_path = potential_swe_path\n                break\n            parent = os.path.dirname(project_root)\n            if parent == project_root:  # Reached filesystem root\n                break\n            project_root = parent\n        else:\n            # Fallback - try absolute path based on known project location\n            swe_lib_path = \"C:/Users/jacks/OneDriv",
+      "dependencies": [
+        "import time\nfrom datetime import datetime\nfrom typing import Dict, Any, Optional, Union, List\nfrom dataclasses import asdict\n\nfrom ..api.models.schemas import ",
+        "from ..core.ephemeris.charts.subject import Subject\nfrom ..core.ephemeris.charts.natal import NatalChart\nfrom ..core.ephemeris.const import PLANET_NAMES, get_sign_from_longitude, get_sign_name\nfrom ..core.ephemeris.tools.ephemeris import validate_ephemeris_files, analyze_retrograde_motion\nfrom ..core.ephemeris.tools.aspects import AspectCalculator\nfrom ..core.ephemeris.tools.orb_systems import OrbSystemManager\nfrom ..core.ephemeris.tools.arabic_parts import ArabicPartsCalculator\nfrom ..core.ephemeris.tools.arabic_parts_models import ArabicPartsRequest\nfrom ..core.ephemeris.tools.fixed_stars import FixedStarCalculator\n\n\nclass EphemerisServiceError"
+      ],
+      "recommended_action": "extract_as_is",
+      "notes": "Working Swiss Ephemeris integration pattern"
+    }
+  ],
+  "generated_at": "2025-09-09T13:46:58.139830"
+}

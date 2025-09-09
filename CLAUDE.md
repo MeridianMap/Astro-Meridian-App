@@ -221,7 +221,197 @@ Before any code integration, ensure:
 - [ ] Monitoring metrics are properly instrumented
 - [ ] Error handling follows established patterns
 
+## 📊 COMPLEXITY MANAGEMENT & ARCHITECTURAL MONITORING
+
+### Complexity Scoring System
+**MANDATORY**: Check complexity before any major feature addition.
+
+#### Complexity Calculation:
+```bash
+# Use the complexity analyzer
+python scripts/generate-manifest.py --complexity-check
 ```
+
+**Complexity Scoring Formula:**
+- Base score: (Total LOC ÷ 100) + (Number of modules × 2)
+- Multipliers: Large files (+1 per 500 LOC file), Redundancies (+5 per detected duplicate)
+- Performance: Response times >200ms (+10), Memory >500MB (+15)
+
+#### Complexity Thresholds:
+- **🟢 HEALTHY (0-150)**: Normal development, all changes allowed
+- **🟡 WARNING (151-300)**: Review required, document architectural decisions  
+- **🟠 DANGER (301-450)**: Feature freeze, refactoring required before new features
+- **🔴 CRITICAL (451+)**: Emergency refactoring, no new features until <300
+
+#### Pre-Feature Complexity Gates:
+```bash
+# MANDATORY before ANY new feature development:
+current_complexity=$(python scripts/generate-manifest.py --score-only)
+if [ $current_complexity -gt 300 ]; then
+    echo "❌ COMPLEXITY GATE FAILED: $current_complexity > 300"
+    echo "🛑 REFACTOR REQUIRED before adding new features"
+    exit 1
+fi
+```
+
+### Response Size Management
+**Performance Requirement**: All API responses must be <50KB (except file downloads).
+
+#### Response Size Monitoring:
+```python
+# Add to all API endpoints
+def validate_response_size(response_data: dict) -> None:
+    size_kb = len(json.dumps(response_data)) / 1024
+    if size_kb > 50:
+        logger.warning(f"Response size {size_kb:.1f}KB exceeds 50KB limit")
+        # Implement selective field inclusion
+        return optimize_response(response_data)
+```
+
+#### Response Optimization Patterns:
+```python
+# REQUIRED pattern for large responses:
+@router.post("/endpoint")
+async def endpoint(
+    request: RequestModel,
+    include_fields: Optional[List[str]] = Query(default=None)
+):
+    result = calculate_full_result(request)
+    
+    # Selective field inclusion
+    if include_fields:
+        result = {k: v for k, v in result.items() if k in include_fields}
+    
+    return result
+```
+
+### Architectural Decision Records (ADRs)
+**MANDATORY**: Document all major architectural decisions to prevent drift.
+
+#### ADR Template (`docs/adrs/ADR-XXXX-title.md`):
+```markdown
+# ADR-XXXX: [Title]
+
+**Date**: YYYY-MM-DD  
+**Status**: [Proposed/Accepted/Deprecated]  
+**Complexity Impact**: [Estimated change in complexity score]
+
+## Context
+What situation led to this decision?
+
+## Decision
+What decision was made and why?
+
+## Consequences
+- **Positive**: What benefits does this provide?
+- **Negative**: What are the costs/risks?  
+- **Complexity**: How does this affect system complexity?
+
+## Alternatives Considered
+What other options were evaluated?
+
+## Implementation Notes
+Key implementation details to preserve context.
+```
+
+### Feature Integration Decision Framework
+**Use this framework to prevent redundant implementations:**
+
+```
+New Feature Request
+    ↓
+1. SEARCH EXISTING CODE
+   grep -r "similar_functionality" backend/ --include="*.py"
+    ↓
+2. ASSESS EXISTING IMPLEMENTATIONS
+   ├── High Quality (Professional, tested, documented)
+   │   └── EXTRACT and INTEGRATE (preserve existing)
+   ├── Medium Quality (Works but needs optimization)  
+   │   └── OPTIMIZE and INTEGRATE (enhance existing)
+   └── Low Quality (Broken, incomplete, legacy)
+       └── REPLACE with new implementation
+    ↓
+3. COMPLEXITY IMPACT ASSESSMENT
+   Will this change increase complexity by >50 points?
+   ├── Yes → Requires ADR and architectural review
+   └── No → Proceed with implementation
+    ↓
+4. INTEGRATION PATTERN SELECTION
+   ├── Extend existing module (preferred)
+   ├── Create new focused module (if extending would create bloat)
+   └── Replace existing (only if existing is fundamentally broken)
+```
+
+## 🚫 EXPLICIT TASK LIMITATIONS & COMMUNICATION
+
+### When You CANNOT Complete a Task
+
+**MANDATORY**: Always explicitly state when you cannot complete a task and explain why.
+
+#### Communication Template:
+```
+❌ **I cannot complete this task because:**
+
+**Specific Limitation**: [Exact technical limitation]
+**Why This Matters**: [Impact on the request]  
+**Alternative Approach**: [What could be done instead]
+**Information Needed**: [What would make it possible]
+
+**Example**: 
+❌ I cannot generate a complete Swiss Ephemeris integration because:
+- **Specific Limitation**: I don't have access to the actual Swiss Ephemeris binary files or their internal APIs
+- **Why This Matters**: Astronomical calculations require precise mathematical constants and algorithms I cannot verify
+- **Alternative Approach**: I can provide the integration pattern and you can test with actual Swiss Ephemeris  
+- **Information Needed**: Access to Swiss Ephemeris documentation or validated example outputs
+```
+
+#### Common Limitation Categories:
+
+1. **🔒 Data Access Limitations**
+   - Cannot read files outside provided context
+   - Cannot access external APIs or databases
+   - Cannot verify astronomical calculation accuracy without reference data
+
+2. **🧮 Calculation Limitations**  
+   - Cannot perform astronomical calculations without Swiss Ephemeris access
+   - Cannot validate mathematical formulas without reference implementations
+   - Cannot test performance without actual execution environment
+
+3. **🔗 Integration Limitations**
+   - Cannot test actual API endpoints without running server
+   - Cannot verify database connections without credentials
+   - Cannot validate caching behavior without Redis access
+
+4. **🎯 Scope Limitations**
+   - Cannot make decisions requiring domain expertise (traditional astrology accuracy)
+   - Cannot determine user preferences without explicit requirements
+   - Cannot assess business impact without usage context
+
+#### Required Response Pattern:
+```python
+# Instead of making assumptions or providing incomplete solutions:
+
+def incomplete_example():
+    # ❌ DON'T DO THIS:
+    # return "Here's a basic implementation that might work..."
+    
+    # ✅ DO THIS:
+    raise NotImplementedError(
+        "Cannot complete Swiss Ephemeris integration because:\n"
+        "- No access to actual Swiss Ephemeris binaries\n" 
+        "- Cannot validate astronomical accuracy\n"
+        "- Need: Swiss Ephemeris documentation and test data\n"
+        "Alternative: Provide integration pattern for manual testing"
+    )
+```
+
+### Quality Assurance Through Explicit Limitations
+
+By explicitly stating limitations, we:
+- ✅ **Prevent incorrect implementations** based on assumptions
+- ✅ **Maintain professional standards** (no "might work" solutions)
+- ✅ **Enable informed decision-making** (user knows what's missing)
+- ✅ **Preserve system integrity** (no untested astronomical calculations)
 
 ## 🎯 FEATURE IMPLEMENTATION DECISION TREE
 
