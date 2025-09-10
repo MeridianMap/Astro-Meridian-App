@@ -1,0 +1,83 @@
+# ORCHESTRATION MANIFEST - Extraction Execution Control
+
+execution_order:
+  phase_1_core_extraction:
+    sequence:
+      - PRP_FIXED_STARS_EXTRACTION
+      - PRP_ARABIC_PARTS_EXTRACTION
+    dependencies: 
+      - swiss_ephemeris_setup
+    checkpoint: "Core calculation engines extracted"
+    
+  phase_2_advanced_calculation:
+    sequence:
+      - PRP_ENHANCED_ASPECTS_EXTRACTION
+      - PRP_ACG_ENGINE_EXTRACTION
+    dependencies:
+      - phase_1_core_extraction
+    checkpoint: "Advanced calculation systems extracted"
+    
+  phase_3_service_integration:
+    sequence:
+      - PRP_SERVICE_OPTIMIZATION
+    dependencies:
+      - phase_1_core_extraction
+      - phase_2_advanced_calculation
+    checkpoint: "Service layer optimized and integrated"
+
+# Validation gates between phases
+validation_gates:
+  after_phase_1:
+    command: "pytest tests/extraction/test_core_systems.py -v"
+    expect: "All core systems import and basic validation passes"
+    on_failure: "HALT - Fix core extraction issues before proceeding"
+    
+  after_phase_2:
+    command: "pytest tests/extraction/test_calculations.py -v"
+    expect: "All calculation systems produce valid output"
+    on_failure: "HALT - Fix calculation issues before service integration"
+    
+  after_phase_3:
+    command: "pytest tests/integration/test_full_stack.py -v"
+    expect: "Full integration with response size <50KB validated"
+    on_failure: "HALT - Service optimization failed"
+
+# State management
+state_checkpoints:
+  git_strategy: "commit_per_prp"
+  before_prp: "git add -A && git commit -m 'Pre-{prp_name}: Clean state'"
+  after_copy: "git add -A && git commit -m '{prp_name}: Files copied'"
+  after_test: "git add -A && git commit -m '{prp_name}: Validation passed' && git tag extraction-{prp_name}-complete"
+  on_failure: "git reset --hard HEAD~1 && echo 'Rollback: {prp_name} failed'"
+
+# Global prerequisites
+prerequisites:
+  python_version: ">=3.9"
+  packages:
+    - pyswisseph>=2.10.3
+    - pydantic>=2.0,<3.0
+    - pytest>=7.0
+    - numpy>=1.20
+  directories:
+    - extracted/systems/
+    - tests/extraction/
+    - tests/integration/
+    - tests/perf/
+  files:
+    - Swiss Eph Library Files/sefstars.txt
+    - Swiss Eph Library Files/seas_18.se1
+
+# Performance targets (global)
+performance_targets:
+  individual_prp_execution: "<30min each"
+  validation_suite: "<5min per phase"
+  full_extraction: "<3 hours total"
+  response_size: "<50KB final"
+  calculation_time: "<100ms uncached, <30ms cached"
+
+# Risk mitigation
+risk_mitigation:
+  backup_strategy: "git branch extraction-backup-{timestamp}"
+  parallel_execution: false  # Sequential only for dependency management
+  continue_on_warning: true
+  stop_on_error: true

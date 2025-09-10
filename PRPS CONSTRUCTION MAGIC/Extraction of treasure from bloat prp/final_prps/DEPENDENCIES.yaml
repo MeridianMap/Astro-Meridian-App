@@ -1,0 +1,122 @@
+# DEPENDENCY MAPPING - System Interdependencies
+
+# External dependencies
+external_dependencies:
+  pyswisseph:
+    version: ">=2.10.3"
+    purpose: "Swiss Ephemeris calculations"
+    validation: "python -c 'import swisseph; print(swisseph.version)'"
+    
+  pydantic:
+    version: ">=2.0,<3.0"
+    purpose: "Data model validation"
+    validation: "python -c 'import pydantic; print(pydantic.VERSION)'"
+    
+  numpy:
+    version: ">=1.20"
+    purpose: "Numerical calculations"
+    validation: "python -c 'import numpy; print(numpy.__version__)'"
+
+# Swiss Ephemeris data files (critical)
+data_dependencies:
+  swiss_eph_catalog:
+    files:
+      - "Swiss Eph Library Files/sefstars.txt"
+      - "Swiss Eph Library Files/seas_18.se1" 
+      - "Swiss Eph Library Files/semo_18.se1"
+      - "Swiss Eph Library Files/sepl_18.se1"
+    validation: "python -c 'import os; assert os.path.exists(\"Swiss Eph Library Files/sefstars.txt\"), \"Swiss Eph catalog missing\"'"
+
+# Internal system dependencies (what each PRP provides/requires)
+internal_dependencies:
+  
+  PRP_FIXED_STARS_EXTRACTION:
+    provides:
+      - FixedStarCalculator
+      - star_registry (Foundation 24 + Extended 77)
+      - swiss_ephemeris_path_setup
+    requires:
+      - pyswisseph
+      - sefstars.txt catalog
+    dependents: []  # Standalone system
+    
+  PRP_ARABIC_PARTS_EXTRACTION:
+    provides:
+      - ArabicPartsCalculator
+      - traditional_lots_registry (16+ lots)
+      - sect_calculator
+      - formula_parser (AST-based)
+    requires:
+      - planetary_position_provider
+      - chart_data_models
+    dependents:
+      - PRP_SERVICE_OPTIMIZATION  # Uses lots in full chart
+      
+  PRP_ENHANCED_ASPECTS_EXTRACTION:
+    provides:
+      - AspectCalculator
+      - aspect_matrix_generator
+      - orb_system_manager
+      - 15+ aspect types
+    requires:
+      - planetary_positions
+      - orb_configuration
+    dependents:
+      - PRP_SERVICE_OPTIMIZATION  # Uses aspects in full chart
+      
+  PRP_ACG_ENGINE_EXTRACTION:
+    provides:
+      - ACGCalculationEngine
+      - coordinate_transformations
+      - mc_ic_ac_dc_line_generators
+      - geojson_exporters
+    requires:
+      - body_position_calculator
+      - gmst_calculator
+      - pyswisseph
+    dependents:
+      - PRP_SERVICE_OPTIMIZATION  # Uses ACG lines
+      
+  PRP_SERVICE_OPTIMIZATION:
+    provides:
+      - ProfessionalEphemerisService
+      - ResponseOptimizer
+      - feature_flag_system
+      - response_size_enforcement
+    requires:
+      - ALL_EXTRACTION_PRPS  # Integrates everything
+    dependents: []  # Final integration layer
+
+# Execution dependency graph
+dependency_graph:
+  level_0_standalone:
+    - PRP_FIXED_STARS_EXTRACTION
+    
+  level_1_calculation_engines:
+    - PRP_ARABIC_PARTS_EXTRACTION  # Needs positions but can use mock data
+    - PRP_ENHANCED_ASPECTS_EXTRACTION  # Same
+    - PRP_ACG_ENGINE_EXTRACTION  # Same
+    
+  level_2_integration:
+    - PRP_SERVICE_OPTIMIZATION  # Needs all level 0+1 complete
+
+# Import resolution mapping (for AI agents)
+import_resolution:
+  during_extraction:
+    # Replace backend imports with extracted equivalents
+    replace_patterns:
+      - from: "from backend.app.core.ephemeris.tools"
+        to: "from extracted.systems"
+      - from: "from app.services"  
+        to: "from extracted.services"
+      - from: "backend.app.core"
+        to: "extracted.systems"
+        
+  # Common import fixes needed
+  common_fixes:
+    - issue: "ModuleNotFoundError: backend"
+      fix: "Update import paths to extracted/ structure"
+    - issue: "Swiss Ephemeris path not found"
+      fix: "Call setup_swiss_ephemeris_path() before calculations"
+    - issue: "Pydantic v1/v2 compatibility"
+      fix: "Use model_dump() instead of dict() for Pydantic v2"

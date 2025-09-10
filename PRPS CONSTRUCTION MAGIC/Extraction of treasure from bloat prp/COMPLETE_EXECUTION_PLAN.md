@@ -216,6 +216,7 @@ def test_swiss_ephemeris_patterns():
 - [ ] House system calculations functional
 - [ ] Fixed star integration operational
 - [ ] Time conversion utilities working
+ - [ ] Retrograde + motion_type classification exposed (direct|retrograde|stationary)
 
 ---
 
@@ -272,7 +273,15 @@ class ResponseOptimizer:
                 'latitude': round(planet.latitude, 4) if hasattr(planet, 'latitude') else 0,
                 'sign': planet.sign,
                 'house': planet.house,
-                'retrograde': getattr(planet, 'retrograde', False)
+                # Retrograde handling aligned with Swiss Ephemeris speed sign
+                'is_retrograde': getattr(planet, 'is_retrograde', getattr(planet, 'retrograde', False)),
+                'motion_type': getattr(
+                    planet,
+                    'motion_type',
+                    'stationary' if abs(getattr(planet, 'longitude_speed', 0) or 0) < 0.005 else (
+                        'retrograde' if (getattr(planet, 'is_retrograde', getattr(planet, 'retrograde', False))) else 'direct'
+                    )
+                )
             }
             for planet in planets
         ]
