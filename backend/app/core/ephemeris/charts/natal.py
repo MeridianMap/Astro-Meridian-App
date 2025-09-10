@@ -29,7 +29,7 @@ from ..tools.position import (
     angular_separation, get_closest_aspect_angle, get_position_summary,
     is_in_same_sign, is_in_same_element, is_in_same_modality
 )
-from ..const import (
+from extracted.systems.utils.const import (
     SwePlanets, MODERN_PLANETS, MAJOR_ASTEROIDS, LUNAR_NODES,
     LILITH_POINTS, HouseSystems, PLANET_NAMES, get_planet_name
 )

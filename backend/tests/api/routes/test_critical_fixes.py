@@ -37,7 +37,7 @@ class TestCriticalFixes:
         response = self.client.post("/ephemeris/natal", json=request_data)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         
         # Verify house system returns the original code, not converted name
@@ -70,7 +70,7 @@ class TestCriticalFixes:
             response = self.client.post("/ephemeris/natal", json=request_data)
             assert response.status_code == 200
             
-            data = response.json()
+            data = response.model_dump_json()
             # Should return the code, not the full name
             assert data["houses"]["system"] == system_code, (
                 f"House system {system_code} should return code, not name"
@@ -92,7 +92,7 @@ class TestCriticalFixes:
         response = self.client.post("/ephemeris/natal", json=request_data)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         
         # Verify response doesn't contain old field name anywhere
         response_str = str(data)
@@ -127,7 +127,7 @@ class TestCriticalFixes:
         response = self.client.post("/ephemeris/natal", json=request_data)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         
         # Verify core response structure
         required_top_level_fields = ["success", "subject", "planets", "houses", "angles", "aspects"]
@@ -163,7 +163,7 @@ class TestCriticalFixes:
         response = self.client.post("/ephemeris/natal", json=request_data)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         
         # Verify all expected fields are still present

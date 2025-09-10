@@ -4,7 +4,7 @@ Unit tests for the Meridian Ephemeris Engine coordinate conversion utilities.
 
 import pytest
 import math
-from app.core.ephemeris.tools.convert import (
+from extracted.systems.convert import (
     dms_to_decimal, decimal_to_dms, dms_to_string, string_to_dms,
     decimal_to_string, string_to_decimal, to_decimal, to_dms, to_string,
     coordinates, normalize_longitude, normalize_latitude,

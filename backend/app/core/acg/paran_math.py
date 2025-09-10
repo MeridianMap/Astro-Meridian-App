@@ -22,7 +22,7 @@ from typing import Tuple, List, Optional, Dict, Any
 from dataclasses import dataclass
 from enum import Enum
 
-from app.core.acg.paran_models import (
+from extracted.systems.acg_engine.paran_models import (
     ParanPairType,
     ACGVisibilityType,
     GeographicPoint,

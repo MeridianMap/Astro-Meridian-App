@@ -1593,7 +1593,7 @@ class EphemerisService:
                     chart_dict = chart.model_dump()
                 elif hasattr(chart, 'dict'):
                     # Pydantic v1 compatibility
-                    chart_dict = chart.dict()
+                    chart_dict = chart.model_dump()
                 else:
                     # Already a dictionary
                     chart_dict = chart

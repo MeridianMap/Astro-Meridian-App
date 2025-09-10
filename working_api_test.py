@@ -44,7 +44,7 @@ def test_working_api():
         if response.status_code == 200:
             print("🎉 SUCCESS!")
             
-            data = response.json()
+            data = response.model_dump_json()
             
             # Save the complete output
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

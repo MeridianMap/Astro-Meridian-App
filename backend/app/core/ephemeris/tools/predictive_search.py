@@ -28,12 +28,13 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 import swisseph as swe
 
-from app.core.ephemeris.tools.predictive_models import (
+from extracted.systems.predictive_models import (
     SolarEclipse, LunarEclipse, Transit, SignIngress
 )
 from app.core.monitoring.metrics import timed_calculation
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 @dataclass
 class SearchResult:

@@ -25,6 +25,7 @@ from ...monitoring.metrics import timed_calculation
 import swisseph as swe
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 @dataclass
 class OptimizationMetrics:

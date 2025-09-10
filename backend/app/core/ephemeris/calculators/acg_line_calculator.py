@@ -13,10 +13,11 @@ from typing import List, Dict, Any, Tuple, Optional
 import logging
 from datetime import datetime
 
-from ..models.planet_data import PlanetData
+from extracted.systems.models.planet_data import PlanetData
 from ..adapters.swiss_ephemeris_adapter import swiss_adapter
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class ACGLineCalculator:

@@ -35,6 +35,7 @@ from ...core.acg.paran_calculator import JimLewisACGParanCalculator
 from ...core.monitoring.metrics import timed_calculation, get_metrics
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 # Create router with ACG prefix
 router = APIRouter(prefix="/acg", tags=["acg"])
@@ -590,7 +591,7 @@ async def acg_health_check() -> Dict[str, Any]:
 # ENHANCED ACG ENDPOINTS (PRP 4)
 # ========================================
 
-from ..models.enhanced_acg_models import (
+from extracted.systems.models.enhanced_acg_models import (
     EnhancedACGLinesRequest, EnhancedACGLinesResponse,
     AspectLineRequest, AspectLineFeatureResponse,
     MotionFilterRequest, MotionFilterResponse,

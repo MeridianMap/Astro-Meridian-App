@@ -31,6 +31,7 @@ from .acg_natal_integration import ACGNatalIntegrator
 from .acg_cache import get_acg_cache_manager
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class ACGCalculationEngine:

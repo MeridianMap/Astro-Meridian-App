@@ -20,13 +20,14 @@ from .acg_types import (
     ACGBodyData, ACGCoordinates, ACGNatalInfo, ACGNatalData,
     ACGRequest, ACGBody, ACGBodyType, ACGMetadata
 )
-from ..ephemeris.charts.natal import NatalChart, ChartData
-from ..ephemeris.charts.subject import Subject, SubjectData
-from ..ephemeris.classes.serialize import PlanetPosition
-from ..ephemeris.const import PLANET_NAMES, SwePlanets
-from ..ephemeris.tools.ephemeris import get_planet
+from extracted.systems.ephemeris_utils.charts.natal import NatalChart, ChartData
+from extracted.systems.ephemeris_utils.charts.subject import Subject, SubjectData
+from extracted.systems.ephemeris_utils.classes.serialize import PlanetPosition
+from extracted.systems.ephemeris_utils.const import PLANET_NAMES, SwePlanets
+from extracted.systems.ephemeris_utils.tools.ephemeris import get_planet
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class ACGNatalIntegrator:

@@ -17,6 +17,7 @@ import swisseph as swe
 import logging
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 # Constants
 DEG_TO_RAD = np.pi / 180.0

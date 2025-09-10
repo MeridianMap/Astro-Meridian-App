@@ -7,10 +7,10 @@ from datetime import datetime
 from unittest.mock import patch, MagicMock
 from zoneinfo import ZoneInfo
 
-from app.core.ephemeris.charts.subject import Subject, SubjectData
-from app.core.ephemeris.charts.natal import NatalChart, ChartData, AspectData
-from app.core.ephemeris.tools.ephemeris import PlanetPosition, HouseSystem, ChartAngles
-from app.core.ephemeris.const import SwePlanets, HouseSystems
+from extracted.systems.charts.subject import Subject, SubjectData
+from extracted.systems.charts.natal import NatalChart, ChartData, AspectData
+from extracted.systems.ephemeris import PlanetPosition, HouseSystem, ChartAngles
+from extracted.systems.const import SwePlanets, HouseSystems
 
 
 class TestNatalChartInitialization:

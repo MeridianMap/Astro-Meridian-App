@@ -25,6 +25,7 @@ from .enhanced_metadata import RetrogradeAwareLineMetadata, MotionStatus, Planet
 from .acg_types import ACGResult, ACGMetadata, ACGNatalInfo
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class FilterCriteria(Enum):

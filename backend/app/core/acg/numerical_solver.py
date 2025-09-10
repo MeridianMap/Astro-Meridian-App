@@ -24,20 +24,21 @@ from scipy.optimize import brentq, minimize_scalar
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
 
-from app.core.acg.paran_models import (
+from extracted.systems.acg_engine.paran_models import (
     GeographicPoint,
     SphericalCoordinates,
     ParanPrecisionLevel,
     ACGVisibilityType,
     ParanPairType
 )
-from app.core.acg.paran_math import (
+from extracted.systems.acg_engine.paran_math import (
     MathematicalConstants,
     SphericalAstronomyUtils,
     ACGVisibilityFilter
 )
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 @dataclass

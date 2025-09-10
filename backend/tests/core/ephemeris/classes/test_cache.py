@@ -7,7 +7,7 @@ import threading
 import pytest
 from unittest.mock import patch
 
-from app.core.ephemeris.classes.cache import (
+from extracted.systems.classes.cache import (
     CacheEntry, EphemerisCache, CacheDecorator, cached,
     get_global_cache, reset_global_cache
 )

@@ -11,51 +11,20 @@ from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass
 import logging
 
-import swisseph as swe
+from extracted.systems.utils.swiss_ephemeris import (
+    ensure_swiss_ephemeris_setup,
+    safe_fixstar_ut,
+)
 
-# Set up Swiss Ephemeris path AFTER importing swisseph (required for swe.set_ephe_path)
-def _setup_swisseph_path():
-    """Set up Swiss Ephemeris path for star catalog access using swe.set_ephe_path()."""
-    current_dir = os.path.dirname(__file__)
-    project_root = current_dir
-    
-    # Go up directories to find Swiss Eph Library Files folder
-    for _ in range(10):
-        potential_path = os.path.join(project_root, "Swiss Eph Library Files")
-        if os.path.exists(potential_path):
-            try:
-                swe.set_ephe_path(potential_path)
-                # Also set environment variable as backup
-                os.environ['SE_EPHE_PATH'] = potential_path
-                return potential_path
-            except Exception:
-                pass
-            break
-        parent = os.path.dirname(project_root)
-        if parent == project_root:
-            break
-        project_root = parent
-    else:
-        # Fallback to known location
-        fallback_path = "C:/Users/jacks/OneDrive/Desktop/MERIDIAN/Meridian DEV/ASTRO MERIDIAN APP V1.0/Swiss Eph Library Files"
-        if os.path.exists(fallback_path):
-            try:
-                swe.set_ephe_path(fallback_path)
-                os.environ['SE_EPHE_PATH'] = fallback_path
-                return fallback_path
-            except Exception:
-                pass
-    
-    return None
+# Ensure Swiss Ephemeris is configured via centralized wrapper
+ensure_swiss_ephemeris_setup()
 
-# Set up the path immediately
-_swiss_eph_path = _setup_swisseph_path()
-
-from ..const import normalize_longitude
-from .ephemeris import PlanetPosition
+from extracted.systems.utils.const import normalize_longitude
 
 
 logger = logging.getLogger(__name__)
+if not logger.handlers:
+    logging.basicConfig(level=logging.INFO)
 
 
 @dataclass
@@ -304,7 +273,7 @@ class FixedStarCalculator:
         """
         try:
             # Test with a known star
-            result = swe.fixstar_ut("Spica", 2451545.0)
+            result = safe_fixstar_ut("Spica", 2451545.0)
             self.logger.info("Swiss Ephemeris limited star catalog available (only built-in stars like Spica)")
             return True
         except Exception as e:
@@ -337,7 +306,7 @@ class FixedStarCalculator:
     def _test_individual_star(self, star_name: str) -> bool:
         """Test if an individual star can be calculated."""
         try:
-            swe.fixstar_ut(star_name, 2451545.0)
+            safe_fixstar_ut(star_name, 2451545.0)
             return True
         except:
             return False
@@ -367,12 +336,8 @@ class FixedStarCalculator:
         se_name = star_data.se_name or star_name
         
         try:
-            if flags is None:
-                # Use minimal flags since star catalog may be incomplete
-                # For built-in stars like Spica, no flags should work
-                result = swe.fixstar_ut(se_name, julian_day)
-            else:
-                result = swe.fixstar_ut(se_name, julian_day, flags)
+            # Note: flags not supported in fixstar_ut wrapper; Swiss Ephemeris uses global flags
+            result = safe_fixstar_ut(se_name, julian_day)
             
             if len(result) < 2 or len(result[0]) < 3:
                 self.logger.error(f"Invalid result for star {star_name}")

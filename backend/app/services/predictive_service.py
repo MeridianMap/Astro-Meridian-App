@@ -24,6 +24,7 @@ from ..core.monitoring.metrics import get_metrics, timed_calculation
 import swisseph as swe
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 class PredictiveServiceError(Exception):
     """Base exception for predictive service errors"""
@@ -112,7 +113,7 @@ class PredictiveService:
             if eclipse and location:
                 # Add visibility information if location provided
                 visibility = await self._calculate_eclipse_visibility(eclipse, geo_location)
-                eclipse.metadata["visibility"] = visibility.dict()
+                eclipse.metadata["visibility"] = visibility.model_dump()
             
             return eclipse
             

@@ -27,9 +27,9 @@ except ImportError:
             return func
         return decorator
 
-from ..const import SwePlanets
+from extracted.systems.utils.const import SwePlanets
 from ..classes.serialize import PlanetPosition, HouseSystem
-from .ephemeris import julian_day_from_datetime, datetime_from_julian_day, get_houses
+from extracted.systems.ephemeris_utils import julian_day_from_datetime, datetime_from_julian_day, get_houses
 
 
 @dataclass
@@ -196,7 +196,7 @@ class BatchCalculator:
                 'longitude': request.longitude
             },
             'planets': planet_positions,
-            'houses': houses.dict() if hasattr(houses, 'dict') else houses.__dict__
+            'houses': houses.model_dump() if hasattr(houses, 'dict') else houses.__dict__
         }
     
     @staticmethod

@@ -6,7 +6,7 @@ import pytest
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 
-from app.core.ephemeris.charts.subject import Subject, SubjectData
+from extracted.systems.charts.subject import Subject, SubjectData
 
 
 class TestSubjectDataValidation:

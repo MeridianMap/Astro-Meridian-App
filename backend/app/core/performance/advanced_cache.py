@@ -34,6 +34,7 @@ from cachetools import TTLCache, LRUCache
 import numpy as np
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class CacheType(str, Enum):

@@ -41,10 +41,11 @@ from .numerical_solver import (
     NumericalHorizonHorizonSolver,
     ParanSolutionValidator
 )
-from ..ephemeris.tools.ephemeris import julian_day_from_datetime
-from ..ephemeris.const import PLANET_NAMES
+from extracted.systems.ephemeris_utils.tools.ephemeris import julian_day_from_datetime
+from extracted.systems.ephemeris_utils.const import PLANET_NAMES
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class ACGParanCalculationError(Exception):

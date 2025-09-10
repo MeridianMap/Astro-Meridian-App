@@ -17,8 +17,8 @@ import pytest
 import time
 import json
 from datetime import datetime
-from app.services.ephemeris_service import EphemerisService
-from app.api.models.schemas import (
+from extracted.services.ephemeris_service import EphemerisService
+from extracted.api.models.schemas import (
     NatalChartRequest, SubjectRequest, CoordinateInput, DateTimeInput, TimezoneInput
 )
 
@@ -48,7 +48,7 @@ class TestRemediationValidation:
             include_dignities=True
         )
         
-        response_dict = response if isinstance(response, dict) else response.dict()
+        response_dict = response if isinstance(response, dict) else response.model_dump()
         planets = response_dict.get('planets', {})
         
         # Test Sun in Gemini - should NOT have exaltation or triplicity
@@ -111,7 +111,7 @@ class TestRemediationValidation:
             include_aspects=True
         )
         
-        response_dict = response if isinstance(response, dict) else response.dict()
+        response_dict = response if isinstance(response, dict) else response.model_dump()
         aspects = response_dict.get('aspects', [])
         
         # Check all aspects for proper naming
@@ -140,7 +140,7 @@ class TestRemediationValidation:
         """Test schema hygiene improvements."""
         response = self.service.calculate_natal_chart_enhanced(self.test_request)
         
-        response_dict = response if isinstance(response, dict) else response.dict()
+        response_dict = response if isinstance(response, dict) else response.model_dump()
         
         # Test boolean types are proper booleans
         planets = response_dict.get('planets', {})
@@ -194,7 +194,7 @@ class TestRemediationValidation:
             include_arabic_parts=True
         )
         
-        response_dict = response if isinstance(response, dict) else response.dict()
+        response_dict = response if isinstance(response, dict) else response.model_dump()
         
         # Test required sections are present
         required_sections = ['subject', 'planets', 'houses', 'angles']
@@ -221,7 +221,7 @@ class TestRemediationValidation:
         response = self.service.calculate_natal_chart_enhanced(self.test_request)
         
         # Test that serialization is consistent
-        response_dict = response if isinstance(response, dict) else response.dict()
+        response_dict = response if isinstance(response, dict) else response.model_dump()
         
         # Re-serialize as JSON and parse back
         json_str = json.dumps(response_dict, default=str)
@@ -263,8 +263,8 @@ class TestRemediationValidation:
         assert enhanced_response is not None, "Enhanced API should work with defaults"
         
         # Core structure should be similar
-        basic_dict = basic_response.dict() if hasattr(basic_response, 'dict') else basic_response
-        enhanced_dict = enhanced_response if isinstance(enhanced_response, dict) else enhanced_response.dict()
+        basic_dict = basic_response.model_dump() if hasattr(basic_response, 'dict') else basic_response
+        enhanced_dict = enhanced_response if isinstance(enhanced_response, dict) else enhanced_response.model_dump()
         
         # Should have same core sections
         core_sections = ['subject', 'planets', 'houses', 'angles']
@@ -280,7 +280,7 @@ class TestRemediationValidation:
             include_dignities=True
         )
         
-        response_dict = response if isinstance(response, dict) else response.dict()
+        response_dict = response if isinstance(response, dict) else response.model_dump()
         
         # Specific regression checks based on original issues
         
@@ -339,7 +339,7 @@ def test_complete_calculation_benchmark(benchmark):
     )
     
     # Verify result is complete
-    result_dict = result if isinstance(result, dict) else result.dict()
+    result_dict = result if isinstance(result, dict) else result.model_dump()
     assert 'planets' in result_dict
     assert 'aspects' in result_dict or 'aspects' in result_dict.get('calculated_aspects', {})
 
@@ -394,7 +394,7 @@ def test_real_world_scenario():
         assert response is not None, f"Failed to calculate for {scenario['name']}"
         
         # Verify no regressions
-        response_dict = response if isinstance(response, dict) else response.dict()
+        response_dict = response if isinstance(response, dict) else response.model_dump()
         
         # Check aspects don't have generic names
         aspects = response_dict.get('aspects', [])

@@ -44,6 +44,7 @@ from pydantic import BaseModel
 from app.core.performance.monitoring import get_performance_monitor
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class JobStatus(str, Enum):
@@ -545,7 +546,7 @@ class AsyncJobManager:
             await redis.setex(
                 f"job_result:{async_result.job_id}",
                 self.config.result_ttl_seconds,
-                async_result.json()
+                async_result.model_dump_json()
             )
         except Exception as e:
             logger.error(f"Failed to store job result: {e}")

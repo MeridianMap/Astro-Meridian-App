@@ -11,7 +11,7 @@ from unittest.mock import patch, MagicMock
 
 import swisseph as swe
 
-from app.core.ephemeris.tools.enhanced_calculations import (
+from extracted.systems.enhanced_calculations import (
     calculate_south_node_position,
     get_enhanced_planet_position,
     calculate_complete_lunar_nodes,
@@ -24,8 +24,8 @@ from app.core.ephemeris.tools.enhanced_calculations import (
     EnhancedPlanetPosition,
     LunarNodeData
 )
-from app.core.ephemeris.classes.serialize import PlanetPosition
-from app.core.ephemeris.const import SwePlanets
+from extracted.systems.classes.serialize import PlanetPosition
+from extracted.systems.const import SwePlanets
 
 
 class TestSouthNodeCalculation:

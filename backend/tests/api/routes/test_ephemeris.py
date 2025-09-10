@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
 
 from app.main import app
-from app.api.models.schemas import NatalChartRequest, SubjectRequest, DateTimeInput, CoordinateInput, TimezoneInput
+from extracted.api.models.schemas import NatalChartRequest, SubjectRequest, DateTimeInput, CoordinateInput, TimezoneInput
 
 
 # Create test client
@@ -25,7 +25,7 @@ class TestHealthEndpoints:
         response = client.get("/health")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["status"] == "healthy"
         assert data["service"] == "meridian-ephemeris-api"
         assert "timestamp" in data
@@ -35,7 +35,7 @@ class TestHealthEndpoints:
         response = client.get("/ephemeris/health")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert "status" in data
         assert "version" in data
         assert "ephemeris_available" in data
@@ -50,7 +50,7 @@ class TestRootEndpoint:
         response = client.get("/")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["message"] == "Welcome to Meridian Ephemeris API"
         assert data["version"] == "1.0.0"
         assert "documentation" in data
@@ -66,7 +66,7 @@ class TestSchemaEndpoints:
         response = client.get("/ephemeris/schemas/natal-request")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert "schema" in data
         assert "examples" in data
         assert "basic" in data["examples"]
@@ -77,7 +77,7 @@ class TestSchemaEndpoints:
         response = client.get("/ephemeris/schemas/natal-response")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert "schema" in data
         assert "description" in data
     
@@ -86,7 +86,7 @@ class TestSchemaEndpoints:
         response = client.get("/ephemeris/house-systems")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert "house_systems" in data
         assert "P" in data["house_systems"]  # Placidus
         assert data["house_systems"]["P"] == "Placidus"
@@ -97,7 +97,7 @@ class TestSchemaEndpoints:
         response = client.get("/ephemeris/supported-objects")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert "planets" in data
         assert "asteroids" in data
         assert "nodes" in data
@@ -127,7 +127,7 @@ class TestNatalChartEndpoint:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         
         # Verify response structure
         assert data["success"] is True
@@ -181,7 +181,7 @@ class TestNatalChartEndpoint:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         assert data["subject"]["name"] == "DMS Test"
     
@@ -214,7 +214,7 @@ class TestNatalChartEndpoint:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         assert data["subject"]["name"] == "Component Test"
     
@@ -233,7 +233,7 @@ class TestNatalChartEndpoint:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         assert data["subject"]["name"] == "Julian Day Test"
     
@@ -262,7 +262,7 @@ class TestNatalChartEndpoint:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         assert data["houses"]["system"] == "K"  # Koch system
     
@@ -281,7 +281,7 @@ class TestNatalChartEndpoint:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         assert data["subject"]["utc_offset"] == 9.0
 
@@ -294,7 +294,7 @@ class TestInputValidation:
         response = client.post("/ephemeris/natal", json={})
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
     
@@ -311,7 +311,7 @@ class TestInputValidation:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
     
@@ -329,7 +329,7 @@ class TestInputValidation:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
     
@@ -347,7 +347,7 @@ class TestInputValidation:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
     
@@ -367,7 +367,7 @@ class TestInputValidation:
         # Out of bounds coordinates may be caught by Subject validation (400) 
         # or passed through and fail during calculation (500)
         assert response.status_code in [400, 422, 500]
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
     
     def test_invalid_house_system(self):
@@ -387,7 +387,7 @@ class TestInputValidation:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
 
@@ -398,7 +398,7 @@ class TestErrorHandling:
     @patch('app.services.ephemeris_service.ephemeris_service.calculate_natal_chart')
     def test_calculation_error_handling(self, mock_calculate):
         """Test calculation error handling."""
-        from app.services.ephemeris_service import CalculationError
+        from extracted.services.ephemeris_service import CalculationError
         
         # Mock a calculation error
         mock_calculate.side_effect = CalculationError("Mock calculation error")
@@ -415,7 +415,7 @@ class TestErrorHandling:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 500
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "calculation_error"
         assert "Mock calculation error" in data["message"]
@@ -423,7 +423,7 @@ class TestErrorHandling:
     @patch('app.services.ephemeris_service.ephemeris_service.calculate_natal_chart')
     def test_input_validation_error_handling(self, mock_calculate):
         """Test input validation error handling."""
-        from app.services.ephemeris_service import InputValidationError
+        from extracted.services.ephemeris_service import InputValidationError
         
         # Mock an input validation error
         mock_calculate.side_effect = InputValidationError("Mock validation error")
@@ -440,7 +440,7 @@ class TestErrorHandling:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 400
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
         assert "Mock validation error" in data["message"]
@@ -463,7 +463,7 @@ class TestErrorHandling:
         response = client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 500
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "internal_error"
 
@@ -505,7 +505,7 @@ class TestResponseFormat:
         for _ in range(3):
             response = client.post("/ephemeris/natal", json=request_data)
             assert response.status_code == 200
-            responses.append(response.json())
+            responses.append(response.model_dump_json())
         
         # Compare key data points (should be identical)
         base_response = responses[0]

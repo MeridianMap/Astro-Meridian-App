@@ -95,7 +95,7 @@ class TestExceptionHandlers:
         })
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
         assert "details" in data
@@ -116,7 +116,7 @@ class TestExceptionHandlers:
         })
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert "errors" in data["details"]
         assert len(data["details"]["errors"]) > 0
@@ -147,7 +147,7 @@ class TestHealthEndpoints:
         response = client.get("/health")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["status"] == "healthy"
         assert data["service"] == "meridian-ephemeris-api"
         assert data["version"] == "1.0.0"
@@ -160,7 +160,7 @@ class TestHealthEndpoints:
         response = client.get("/ephemeris/health")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert "status" in data
         assert "ephemeris_available" in data
         assert "uptime" in data
@@ -175,7 +175,7 @@ class TestRootEndpoint:
         response = client.get("/")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         
         # Check required fields
         assert data["message"] == "Welcome to Meridian Ephemeris API"

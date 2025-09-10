@@ -24,8 +24,8 @@ import logging
 import numpy as np
 import swisseph as swe
 
-from ..ephemeris.tools.aspects import AspectType, get_traditional_orbs
-from ..ephemeris.const import normalize_longitude, PLANET_NAMES
+from extracted.systems.ephemeris_utils.tools.aspects import AspectType, get_traditional_orbs
+from extracted.systems.ephemeris_utils.const import normalize_longitude, PLANET_NAMES
 from .acg_utils import (
     gmst_deg_from_jd_ut1, wrap_deg, wrap_pm180,
     segment_line_at_discontinuities
@@ -33,6 +33,7 @@ from .acg_utils import (
 from .acg_types import ACGCoordinates
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class AspectAngleType(NamedTuple):

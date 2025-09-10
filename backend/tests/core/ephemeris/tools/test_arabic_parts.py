@@ -19,22 +19,22 @@ from datetime import datetime, timezone
 from unittest.mock import patch, MagicMock
 from typing import Dict, List
 
-from app.core.ephemeris.tools.arabic_parts import (
+from extracted.systems.arabic_parts import (
     ArabicPartsCalculator, BatchArabicPartsCalculator,
     calculate_traditional_lots, calculate_core_lots, get_lot_of_fortune
 )
-from app.core.ephemeris.tools.arabic_parts_models import (
+from extracted.systems.arabic_parts_models import (
     ArabicPartsRequest, ArabicPartsResult, SectDetermination,
     CalculationMethod, ChartSect
 )
-from app.core.ephemeris.tools.arabic_parts_formulas import (
+from extracted.systems.arabic_parts_formulas import (
     formula_registry, get_traditional_lots, get_core_lots
 )
-from app.core.ephemeris.tools.sect_calculator import SectCalculator
-from app.core.ephemeris.classes.serialize import (
+from extracted.systems.sect_calculator import SectCalculator
+from extracted.systems.classes.serialize import (
     PlanetPosition, HouseSystem, ChartData
 )
-from app.core.ephemeris.const import SwePlanets, normalize_longitude, HouseSystems
+from extracted.systems.const import SwePlanets, normalize_longitude, HouseSystems
 
 
 class TestArabicPartsFormulaRegistry:
@@ -158,7 +158,7 @@ class TestSectDetermination:
         # Sun in 10th house (above horizon)
         chart_data = self.create_test_chart_data(sun_longitude=90.0, ascendant=0.0)
         
-        from app.core.ephemeris.tools.sect_calculator import determine_chart_sect
+        from extracted.systems.sect_calculator import determine_chart_sect
         
         sect = determine_chart_sect(
             sun_position=chart_data.planets[0],
@@ -175,7 +175,7 @@ class TestSectDetermination:
         # Sun in 4th house (below horizon)  
         chart_data = self.create_test_chart_data(sun_longitude=270.0, ascendant=0.0)
         
-        from app.core.ephemeris.tools.sect_calculator import determine_chart_sect
+        from extracted.systems.sect_calculator import determine_chart_sect
         
         sect = determine_chart_sect(
             sun_position=chart_data.planets[0],
@@ -536,8 +536,8 @@ class TestAPIIntegration:
         # This would test the actual API endpoint
         # For now, test the service integration
         
-        from app.services.ephemeris_service import ephemeris_service
-        from app.api.models.schemas import NatalChartRequest, SubjectRequest, DateTimeInput, CoordinateInput
+        from extracted.services.ephemeris_service import ephemeris_service
+        from extracted.api.models.schemas import NatalChartRequest, SubjectRequest, DateTimeInput, CoordinateInput
         
         # Create test request
         subject = SubjectRequest(

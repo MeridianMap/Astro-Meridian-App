@@ -6,8 +6,8 @@ import sys
 import os
 sys.path.append('backend')
 
-from backend.app.services.ephemeris_service import EphemerisService
-from backend.app.api.models.schemas import (
+from extracted.services.ephemeris_service import EphemerisService
+from extracted.api.models.schemas import (
     NatalChartRequest, SubjectRequest, CoordinateInput, DateTimeInput, TimezoneInput
 )
 

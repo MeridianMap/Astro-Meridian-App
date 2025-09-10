@@ -55,6 +55,7 @@ from app.core.performance.async_processing import (
 )
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 @dataclass

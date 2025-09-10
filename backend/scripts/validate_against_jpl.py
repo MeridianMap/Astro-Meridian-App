@@ -19,9 +19,9 @@ import swisseph as swe
 # Add the backend directory to Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.core.ephemeris.tools.validation import nasa_validator
-from app.core.ephemeris.charts.natal import NatalChart
-from app.core.ephemeris.charts.subject import Subject
+from extracted.systems.validation import nasa_validator
+from extracted.systems.charts.natal import NatalChart
+from extracted.systems.charts.subject import Subject
 
 class JPLValidationRunner:
     """Comprehensive JPL Horizons validation test runner."""

@@ -32,9 +32,10 @@ from .sect_calculator import SectCalculator, SectAnalysisData, determine_chart_s
 from ..tools.ephemeris import PlanetPosition, HouseSystem, ChartData
 from ..classes.cache import get_global_cache
 from ..classes.redis_cache import get_redis_cache, cache_result
-from ..const import normalize_longitude
+from extracted.systems.utils.const import normalize_longitude
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 @dataclass

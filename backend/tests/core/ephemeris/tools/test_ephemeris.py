@@ -6,13 +6,13 @@ import pytest
 from datetime import datetime, timezone
 from unittest.mock import patch, MagicMock
 
-from app.core.ephemeris.tools.ephemeris import (
+from extracted.systems.ephemeris import (
     julian_day_from_datetime, datetime_from_julian_day,
     get_planet, get_houses, get_angles, get_point, get_fixed_star,
     calculate_planetary_chart, validate_ephemeris_files
 )
-from app.core.ephemeris.const import SwePlanets
-from app.core.ephemeris.classes.serialize import PlanetPosition, HouseSystem
+from extracted.systems.const import SwePlanets
+from extracted.systems.classes.serialize import PlanetPosition, HouseSystem
 
 
 class TestJulianDayConversions:
@@ -355,7 +355,7 @@ class TestIntegrationScenarios:
     ])
     def test_longitude_normalization_scenarios(self, longitude, expected_normalized):
         """Test longitude normalization in various scenarios."""
-        from app.core.ephemeris.const import normalize_longitude
+        from extracted.systems.const import normalize_longitude
         result = normalize_longitude(longitude)
         assert abs(result - expected_normalized) < 0.001
 
@@ -365,8 +365,8 @@ class TestRetrogradeAnalysis:
     
     def test_analyze_retrograde_motion_with_planet_positions(self):
         """Test retrograde analysis with PlanetPosition objects."""
-        from app.core.ephemeris.tools.ephemeris import analyze_retrograde_motion
-        from app.core.ephemeris.classes.serialize import PlanetPosition
+        from extracted.systems.ephemeris import analyze_retrograde_motion
+        from extracted.systems.classes.serialize import PlanetPosition
         
         positions = {
             'mercury': PlanetPosition(
@@ -395,7 +395,7 @@ class TestRetrogradeAnalysis:
     
     def test_analyze_retrograde_motion_with_dict_positions(self):
         """Test retrograde analysis with dictionary positions."""
-        from app.core.ephemeris.tools.ephemeris import analyze_retrograde_motion
+        from extracted.systems.ephemeris import analyze_retrograde_motion
         
         positions = {
             'jupiter': {
@@ -421,7 +421,7 @@ class TestRetrogradeAnalysis:
     
     def test_analyze_retrograde_motion_empty_positions(self):
         """Test retrograde analysis with empty positions."""
-        from app.core.ephemeris.tools.ephemeris import analyze_retrograde_motion
+        from extracted.systems.ephemeris import analyze_retrograde_motion
         
         result = analyze_retrograde_motion({})
         
@@ -483,7 +483,7 @@ class TestPlanetPositionEnhancements:
     
     def test_planet_position_retrograde_detection(self):
         """Test retrograde detection in PlanetPosition."""
-        from app.core.ephemeris.classes.serialize import PlanetPosition
+        from extracted.systems.classes.serialize import PlanetPosition
         
         # Test retrograde planet
         retrograde_planet = PlanetPosition(
@@ -511,7 +511,7 @@ class TestPlanetPositionEnhancements:
     
     def test_planet_position_to_dict_includes_motion(self):
         """Test that to_dict includes motion information."""
-        from app.core.ephemeris.classes.serialize import PlanetPosition
+        from extracted.systems.classes.serialize import PlanetPosition
         
         planet = PlanetPosition(
             longitude=200.0, latitude=1.0, distance=0.8,

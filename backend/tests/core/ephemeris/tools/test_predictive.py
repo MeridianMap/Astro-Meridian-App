@@ -13,18 +13,18 @@ from unittest.mock import Mock, patch, MagicMock
 import numpy as np
 
 # Import modules under test
-from app.core.ephemeris.tools.eclipse_calculator import EclipseCalculator, EclipseCalculationError
-from app.core.ephemeris.tools.transit_calculator import TransitCalculator, TransitCalculationError
-from app.core.ephemeris.tools.predictive_search import EclipseSearchAlgorithms, TransitSearchAlgorithms
-from app.core.ephemeris.tools.predictive_optimization import (
+from extracted.systems.eclipse_calculator import EclipseCalculator, EclipseCalculationError
+from extracted.systems.transit_calculator import TransitCalculator, TransitCalculationError
+from extracted.systems.predictive_search import EclipseSearchAlgorithms, TransitSearchAlgorithms
+from extracted.systems.predictive_optimization import (
     VectorizedCalculations, IntelligentCaching, PredictiveOptimizer
 )
-from app.core.ephemeris.tools.validation import NASAValidator, ValidationResult
-from app.core.ephemeris.tools.predictive_models import (
+from extracted.systems.validation import NASAValidator, ValidationResult
+from extracted.systems.predictive_models import (
     SolarEclipse, LunarEclipse, Transit, SignIngress, EclipseType, 
     LunarEclipseType, RetrogradeStatus
 )
-from app.services.predictive_service import PredictiveService
+from extracted.services.predictive_service import PredictiveService
 import swisseph as swe
 
 

@@ -10,13 +10,13 @@ import numpy as np
 from datetime import datetime, timezone
 from typing import Dict, Any
 
-from app.core.ephemeris.classes.serialize import (
+from extracted.systems.classes.serialize import (
     EphemerisEncoder, EphemerisDecoder, EphemerisData,
     PlanetPosition, HouseSystem, ChartData,
     serialize_calculation_result, deserialize_calculation_result,
     convert_numpy_to_json_safe
 )
-from app.core.ephemeris.const import SwePlanets, HouseSystems
+from extracted.systems.const import SwePlanets, HouseSystems
 from tests.utils import assert_angle_close, create_test_subject_data
 
 
@@ -291,8 +291,8 @@ class TestEphemerisDataClass:
     def test_ephemeris_data_json_serialization_cycle(self):
         """Test complete EphemerisData JSON serialization cycle."""
         # Create test chart data
-        from app.core.ephemeris.charts.subject import Subject
-        from app.core.ephemeris.charts.natal import NatalChart
+        from extracted.systems.charts.subject import Subject
+        from extracted.systems.charts.natal import NatalChart
         
         subject = Subject(
             name="JSON Serialization Test",

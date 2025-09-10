@@ -17,7 +17,7 @@ from typing import Dict, List, Optional, Tuple, Union, Any
 from dataclasses import dataclass
 from enum import Enum
 
-from ..const import normalize_longitude
+from extracted.systems.utils.const import normalize_longitude
 from ..tools.ephemeris import PlanetPosition
 
 
@@ -357,7 +357,7 @@ class AspectCalculator:
     
     def _get_planet_name(self, planet_id: int) -> str:
         """Convert planet ID to name using consistent naming."""
-        from ..const import get_planet_name
+        from extracted.systems.utils.const import get_planet_name
         return get_planet_name(planet_id)
     
     def calculate_aspect_matrix(self, positions: List[PlanetPosition]) -> AspectMatrix:
@@ -677,7 +677,7 @@ class BatchAspectCalculator:
     
     def _get_planet_name(self, planet_id: int) -> str:
         """Get planet name from ID using consistent naming."""
-        from ..const import get_planet_name
+        from extracted.systems.utils.const import get_planet_name
         return get_planet_name(planet_id)
     
     def calculate_batch_aspects_parallel(self, position_batches: List[List[PlanetPosition]]) -> List[AspectMatrix]:

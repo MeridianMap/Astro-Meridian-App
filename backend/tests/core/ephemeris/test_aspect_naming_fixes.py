@@ -6,11 +6,11 @@ generic "Planet N" fallback names for asteroids and other celestial objects.
 """
 
 import pytest
-from app.core.ephemeris.tools.aspects import AspectCalculator
-from app.core.ephemeris.charts.natal import NatalChart
-from app.core.ephemeris.charts.subject import Subject
-from app.core.ephemeris.const import get_planet_name, SwePlanets
-from app.core.ephemeris.classes.serialize import PlanetPosition
+from extracted.systems.aspects import AspectCalculator
+from extracted.systems.charts.natal import NatalChart
+from extracted.systems.charts.subject import Subject
+from extracted.systems.const import get_planet_name, SwePlanets
+from extracted.systems.classes.serialize import PlanetPosition
 from datetime import datetime
 
 
@@ -184,8 +184,8 @@ class TestAspectNamingFixes:
 
     def test_no_generic_planet_names_in_output(self):
         """Integration test ensuring no generic 'Planet N' names appear in final output."""
-        from app.services.ephemeris_service import EphemerisService
-        from app.api.models.schemas import NatalChartRequest, SubjectRequest, CoordinateInput, DateTimeInput
+        from extracted.services.ephemeris_service import EphemerisService
+        from extracted.api.models.schemas import NatalChartRequest, SubjectRequest, CoordinateInput, DateTimeInput
         
         # Create service and request
         service = EphemerisService()
@@ -208,7 +208,7 @@ class TestAspectNamingFixes:
         )
         
         # Convert to dict for easier inspection
-        response_dict = response if isinstance(response, dict) else response.dict()
+        response_dict = response if isinstance(response, dict) else response.model_dump()
         
         # Check aspects for generic names
         if 'aspects' in response_dict:

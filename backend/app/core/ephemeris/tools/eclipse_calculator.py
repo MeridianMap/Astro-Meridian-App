@@ -25,15 +25,16 @@ import logging
 from dataclasses import dataclass
 import swisseph as swe
 
-from app.core.ephemeris.tools.predictive_models import (
+from extracted.systems.predictive_models import (
     SolarEclipse, LunarEclipse, EclipseVisibility, EclipseType,
     LunarEclipseType, GeographicLocation
 )
-from app.core.ephemeris.classes.cache import get_global_cache
-from app.core.ephemeris.classes.redis_cache import get_redis_cache
+from extracted.systems.classes.cache import get_global_cache
+from extracted.systems.classes.redis_cache import get_redis_cache
 from app.core.monitoring.metrics import timed_calculation
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 class EclipseCalculationError(Exception):
     """Raised when eclipse calculations fail"""
@@ -88,7 +89,7 @@ class EclipseCalculator:
             cache_key = self._generate_cache_key("solar_eclipse", {
                 "start_date": start_date.isoformat(),
                 "eclipse_type": eclipse_type,
-                "location": location.dict() if location else None
+                "location": location.model_dump() if location else None
             })
             
             # Check cache first
@@ -108,7 +109,7 @@ class EclipseCalculator:
             solar_eclipse = self._create_solar_eclipse_object(eclipse_data, location)
             
             # Cache the result (24 hour TTL for eclipse data)
-            self.cache.put(cache_key, solar_eclipse.dict(), ttl=86400)
+            self.cache.put(cache_key, solar_eclipse.model_dump(), ttl=86400)
             
             logger.info(f"Found solar eclipse: {solar_eclipse.maximum_eclipse_time}")
             return solar_eclipse
@@ -160,7 +161,7 @@ class EclipseCalculator:
             lunar_eclipse = self._create_lunar_eclipse_object(eclipse_data)
             
             # Cache the result
-            self.cache.put(cache_key, lunar_eclipse.dict(), ttl=86400)
+            self.cache.put(cache_key, lunar_eclipse.model_dump(), ttl=86400)
             
             logger.info(f"Found lunar eclipse: {lunar_eclipse.maximum_eclipse_time}")
             return lunar_eclipse
@@ -204,7 +205,7 @@ class EclipseCalculator:
                 "start_date": start_date.isoformat(),
                 "end_date": end_date.isoformat(),
                 "eclipse_types": eclipse_types,
-                "location": location.dict() if location else None
+                "location": location.model_dump() if location else None
             })
             
             # Check cache

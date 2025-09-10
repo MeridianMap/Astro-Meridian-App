@@ -15,8 +15,8 @@ import time
 from datetime import datetime
 from unittest.mock import patch, MagicMock
 
-from app.core.acg.acg_cache import ACGCacheManager, get_acg_cache_manager, ACGPerformanceOptimizer
-from app.core.acg.acg_types import (
+from extracted.systems.acg_engine.acg_cache import ACGCacheManager, get_acg_cache_manager, ACGPerformanceOptimizer
+from extracted.systems.acg_engine.acg_types import (
     ACGRequest, ACGResult, ACGBody, ACGBodyType, ACGOptions
 )
 

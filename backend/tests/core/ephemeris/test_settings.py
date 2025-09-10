@@ -8,7 +8,7 @@ import pytest
 import threading
 from unittest.mock import patch
 
-from app.core.ephemeris.settings import EphemerisSettings, SettingsSingleton, settings
+from extracted.systems.settings import EphemerisSettings, SettingsSingleton, settings
 
 
 class TestEphemerisSettings:

@@ -22,6 +22,7 @@ from ..classes.cache import get_global_cache
 from ...monitoring.metrics import timed_calculation
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 @dataclass
 class ValidationResult:

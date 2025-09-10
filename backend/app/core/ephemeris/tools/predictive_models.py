@@ -14,7 +14,7 @@ from typing import List, Optional, Dict, Any, Union, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 
-from ..const import normalize_longitude, PLANET_NAMES
+from extracted.systems.utils.const import normalize_longitude, PLANET_NAMES
 
 
 class EclipseType(Enum):

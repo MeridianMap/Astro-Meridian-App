@@ -241,7 +241,7 @@ class TestProductionPerformanceIntegration:
         })
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         
         assert data["success"] is True
         assert "data" in data

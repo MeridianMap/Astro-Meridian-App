@@ -33,7 +33,7 @@ class TestRetrogradeIndicators:
         response = self.client.post("/ephemeris/natal", json=request_data)
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         
         # Verify all planets have retrograde fields
@@ -62,7 +62,7 @@ class TestRetrogradeIndicators:
         response = self.client.post("/ephemeris/natal", json=request_data)
         assert response.status_code == 200
         
-        planets = response.json()["planets"]
+        planets = response.model_dump_json()["planets"]
         
         # Verify known retrograde planets from PRP analysis
         expected_retrograde = ["Saturn", "Uranus", "Neptune", "Pluto"]
@@ -96,7 +96,7 @@ class TestRetrogradeIndicators:
         response = self.client.post("/ephemeris/natal", json=request_data)
         assert response.status_code == 200
         
-        planets = response.json()["planets"]
+        planets = response.model_dump_json()["planets"]
         
         for planet_name, planet_data in planets.items():
             longitude_speed = planet_data.get("longitude_speed")
@@ -138,7 +138,7 @@ class TestRetrogradeIndicators:
         response = self.client.post("/ephemeris/natal", json=request_data)
         assert response.status_code == 200
         
-        planets = response.json()["planets"]
+        planets = response.model_dump_json()["planets"]
         
         # Verify that the motion_type logic is working
         for planet_name, planet_data in planets.items():
@@ -170,7 +170,7 @@ class TestRetrogradeIndicators:
         response = self.client.post("/ephemeris/natal", json=request_data)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         
         # Verify core response structure is maintained
         assert "success" in data

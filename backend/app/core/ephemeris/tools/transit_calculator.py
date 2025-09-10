@@ -26,14 +26,15 @@ import math
 from dataclasses import dataclass
 import swisseph as swe
 
-from app.core.ephemeris.tools.predictive_models import (
+from extracted.systems.predictive_models import (
     Transit, SignIngress, PlanetaryStation, RetrogradeStatus
 )
-from app.core.ephemeris.classes.cache import get_global_cache
-from app.core.ephemeris.classes.redis_cache import get_redis_cache
+from extracted.systems.classes.cache import get_global_cache
+from extracted.systems.classes.redis_cache import get_redis_cache
 from app.core.monitoring.metrics import timed_calculation
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 class TransitCalculationError(Exception):
     """Raised when transit calculations fail"""
@@ -145,7 +146,7 @@ class TransitCalculator:
             )
             
             # Cache results (24 hour TTL)
-            transit_dicts = [t.dict() for t in transits]
+            transit_dicts = [t.model_dump() for t in transits]
             self.cache.put(cache_key, transit_dicts, ttl=86400)
             
             planet_name = self._get_planet_name(planet_id)
@@ -198,7 +199,7 @@ class TransitCalculator:
             ingresses = self._search_sign_ingresses(planet_id, start_date, target_sign)
             
             # Cache results
-            ingress_dicts = [i.dict() for i in ingresses]
+            ingress_dicts = [i.model_dump() for i in ingresses]
             self.cache.put(cache_key, ingress_dicts, ttl=86400)
             
             planet_name = self._get_planet_name(planet_id)

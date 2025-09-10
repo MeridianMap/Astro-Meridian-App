@@ -5,7 +5,7 @@ Unit tests for the Meridian Ephemeris Engine constants module.
 import pytest
 import swisseph as swe
 
-from app.core.ephemeris.const import (
+from extracted.systems.const import (
     SwePlanets, SweFlags, HouseSystems, Ayanamsa, Signs, Aspects,
     PLANET_NAMES, PLANET_SYMBOLS, SIGN_NAMES, SIGN_SYMBOLS,
     get_planet_name, get_planet_symbol, get_sign_from_longitude,

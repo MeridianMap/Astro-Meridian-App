@@ -101,7 +101,7 @@ def generate_comprehensive_chart():
     print(f"📊 HTTP Status: {response.status_code}")
     
     try:
-        body = response.json()
+        body = response.model_dump_json()
     except Exception as e:
         print(f"❌ Failed to parse JSON response: {e}")
         return None

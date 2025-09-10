@@ -18,6 +18,7 @@ from ..core.ephemeris.const import MODERN_PLANETS, MAJOR_ASTEROIDS, LUNAR_NODES,
 from ..api.models.schemas import NatalChartRequest
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class ChartCalculationService:

@@ -58,7 +58,7 @@ class ImportResolutionFixer:
             
             # Logger setup fixes
             (r'logger = logging\.getLogger\(__name__\)', 
-             'logger = logging.getLogger(__name__)\nif not logger.handlers: logging.basicConfig(level=logging.INFO)'),
+             'logger = logging.getLogger(__name__)\\nif not logger.handlers: logging.basicConfig(level=logging.INFO)'),
         ]
         
         # Files that need special handling
@@ -112,17 +112,14 @@ class ImportResolutionFixer:
     def _fix_acg_core_imports(self, content: str) -> str:
         """Special fixes for acg_core.py"""
         fixes = [
-            # ACG utils imports
-            (r'from \.acg_utils import',
-             'from .acg_utils import'),
-             
-            # ACG types
-            (r'from \.acg_types import',
-             'from .acg_types import'),
-             
-            # ACG cache
-            (r'from \.acg_cache import',
-             'from .acg_cache import'),
+            # ACG relative import normalizations
+            (r'from \.acg_utils import', 'from .acg_utils import'),
+            (r'from \.acg_types import', 'from .acg_types import'),
+            (r'from \.acg_cache import', 'from .acg_cache import'),
+            # Ensure legacy BaseSettings import is updated to pydantic_settings
+            (r'from pydantic import BaseSettings', 'from pydantic_settings import BaseSettings'),
+            # Logger setup fixes (ensure basicConfig only added when no handlers)
+            (r'logger = logging\.getLogger\(__name__\)', 'logger = logging.getLogger(__name__)\\nif not logger.handlers: logging.basicConfig(level=logging.INFO)'),
         ]
         
         for old, new in fixes:
@@ -134,6 +131,10 @@ class ImportResolutionFixer:
         """Fix imports in a single file and return list of changes made"""
         changes = []
         
+        # Skip unsafe paths
+        if self._should_skip_path(file_path):
+            return []
+
         if not os.path.exists(file_path):
             return [f"File not found: {file_path}"]
         
@@ -189,6 +190,11 @@ class ImportResolutionFixer:
             return {"ERROR": [f"Directory not found: {directory_path}"]}
         
         for root, dirs, files in os.walk(directory_path):
+            # Prune directories we must not touch
+            self._prune_unsafe_dirs(dirs)
+            # Skip entire tree if root is unsafe
+            if self._should_skip_path(root):
+                continue
             for file in files:
                 if file.endswith('.py') and not file.endswith('.backup'):
                     file_path = os.path.join(root, file)
@@ -198,6 +204,27 @@ class ImportResolutionFixer:
                         results[rel_path] = changes
                         
         return results
+
+    # ----------------- internal helpers -----------------
+    def _should_skip_path(self, path: str) -> bool:
+        """Return True if the path points into a virtual env, site-packages, caches, or vendor dirs"""
+        lowered = path.replace('\\', '/').lower()
+        skip_substrings = [
+            '/.venv/', '/venv/', '/env/', '/.env/',
+            '/site-packages/', '/dist-packages/',
+            '/node_modules/', '/.git/', '/__pycache__/'
+        ]
+        return any(s in lowered for s in skip_substrings)
+
+    def _prune_unsafe_dirs(self, dirs: List[str]) -> None:
+        """Remove unsafe directory names from os.walk traversal in-place"""
+        unsafe = {
+            '.venv', 'venv', 'env', '.env',
+            'site-packages', 'dist-packages',
+            'node_modules', '.git', '__pycache__'
+        }
+        # mutate in place
+        dirs[:] = [d for d in dirs if d not in unsafe]
     
     def create_module_structure(self, base_path: str = "."):
         """Create complete module structure for extracted systems"""

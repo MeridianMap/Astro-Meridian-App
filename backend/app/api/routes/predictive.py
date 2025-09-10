@@ -10,7 +10,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, status, Depends, Query
 from fastapi.responses import JSONResponse
 
-from ..models.predictive_schemas import (
+from extracted.systems.models.predictive_schemas import (
     # Eclipse endpoints
     NextEclipseRequest, NextEclipseResponse,
     EclipseSearchRequest, EclipseSearchResponse,

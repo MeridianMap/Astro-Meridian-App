@@ -17,7 +17,7 @@ import json
 from typing import Union, Dict, List, Optional, Tuple
 import swisseph as swe
 
-from ..const import SIGN_NAMES, SIGN_SYMBOLS, get_sign_from_longitude
+from extracted.systems.utils.const import SIGN_NAMES, SIGN_SYMBOLS, get_sign_from_longitude
 from ..classes.cache import cached
 
 

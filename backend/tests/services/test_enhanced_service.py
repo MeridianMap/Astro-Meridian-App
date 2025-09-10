@@ -4,8 +4,8 @@ Test suite for Enhanced EphemerisService functionality
 import pytest
 from datetime import datetime, timezone
 
-from app.services.ephemeris_service import EphemerisService
-from app.api.models.schemas import NatalChartRequest, SubjectRequest, DateTimeInput, CoordinateInput
+from extracted.services.ephemeris_service import EphemerisService
+from extracted.api.models.schemas import NatalChartRequest, SubjectRequest, DateTimeInput, CoordinateInput
 
 
 class TestEnhancedEphemerisService:

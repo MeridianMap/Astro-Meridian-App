@@ -9,12 +9,12 @@ import pytest
 from datetime import datetime
 from typing import Dict, Any
 
-from app.core.acg.acg_types import (
+from extracted.systems.acg_engine.acg_types import (
     ACGRequest, ACGBody, ACGBodyType, ACGNatalData, ACGOptions,
     ACGCoordinates, ACGNatalInfo, ACGBodyData
 )
-from app.core.acg.acg_natal_integration import ACGNatalIntegrator
-from app.core.ephemeris.charts.subject import Subject
+from extracted.systems.acg_engine.acg_natal_integration import ACGNatalIntegrator
+from extracted.systems.charts.subject import Subject
 
 
 class TestACGNatalDataValidation:
@@ -193,7 +193,7 @@ class TestNatalInfoExtraction:
     
     def test_convert_to_acg_coordinates(self, integrator):
         """Test conversion to ACG coordinates."""
-        from app.core.ephemeris.classes.serialize import PlanetPosition
+        from extracted.systems.classes.serialize import PlanetPosition
         
         # Create mock planet position
         planet_pos = PlanetPosition(

@@ -52,6 +52,7 @@ from app.core.performance.monitoring import get_performance_monitor, AlertSeveri
 from app.core.performance.memory_optimizer import get_memory_manager
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class ScalingTrigger(str, Enum):

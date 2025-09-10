@@ -13,8 +13,8 @@ import pytest
 from datetime import datetime
 from typing import Dict, Any
 
-from app.core.acg.acg_metadata import ACGMetadataManager
-from app.core.acg.acg_types import (
+from extracted.systems.acg_engine.acg_metadata import ACGMetadataManager
+from extracted.systems.acg_engine.acg_types import (
     ACGMetadata, ACGCoordinates, ACGLineInfo, ACGNatalInfo,
     ACGBodyType, ACGLineType
 )

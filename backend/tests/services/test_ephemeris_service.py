@@ -9,9 +9,9 @@ import pytest
 from datetime import datetime, timezone
 from unittest.mock import patch, MagicMock
 
-from app.services.ephemeris_service import EphemerisService
-from app.core.ephemeris.classes.serialize import PlanetPosition
-from app.api.models.schemas import NatalChartRequest, SubjectRequest, DateTimeInput, CoordinateInput
+from extracted.services.ephemeris_service import EphemerisService
+from extracted.systems.classes.serialize import PlanetPosition
+from extracted.api.models.schemas import NatalChartRequest, SubjectRequest, DateTimeInput, CoordinateInput
 
 
 class TestEphemerisService:

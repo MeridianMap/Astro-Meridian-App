@@ -26,9 +26,10 @@ import swisseph as swe
 
 from .enhanced_metadata import RetrogradeAwareLineMetadata, EnhancedACGLineMetadataGenerator
 from .aspect_lines import AspectToAngleCalculator, AspectLineFeature
-from ..ephemeris.tools.enhanced_calculations import EnhancedPlanetPosition
+from extracted.systems.ephemeris_utils.tools.enhanced_calculations import EnhancedPlanetPosition
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 @dataclass

@@ -19,7 +19,7 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
 
 from app.main import app
-from app.core.acg.acg_types import ACGResult, ACGBody, ACGBodyType, ACGOptions
+from extracted.systems.acg_engine.acg_types import ACGResult, ACGBody, ACGBodyType, ACGOptions
 
 
 class TestACGAPIEndpoints:
@@ -55,7 +55,7 @@ class TestACGAPIEndpoints:
         response = client.get("/acg/health")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         
         assert "status" in data
         assert data["service"] == "acg"
@@ -68,7 +68,7 @@ class TestACGAPIEndpoints:
         response = client.get("/acg/features")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         
         assert "bodies" in data
         assert "line_types" in data
@@ -98,7 +98,7 @@ class TestACGAPIEndpoints:
         assert response.status_code == 200
         assert response.headers.get("content-type") == "application/json"
         
-        schema = response.json()
+        schema = response.model_dump_json()
         
         assert "$schema" in schema
         assert schema["$schema"] == "http://json-schema.org/draft-07/schema#"
@@ -143,7 +143,7 @@ class TestACGAPIEndpoints:
         assert "X-Calculation-Time" in response.headers
         assert "X-Features-Count" in response.headers
         
-        data = response.json()
+        data = response.model_dump_json()
         assert data["type"] == "FeatureCollection"
         assert "features" in data
         assert len(data["features"]) == 1
@@ -164,7 +164,7 @@ class TestACGAPIEndpoints:
         response = client.post("/acg/lines", json=invalid_request)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert "detail" in data
     
     @patch('app.api.routes.acg.acg_engine.calculate_acg_lines')
@@ -175,7 +175,7 @@ class TestACGAPIEndpoints:
         response = client.post("/acg/lines", json=valid_acg_request)
         
         assert response.status_code == 500
-        data = response.json()
+        data = response.model_dump_json()
         assert data["detail"]["error"] == "calculation_error"
         assert "calculation failed" in data["detail"]["message"].lower()
     
@@ -209,7 +209,7 @@ class TestACGAPIEndpoints:
         assert "X-Batch-Size" in response.headers
         assert "X-Success-Count" in response.headers
         
-        data = response.json()
+        data = response.model_dump_json()
         assert "results" in data
         assert len(data["results"]) == 2
         
@@ -237,7 +237,7 @@ class TestACGAPIEndpoints:
         response = client.post("/acg/batch", json=batch_request)
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         
         assert len(data["results"]) == 2
         
@@ -271,7 +271,7 @@ class TestACGAPIEndpoints:
         assert "X-Calculation-Time" in response.headers
         assert "X-Frame-Count" in response.headers
         
-        data = response.json()
+        data = response.model_dump_json()
         assert "frames" in data
         
         # Should have 2 frames (start time + 60 minutes)
@@ -293,7 +293,7 @@ class TestACGAPIEndpoints:
         response = client.post("/acg/animate", json=invalid_request)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["detail"]["error"] == "validation_error"
         assert "start time must be before end time" in data["detail"]["message"].lower()
 
@@ -392,7 +392,7 @@ class TestACGAPIResponseFormats:
     def test_acg_features_response_structure(self, client):
         """Test ACG features response has correct structure."""
         response = client.get("/acg/features")
-        data = response.json()
+        data = response.model_dump_json()
         
         # Validate bodies structure
         assert isinstance(data["bodies"], list)
@@ -426,7 +426,7 @@ class TestACGAPIResponseFormats:
     def test_acg_schema_response_structure(self, client):
         """Test ACG schema response has valid JSON Schema structure."""
         response = client.get("/acg/schema")
-        schema = response.json()
+        schema = response.model_dump_json()
         
         # Basic JSON Schema structure
         assert schema["$schema"] == "http://json-schema.org/draft-07/schema#"
@@ -483,7 +483,7 @@ class TestACGAPIResponseFormats:
         }
         
         response = client.post("/acg/lines", json=request_data)
-        data = response.json()
+        data = response.model_dump_json()
         
         # Validate GeoJSON FeatureCollection structure
         assert data["type"] == "FeatureCollection"

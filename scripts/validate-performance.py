@@ -21,9 +21,9 @@ import concurrent.futures
 # Add backend to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "backend"))
 
-from app.core.ephemeris.tools.batch import BatchCalculator, BatchRequest
-from app.core.ephemeris.classes.cache import get_global_cache
-from app.core.ephemeris.classes.redis_cache import get_redis_cache
+from extracted.systems.batch import BatchCalculator, BatchRequest
+from extracted.systems.classes.cache import get_global_cache
+from extracted.systems.classes.redis_cache import get_redis_cache
 
 
 class PerformanceValidator:
@@ -312,8 +312,8 @@ class PerformanceValidator:
         
         try:
             from app.core.performance.optimizations import ConcurrentCalculator
-            from app.core.ephemeris.const import SwePlanets
-            from app.core.ephemeris.tools.ephemeris import julian_day_from_datetime
+            from extracted.systems.const import SwePlanets
+            from extracted.systems.ephemeris import julian_day_from_datetime
             
             jd = julian_day_from_datetime(datetime(2000, 1, 1, 12, 0, tzinfo=timezone.utc))
             planets = [SwePlanets.SUN, SwePlanets.MOON, SwePlanets.MERCURY, SwePlanets.VENUS, SwePlanets.MARS]
@@ -376,7 +376,7 @@ class PerformanceValidator:
     def _calculate_julian_day(self, dt: datetime) -> float:
         """Helper to calculate Julian day."""
         try:
-            from app.core.ephemeris.tools.ephemeris import julian_day_from_datetime
+            from extracted.systems.ephemeris import julian_day_from_datetime
             return julian_day_from_datetime(dt)
         except:
             # Fallback calculation

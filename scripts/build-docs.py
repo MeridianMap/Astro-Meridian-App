@@ -813,7 +813,7 @@ class RobustEphemerisClient:
         # Handle HTTP errors
         if response.status_code == 429:
             retry_after = int(response.headers.get('X-RateLimit-Retry-After', 60))
-            error_data = response.json()
+            error_data = response.model_dump_json()
             raise RateLimitError(
                 error_data.get("message", "Rate limit exceeded"),
                 retry_after,
@@ -821,7 +821,7 @@ class RobustEphemerisClient:
             )
         
         try:
-            data = response.json()
+            data = response.model_dump_json()
         except requests.exceptions.JSONDecodeError:
             raise EphemerisAPIError("invalid_response", 
                                   f"Invalid JSON response: {response.text[:200]}")
@@ -978,6 +978,7 @@ def exponential_backoff_retry(func, max_retries=3):
 import logging
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 try:
     chart = client.calculate_natal_chart(subject_data)

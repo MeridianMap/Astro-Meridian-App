@@ -8,7 +8,7 @@ instead of generic "Object X" or "Planet X" references.
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
-from app.core.ephemeris.const import PLANET_NAMES
+from extracted.systems.const import PLANET_NAMES
 
 
 class TestNomenclatureConsistency:
@@ -33,7 +33,7 @@ class TestNomenclatureConsistency:
         response = self.client.post("/ephemeris/natal", json=request_data)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         planets = data["planets"]
         
         # Check that no generic names are present
@@ -56,7 +56,7 @@ class TestNomenclatureConsistency:
         response = self.client.post("/ephemeris/natal", json=request_data)
         assert response.status_code == 200
         
-        planets = response.json()["planets"]
+        planets = response.model_dump_json()["planets"]
         
         # Expected asteroid names based on PLANET_NAMES dictionary
         expected_asteroids = {
@@ -89,7 +89,7 @@ class TestNomenclatureConsistency:
         response = self.client.post("/ephemeris/natal", json=request_data)
         assert response.status_code == 200
         
-        planets = response.json()["planets"]
+        planets = response.model_dump_json()["planets"]
         
         # Expected centaur names
         expected_centaurs = {
@@ -146,7 +146,7 @@ class TestNomenclatureConsistency:
             response = self.client.post("/ephemeris/natal", json=request_data)
             assert response.status_code == 200
             
-            planets = response.json()["planets"]
+            planets = response.model_dump_json()["planets"]
             
             # Check that any expected names present are consistent
             for planet_name in planets.keys():
@@ -172,7 +172,7 @@ class TestNomenclatureConsistency:
         response = self.client.post("/ephemeris/natal", json=request_data)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         
         # Verify core response structure maintained
         assert "success" in data

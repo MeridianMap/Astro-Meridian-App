@@ -48,7 +48,7 @@ def test_api():
             print("SUCCESS! Got response")
             
             # Parse and save response
-            data = response.json()
+            data = response.model_dump_json()
             
             output_data = {
                 "test_info": {

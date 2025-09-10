@@ -12,9 +12,9 @@ Tests against known good calculations using traditional astrological principles.
 """
 
 import pytest
-from app.core.ephemeris.tools.dignities import EssentialDignitiesCalculator
-from app.core.ephemeris.const import SwePlanets
-from app.core.ephemeris.data.dignity_loader import get_dignity_loader
+from extracted.systems.dignities import EssentialDignitiesCalculator
+from extracted.systems.const import SwePlanets
+from extracted.systems.data.dignity_loader import get_dignity_loader
 
 
 class TestEssentialDignitiesFixes:

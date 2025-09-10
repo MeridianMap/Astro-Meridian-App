@@ -22,7 +22,7 @@ from datetime import datetime
 
 from .arabic_parts_models import SectDetermination, ChartSect
 from ..tools.ephemeris import PlanetPosition, HouseSystem
-from ..const import normalize_longitude
+from extracted.systems.utils.const import normalize_longitude
 
 
 class SectCalculationMethod:

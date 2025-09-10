@@ -4,7 +4,7 @@ Unit tests for the Meridian Ephemeris Engine position analysis utilities.
 
 import pytest
 from unittest.mock import patch
-from app.core.ephemeris.tools.position import (
+from extracted.systems.position import (
     get_longitude, zodiac_sign, sign_longitude, opposite_sign, decan,
     element, modality, house_position, opposite_house_position,
     angular_separation, is_in_same_sign, is_in_same_element, 

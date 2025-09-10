@@ -34,6 +34,7 @@ from contextlib import contextmanager
 import numpy as np
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class AlertSeverity(Enum):

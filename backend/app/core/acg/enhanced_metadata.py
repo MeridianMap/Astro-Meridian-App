@@ -16,8 +16,8 @@ from typing import Dict, List, Optional, Any, Union, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 
-from ..ephemeris.tools.enhanced_calculations import EnhancedPlanetPosition
-from ..ephemeris.const import normalize_longitude, PLANET_NAMES
+from extracted.systems.ephemeris_utils.tools.enhanced_calculations import EnhancedPlanetPosition
+from extracted.systems.ephemeris_utils.const import normalize_longitude, PLANET_NAMES
 
 
 class MotionStatus(Enum):

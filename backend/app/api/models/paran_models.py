@@ -10,8 +10,8 @@ from typing import List, Optional, Dict, Any, Union
 from enum import Enum
 from pydantic import BaseModel, Field, validator, root_validator
 
-from app.api.models.schemas import DateTimeInput, CoordinateInput
-from app.core.acg.paran_models import (
+from extracted.api.models.schemas import DateTimeInput, CoordinateInput
+from extracted.systems.acg_engine.paran_models import (
     ACGEventType,
     ACGVisibilityMode,
     HorizonConvention,

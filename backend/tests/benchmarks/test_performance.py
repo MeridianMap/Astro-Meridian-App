@@ -19,11 +19,11 @@ try:
 except ImportError:
     pytest_benchmark_available = False
 
-from app.core.ephemeris.tools.ephemeris import get_planet, julian_day_from_datetime, get_houses
-from app.core.ephemeris.tools.batch import BatchCalculator, BatchRequest, create_batch_from_data
-from app.core.ephemeris.const import SwePlanets
-from app.core.ephemeris.classes.cache import get_global_cache
-from app.core.ephemeris.classes.redis_cache import get_redis_cache
+from extracted.systems.ephemeris import get_planet, julian_day_from_datetime, get_houses
+from extracted.systems.batch import BatchCalculator, BatchRequest, create_batch_from_data
+from extracted.systems.const import SwePlanets
+from extracted.systems.classes.cache import get_global_cache
+from extracted.systems.classes.redis_cache import get_redis_cache
 
 
 class TestEphemerisBenchmarks:

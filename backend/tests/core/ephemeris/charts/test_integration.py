@@ -9,9 +9,9 @@ import pytest
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from app.core.ephemeris.charts.subject import Subject
-from app.core.ephemeris.charts.natal import NatalChart
-from app.core.ephemeris.const import SwePlanets, HouseSystems
+from extracted.systems.charts.subject import Subject
+from extracted.systems.charts.natal import NatalChart
+from extracted.systems.const import SwePlanets, HouseSystems
 
 
 class TestChartIntegration:

@@ -16,9 +16,9 @@ import os
 from typing import List
 from unittest.mock import Mock
 
-from app.core.ephemeris.tools.aspects import AspectCalculator, BatchAspectCalculator
-from app.core.ephemeris.tools.orb_systems import OrbSystemManager
-from app.core.ephemeris.classes.serialize import PlanetPosition
+from extracted.systems.aspects import AspectCalculator, BatchAspectCalculator
+from extracted.systems.orb_systems import OrbSystemManager
+from extracted.systems.classes.serialize import PlanetPosition
 
 
 class TestAspectPerformanceRequirements:
@@ -249,7 +249,7 @@ class TestCachePerformanceRequirements:
     @pytest.fixture
     def cached_service(self):
         """Mock ephemeris service with caching."""
-        from app.services.ephemeris_service import EphemerisService
+        from extracted.services.ephemeris_service import EphemerisService
         return EphemerisService()
     
     def test_cache_hit_rate_70_percent(self, cached_service, standard_chart_positions):

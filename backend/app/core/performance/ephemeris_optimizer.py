@@ -35,6 +35,7 @@ import numpy as np
 from app.core.performance.advanced_cache import get_intelligent_cache, CacheType
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 @dataclass

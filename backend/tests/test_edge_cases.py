@@ -13,11 +13,11 @@ from tests.utils import (
     assert_angle_close, assert_planet_position_close, load_fixture,
     create_test_subject_data, PerformanceTracker
 )
-from app.core.ephemeris.charts.subject import Subject
-from app.core.ephemeris.charts.natal import NatalChart
-from app.core.ephemeris.tools.ephemeris import get_planet
-from app.core.ephemeris.tools.date import to_julian_day, to_datetime
-from app.core.ephemeris.const import SwePlanets, HouseSystems
+from extracted.systems.charts.subject import Subject
+from extracted.systems.charts.natal import NatalChart
+from extracted.systems.ephemeris import get_planet
+from extracted.systems.date import to_julian_day, to_datetime
+from extracted.systems.const import SwePlanets, HouseSystems
 
 
 class TestDSTTransitions:

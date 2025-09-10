@@ -26,11 +26,12 @@ from dataclasses import asdict
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 
 from .acg_types import ACGRequest, ACGResult, ACGBodyData, ACGLineData
-from ..ephemeris.classes.cache import get_global_cache
-from ..ephemeris.classes.redis_cache import get_redis_cache
+from extracted.systems.ephemeris_utils.classes.cache import get_global_cache
+from extracted.systems.ephemeris_utils.classes.redis_cache import get_redis_cache
 # from ..performance.optimizations import MemoryOptimizations
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class ACGCacheManager:

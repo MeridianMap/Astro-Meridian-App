@@ -25,7 +25,7 @@ if BACKEND_DIR not in sys.path:
     sys.path.insert(0, BACKEND_DIR)
 
 from app.main import app
-from app.api.models.schemas import (
+from extracted.api.models.schemas import (
     NatalChartEnhancedRequest, NatalChartEnhancedResponse,
     AspectMatrixResponse, EnhancedAspectResponse, CalculationMetadata
 )
@@ -66,7 +66,7 @@ class TestEnhancedEphemerisAPI:
         response = client.post("/ephemeris/v2/natal-enhanced", json=sample_enhanced_request)
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         
         # Verify response structure
         assert "success" in data
@@ -133,7 +133,7 @@ class TestEnhancedEphemerisAPI:
             response = client.post("/ephemeris/v2/natal-enhanced", json=request_data)
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             
             # Verify orb system was used
@@ -161,7 +161,7 @@ class TestEnhancedEphemerisAPI:
         response = client.post("/ephemeris/v2/natal-enhanced", json=request_data)
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         
         # Custom orb config should be used instead of preset
@@ -179,7 +179,7 @@ class TestEnhancedEphemerisAPI:
             response = client.post("/ephemeris/v2/natal-enhanced", json=request_data)
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             
             metadata = data["calculation_metadata"]
@@ -215,7 +215,7 @@ class TestEnhancedEphemerisAPI:
         response = client.post("/ephemeris/v2/natal-enhanced", json=request_data)
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         
         # Should still return standard aspects from natal chart, not enhanced aspects
@@ -268,7 +268,7 @@ class TestEnhancedEphemerisAPI:
         response = client.post("/ephemeris/natal", json=standard_request)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         assert data["chart_type"] == "natal"  # Not "natal_enhanced"
     
@@ -328,7 +328,7 @@ class TestEnhancedEphemerisAPI:
         response = client.post("/ephemeris/v2/natal-enhanced", json=sample_enhanced_request)
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         
         # Validate response can be parsed by Pydantic model
         try:
@@ -392,7 +392,7 @@ class TestEnhancedEphemerisAPI:
         status = response.status_code
         # Try to decode JSON; fall back to raw text
         try:
-            body = response.json()
+            body = response.model_dump_json()
         except Exception:
             body = {"raw": response.text}
 
@@ -451,7 +451,7 @@ class TestAPIDocumentation:
         response = client.get("/openapi.json")
         assert response.status_code == 200
         
-        openapi_schema = response.json()
+        openapi_schema = response.model_dump_json()
         paths = openapi_schema.get("paths", {})
         
         # Enhanced endpoint should be documented

@@ -16,12 +16,12 @@ import time
 from typing import List, Dict, Any
 from unittest.mock import Mock, patch
 
-from app.core.ephemeris.tools.aspects import (
+from extracted.systems.aspects import (
     AspectCalculator, AspectType, Aspect, OrbConfiguration,
     AspectMatrix, BatchAspectCalculator, calculate_aspect_strength
 )
-from app.core.ephemeris.tools.orb_systems import OrbSystemManager
-from app.core.ephemeris.classes.serialize import PlanetPosition
+from extracted.systems.orb_systems import OrbSystemManager
+from extracted.systems.classes.serialize import PlanetPosition
 
 
 class TestAspectCalculatorCore:

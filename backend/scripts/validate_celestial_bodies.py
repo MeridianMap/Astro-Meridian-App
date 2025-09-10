@@ -17,11 +17,12 @@ from typing import Dict, List, Tuple, Any
 import logging
 
 # Import ACG components
-from app.core.acg.acg_core import ACGCalculationEngine
-from app.core.acg.acg_types import ACGBodyType
+from extracted.systems.acg_engine.acg_core import ACGCalculationEngine
+from extracted.systems.acg_engine.acg_types import ACGBodyType
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class CelestialBodyValidator:

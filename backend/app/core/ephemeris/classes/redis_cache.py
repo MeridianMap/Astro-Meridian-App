@@ -25,6 +25,7 @@ from ..settings import settings
 
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class RedisCache:

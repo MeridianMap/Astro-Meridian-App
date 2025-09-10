@@ -14,8 +14,8 @@ import numpy as np
 from datetime import datetime
 from unittest.mock import patch, MagicMock
 
-from app.core.acg.acg_core import ACGCalculationEngine
-from app.core.acg.acg_types import (
+from extracted.systems.acg_engine.acg_core import ACGCalculationEngine
+from extracted.systems.acg_engine.acg_types import (
     ACGRequest, ACGBody, ACGBodyType, ACGOptions, ACGNatalData,
     ACGCoordinates, ACGBodyData, ACGLineType
 )
@@ -264,7 +264,7 @@ class TestACGRequestProcessing:
     
     def test_metadata_to_properties_conversion(self, engine):
         """Test metadata to GeoJSON properties conversion."""
-        from app.core.acg.acg_types import ACGMetadata, ACGLineInfo
+        from extracted.systems.acg_engine.acg_types import ACGMetadata, ACGLineInfo
         
         metadata = ACGMetadata(
             id="TestBody",
@@ -391,7 +391,7 @@ class TestPerformanceAndScaling:
     @pytest.mark.benchmark
     def test_metadata_conversion_performance(self, engine, benchmark):
         """Benchmark metadata to properties conversion."""
-        from app.core.acg.acg_types import ACGMetadata, ACGLineInfo
+        from extracted.systems.acg_engine.acg_types import ACGMetadata, ACGLineInfo
         
         metadata = ACGMetadata(
             id="TestBody",

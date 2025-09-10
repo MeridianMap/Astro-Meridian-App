@@ -18,9 +18,9 @@ from typing import Dict, List, Any
 # Add the backend directory to Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.core.ephemeris.tools.validation import nasa_validator, ValidationResult
-from app.core.ephemeris.tools.eclipse_calculator import EclipseCalculator
-from app.core.ephemeris.tools.predictive_models import SolarEclipse, LunarEclipse
+from extracted.systems.validation import nasa_validator, ValidationResult
+from extracted.systems.eclipse_calculator import EclipseCalculator
+from extracted.systems.predictive_models import SolarEclipse, LunarEclipse
 
 class NASAValidationRunner:
     """Comprehensive NASA validation test runner."""

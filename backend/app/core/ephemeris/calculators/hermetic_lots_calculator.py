@@ -13,9 +13,10 @@ import math
 import logging
 from datetime import datetime
 
-from ..models.planet_data import PlanetData
+from extracted.systems.models.planet_data import PlanetData
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class HermeticLotsCalculator:

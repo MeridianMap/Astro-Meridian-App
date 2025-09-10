@@ -22,12 +22,13 @@ from .enhanced_metadata import (
     RetrogradeAwareLineMetadata, EnhancedACGLineMetadataGenerator,
     MotionStatus, PlanetaryDignity
 )
-from ..ephemeris.tools.enhanced_calculations import (
+from extracted.systems.ephemeris_utils.tools.enhanced_calculations import (
     EnhancedPlanetPosition, get_enhanced_planet_position
 )
-from ..ephemeris.const import PLANET_NAMES
+from extracted.systems.ephemeris_utils.const import PLANET_NAMES
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class RetrogradeIntegratedACGCalculator:

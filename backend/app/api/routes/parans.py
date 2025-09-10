@@ -19,20 +19,21 @@ from fastapi import APIRouter, HTTPException, status, Response
 from fastapi.responses import JSONResponse
 import logging
 
-from app.api.models.paran_models import (
+from extracted.api.models.paran_models import (
     ParanCalculationRequest, ParanCalculationResponse,
     GlobalParanSearchRequest, GlobalParanSearchResponse,
     ParanValidationRequest, ParanValidationResponse,
     ParanCalculationError
 )
-from app.core.acg.paran_calculator import JimLewisACGParanCalculator
-from app.core.acg.paran_models import (
+from extracted.systems.acg_engine.paran_calculator import JimLewisACGParanCalculator
+from extracted.systems.acg_engine.paran_models import (
     ACGParanConfiguration, ACGEventType, ACGVisibilityMode,
     HorizonConvention, ParanPrecisionLevel
 )
 from app.core.monitoring.metrics import timed_calculation, get_metrics
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 # Create router with parans prefix
 router = APIRouter(prefix="/parans", tags=["parans"])
@@ -563,7 +564,7 @@ async def paran_health_check() -> Dict[str, Any]:
         test_start = time.time()
         
         # Minimal test calculation
-        from app.core.acg.paran_models import ACGParanConfiguration, ACGEventType, ACGVisibilityMode
+        from extracted.systems.acg_engine.paran_models import ACGParanConfiguration, ACGEventType, ACGVisibilityMode
         
         test_config = ACGParanConfiguration(
             planet_pairs=[("Sun", "Moon")],

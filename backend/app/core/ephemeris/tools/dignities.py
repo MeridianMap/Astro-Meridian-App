@@ -12,7 +12,7 @@ from enum import IntEnum
 import bisect
 import time
 from functools import lru_cache
-from ..const import SwePlanets
+from extracted.systems.utils.const import SwePlanets
 from ..classes.cache import get_global_cache
 from ..data.dignity_loader import get_dignity_loader
 

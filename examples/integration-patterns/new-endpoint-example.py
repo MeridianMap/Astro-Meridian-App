@@ -13,15 +13,16 @@ from pydantic import BaseModel, Field, validator
 import logging
 
 # Core imports
-from app.core.ephemeris.tools.ephemeris import get_planet, julian_day_from_datetime
-from app.core.ephemeris.const import SwePlanets, get_planet_name
-from app.core.ephemeris.classes.cache import get_global_cache
-from app.core.ephemeris.classes.redis_cache import get_redis_cache
+from extracted.systems.ephemeris import get_planet, julian_day_from_datetime
+from extracted.systems.const import SwePlanets, get_planet_name
+from extracted.systems.classes.cache import get_global_cache
+from extracted.systems.classes.redis_cache import get_redis_cache
 from app.core.monitoring.metrics import timed_calculation, get_metrics
-from app.api.models.schemas import DateTimeInput, ErrorResponse
+from extracted.api.models.schemas import DateTimeInput, ErrorResponse
 
 # Set up logging
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 # Router for the new endpoint
 router = APIRouter(prefix="/ephemeris", tags=["aspects"])
@@ -200,8 +201,8 @@ class AspectCalculator:
             return cached_result
         
         # 3. Parse datetime
-        from app.core.ephemeris.tools.date import parse_datetime_input
-        dt = parse_datetime_input(datetime_input.dict())
+        from extracted.systems.date import parse_datetime_input
+        dt = parse_datetime_input(datetime_input.model_dump())
         jd = julian_day_from_datetime(dt)
         
         # 4. Calculate planetary positions
@@ -291,7 +292,7 @@ class AspectCalculator:
         import json
         
         cache_data = {
-            "datetime": datetime_input.dict(),
+            "datetime": datetime_input.model_dump(),
             "planets": sorted(planet_names),
             "orbs": orb_settings
         }
@@ -307,7 +308,7 @@ class AspectCalculator:
         redis_cache = get_redis_cache()
         if redis_cache.enabled:
             cache_data = {
-                "datetime": datetime_input.dict(),
+                "datetime": datetime_input.model_dump(),
                 "planets": planet_names,
                 "orbs": orb_settings
             }
@@ -338,7 +339,7 @@ class AspectCalculator:
         redis_cache = get_redis_cache()
         if redis_cache.enabled:
             cache_data = {
-                "datetime": datetime_input.dict(),
+                "datetime": datetime_input.model_dump(),
                 "planets": planet_names,
                 "orbs": orb_settings
             }
@@ -597,7 +598,7 @@ def test_new_endpoint():
     response = client.post("/ephemeris/aspects", json=test_request)
     
     assert response.status_code == 200
-    data = response.json()
+    data = response.model_dump_json()
     
     assert data["success"] is True
     assert "data" in data

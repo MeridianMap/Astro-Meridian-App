@@ -7,7 +7,7 @@ from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 from unittest.mock import patch, MagicMock
 
-from app.core.ephemeris.tools.date import (
+from extracted.systems.date import (
     to_datetime, to_julian_day, localize_datetime, get_timezone_info,
     lookup_timezone_by_coordinates, get_timezone_name, is_ambiguous_time,
     is_dst_active, get_utc_offset, normalize_datetime_to_utc,

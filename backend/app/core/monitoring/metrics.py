@@ -45,6 +45,7 @@ except ImportError:
 
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class MeridianMetrics:
@@ -448,7 +449,7 @@ def update_health_metrics():
     # Check various system components
     try:
         # Check Redis connection
-        from ..ephemeris.classes.redis_cache import get_redis_cache
+        from extracted.systems.ephemeris_utils.classes.redis_cache import get_redis_cache
         redis_cache = get_redis_cache()
         redis_healthy = redis_cache.enabled
         metrics.update_system_health("redis", redis_healthy)

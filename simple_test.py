@@ -49,7 +49,7 @@ def test_api_simple():
             print("✅ SUCCESS!")
             
             # Get JSON response
-            data = response.json()
+            data = response.model_dump_json()
             
             # Create output file
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

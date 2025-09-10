@@ -13,11 +13,11 @@ from unittest.mock import patch, Mock
 import json
 
 from app.main import app
-from app.core.ephemeris.tools.predictive_models import (
+from extracted.systems.predictive_models import (
     SolarEclipse, LunarEclipse, Transit, SignIngress, EclipseVisibility,
     EclipseType, LunarEclipseType, RetrogradeStatus, GeographicLocation
 )
-from app.services.predictive_service import predictive_service
+from extracted.services.predictive_service import predictive_service
 
 
 class TestEclipseAPIEndpoints:
@@ -49,7 +49,7 @@ class TestEclipseAPIEndpoints:
             response = client.post("/v2/eclipses/next-solar", json=request_data)
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             assert data["eclipse"] is not None
             assert "metadata" in data
@@ -67,7 +67,7 @@ class TestEclipseAPIEndpoints:
             response = client.post("/v2/eclipses/next-solar", json=request_data)
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             assert data["eclipse"] is None
             assert "No solar eclipse found" in data["message"]
@@ -82,7 +82,7 @@ class TestEclipseAPIEndpoints:
         response = client.post("/v2/eclipses/next-solar", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
         assert "Invalid eclipse type" in data["message"]
@@ -108,7 +108,7 @@ class TestEclipseAPIEndpoints:
             response = client.post("/v2/eclipses/next-lunar", json=request_data)
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             assert data["eclipse"] is not None
     
@@ -122,7 +122,7 @@ class TestEclipseAPIEndpoints:
         response = client.post("/v2/eclipses/next-lunar", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
     
@@ -155,7 +155,7 @@ class TestEclipseAPIEndpoints:
             response = client.post("/v2/eclipses/search", json=request_data)
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             assert data["total_count"] == 2
             assert data["search_range_years"] == 1.0
@@ -170,7 +170,7 @@ class TestEclipseAPIEndpoints:
         response = client.post("/v2/eclipses/search", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
         assert "End date must be after start date" in data["message"]
@@ -185,7 +185,7 @@ class TestEclipseAPIEndpoints:
         response = client.post("/v2/eclipses/search", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
         assert "range too large" in data["message"]
@@ -221,7 +221,7 @@ class TestEclipseAPIEndpoints:
             response = client.post("/v2/eclipses/visibility", json=request_data)
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             assert data["visibility"] is not None
     
@@ -239,7 +239,7 @@ class TestEclipseAPIEndpoints:
         response = client.post("/v2/eclipses/visibility", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
 
@@ -277,7 +277,7 @@ class TestTransitAPIEndpoints:
             response = client.post("/v2/transits/planet-to-degree", json=request_data)
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             assert data["total_count"] == 1
             assert len(data["transits"]) == 1
@@ -293,7 +293,7 @@ class TestTransitAPIEndpoints:
         response = client.post("/v2/transits/planet-to-degree", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
         assert "Invalid planet name" in data["message"]
@@ -309,7 +309,7 @@ class TestTransitAPIEndpoints:
         response = client.post("/v2/transits/planet-to-degree", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
         assert "Target degree must be between 0 and 360" in data["message"]
@@ -347,7 +347,7 @@ class TestTransitAPIEndpoints:
             response = client.post("/v2/transits/sign-ingresses", json=request_data)
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             assert data["total_count"] == 2
             assert "Jupiter" in data["ingresses"]
@@ -364,7 +364,7 @@ class TestTransitAPIEndpoints:
         response = client.post("/v2/transits/sign-ingresses", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
         assert "Invalid planet names" in data["message"]
@@ -408,7 +408,7 @@ class TestTransitAPIEndpoints:
             response = client.post("/v2/transits/search", json=request_data)
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             assert "results" in data
             assert data["search_range_years"] == pytest.approx(0.4, rel=0.1)
@@ -423,7 +423,7 @@ class TestTransitAPIEndpoints:
         response = client.post("/v2/transits/search", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
         assert "End date must be after start date" in data["message"]
@@ -438,7 +438,7 @@ class TestTransitAPIEndpoints:
         response = client.post("/v2/transits/search", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
         assert data["error"] == "validation_error"
         assert "range too large" in data["message"]
@@ -480,7 +480,7 @@ class TestOptimizationAPIEndpoints:
             response = client.get("/v2/optimization/status")
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             assert "optimization_status" in data
             assert "features" in data
@@ -494,7 +494,7 @@ class TestOptimizationAPIEndpoints:
             response = client.post("/v2/optimization/clear-cache")
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             assert "cache cleared" in data["message"]
             assert "cache_types_available" in data
@@ -507,7 +507,7 @@ class TestOptimizationAPIEndpoints:
             response = client.post("/v2/optimization/clear-cache?cache_type=eclipse_search")
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is True
             assert "eclipse_search" in data["message"]
     
@@ -519,7 +519,7 @@ class TestOptimizationAPIEndpoints:
             response = client.post("/v2/optimization/clear-cache")
             
             assert response.status_code == 200
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is False
             assert data["error"] == "cache_clear_failed"
     
@@ -528,7 +528,7 @@ class TestOptimizationAPIEndpoints:
         response = client.get("/v2/optimization/benchmarks")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         assert "benchmarks" in data
         assert "eclipse_calculations" in data["benchmarks"]
@@ -550,7 +550,7 @@ class TestHealthAndInfoEndpoints:
         response = client.get("/v2/health")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         assert data["service"] == "predictive_astrology"
         assert "features" in data
@@ -562,7 +562,7 @@ class TestHealthAndInfoEndpoints:
         response = client.get("/v2/rate-limits")
         
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         assert "rate_limits" in data
         assert "eclipse_searches" in data["rate_limits"]
@@ -584,7 +584,7 @@ class TestAPIErrorHandling:
         response = client.post("/v2/eclipses/next-solar", data="invalid json")
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
     
     def test_missing_required_fields(self, client):
@@ -597,7 +597,7 @@ class TestAPIErrorHandling:
         response = client.post("/v2/eclipses/next-solar", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
     
     def test_service_error_handling(self, client):
@@ -612,7 +612,7 @@ class TestAPIErrorHandling:
             response = client.post("/v2/eclipses/next-solar", json=request_data)
             
             assert response.status_code == 500
-            data = response.json()
+            data = response.model_dump_json()
             assert data["success"] is False
             assert data["error"] == "internal_server_error"
     
@@ -625,7 +625,7 @@ class TestAPIErrorHandling:
         response = client.post("/v2/eclipses/next-solar", json=request_data)
         
         assert response.status_code == 422
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is False
 
 
@@ -725,7 +725,7 @@ class TestAsyncAPIBehavior:
             # All requests should succeed
             for response in responses:
                 assert response.status_code == 200
-                data = response.json()
+                data = response.model_dump_json()
                 assert data["success"] is True
 
 

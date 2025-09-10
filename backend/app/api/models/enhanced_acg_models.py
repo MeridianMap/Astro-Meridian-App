@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Any, Literal, Union
 from pydantic import BaseModel, Field, ConfigDict
 from enum import Enum
 
-from ..models.common import DateTimeInput, CoordinateInput
+from extracted.systems.models.common import DateTimeInput, CoordinateInput
 
 
 class AspectLineType(str, Enum):

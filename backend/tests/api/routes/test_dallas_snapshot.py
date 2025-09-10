@@ -52,7 +52,7 @@ class TestDallasSnapshot:
 
         response = client.post("/ephemeris/v2/natal-enhanced", json=request_payload)
         assert response.status_code == 200
-        data = response.json()
+        data = response.model_dump_json()
         assert data.get("success") is True
 
         # Print full JSON for manual review

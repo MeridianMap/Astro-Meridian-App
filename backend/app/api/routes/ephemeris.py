@@ -9,7 +9,7 @@ from typing import Union
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.responses import JSONResponse
 
-from ..models.schemas import (
+from extracted.systems.models.schemas import (
     NatalChartRequest, NatalChartResponse, ErrorResponse, HealthResponse,
     NatalChartEnhancedRequest, NatalChartEnhancedResponse, CalculationMetadata,
     AspectMatrixResponse, EnhancedAspectResponse, ArabicPartsResponse,

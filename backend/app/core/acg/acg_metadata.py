@@ -28,6 +28,7 @@ from .acg_types import (
 from .acg_utils import get_swiss_ephemeris_version
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class ACGMetadataManager:

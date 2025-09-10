@@ -36,7 +36,7 @@ class TestArabicPartsActivation:
         response = self.client.post("/ephemeris/v2/natal-enhanced", json=request_data)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         
         # Verify Arabic Parts are present and populated
@@ -74,7 +74,7 @@ class TestArabicPartsActivation:
         response = self.client.post("/ephemeris/v2/natal-enhanced", json=request_data)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         parts_data = data["arabic_parts"]["arabic_parts"]
         
         # Check for core traditional lots
@@ -128,7 +128,7 @@ class TestArabicPartsActivation:
         day_response = self.client.post("/ephemeris/v2/natal-enhanced", json=day_request)
         assert day_response.status_code == 200
         
-        day_data = day_response.json()
+        day_data = day_response.model_dump_json()
         day_sect = day_data["arabic_parts"]["sect_determination"]
         day_parts = day_data["arabic_parts"]["arabic_parts"]
         
@@ -167,7 +167,7 @@ class TestArabicPartsActivation:
         response = self.client.post("/ephemeris/v2/natal-enhanced", json=request_data)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         parts_data = data["arabic_parts"]["arabic_parts"]
         formulas_used = data["arabic_parts"]["formulas_used"]
         
@@ -198,7 +198,7 @@ class TestArabicPartsActivation:
         response = self.client.post("/ephemeris/v2/natal-enhanced", json=request_data)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         arabic_parts = data["arabic_parts"]
         
         # Verify performance target (<40ms as specified in PRP)
@@ -227,7 +227,7 @@ class TestArabicPartsActivation:
         response = self.client.post("/ephemeris/v2/natal-enhanced", json=basic_request)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         assert data["success"] is True
         
         # Should have core ephemeris data
@@ -255,7 +255,7 @@ class TestArabicPartsActivation:
         response = self.client.post("/ephemeris/natal", json=basic_request)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         
         # Basic endpoint should not include arabic_parts field
         assert "arabic_parts" not in data, "Basic endpoint should not include Arabic Parts"
@@ -277,7 +277,7 @@ class TestArabicPartsActivation:
         response = self.client.post("/ephemeris/v2/natal-enhanced", json=request_data)
         assert response.status_code == 200
         
-        data = response.json()
+        data = response.model_dump_json()
         formulas_used = data["arabic_parts"]["formulas_used"]
         
         # Should be a list, not a dict (this was the original activation issue)

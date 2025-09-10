@@ -27,13 +27,14 @@ except ImportError:
         return decorator
     prange = range
 
-from ..ephemeris.const import SwePlanets, SweObjects
-from ..ephemeris.classes.serialize import PlanetPosition
-from ..ephemeris.tools.ephemeris import julian_day_from_datetime
+from extracted.systems.ephemeris_utils.const import SwePlanets, SweObjects
+from extracted.systems.ephemeris_utils.classes.serialize import PlanetPosition
+from extracted.systems.ephemeris_utils.tools.ephemeris import julian_day_from_datetime
 from ..monitoring.metrics import get_metrics, timed_calculation
 
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class PerformanceOptimizer:

@@ -35,6 +35,7 @@ import logging
 import numpy as np
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 T = TypeVar('T')
 

@@ -18,25 +18,25 @@ from datetime import datetime, timezone
 from unittest.mock import patch, MagicMock
 from typing import Dict, List, Any
 
-from app.core.acg.enhanced_metadata import (
+from extracted.systems.acg_engine.enhanced_metadata import (
     RetrogradeAwareLineMetadata, EnhancedACGLineMetadataGenerator,
     MotionStatus, PlanetaryDignity
 )
-from app.core.acg.aspect_lines import (
+from extracted.systems.acg_engine.aspect_lines import (
     AspectToAngleCalculator, AspectLineFeature, AspectLinesManager,
     AspectLinePoint, AspectAngleType
 )
-from app.core.acg.retrograde_integration import (
+from extracted.systems.acg_engine.retrograde_integration import (
     RetrogradeIntegratedACGCalculator, MotionBasedLineStyler
 )
-from app.core.acg.filters import MotionBasedFilter, FilterConfig, FilterResult
-from app.core.acg.visualization import (
+from extracted.systems.acg_engine.filters import MotionBasedFilter, FilterConfig, FilterResult
+from extracted.systems.acg_engine.visualization import (
     VisualizationMetadataGenerator, StyleMetadata, InteractiveMetadata,
     LegendData, VisualizationFramework
 )
-from app.core.acg.performance import EnhancedACGPerformanceOptimizer, PerformanceMetrics
-from app.core.ephemeris.tools.enhanced_calculations import EnhancedPlanetPosition
-from app.core.ephemeris.tools.aspects import AspectType
+from extracted.systems.acg_engine.performance import EnhancedACGPerformanceOptimizer, PerformanceMetrics
+from extracted.systems.enhanced_calculations import EnhancedPlanetPosition
+from extracted.systems.aspects import AspectType
 
 
 class TestRetrogradeAwareMetadata:

@@ -21,9 +21,10 @@ import logging
 
 from .enhanced_metadata import RetrogradeAwareLineMetadata, MotionStatus, PlanetaryDignity
 from .aspect_lines import AspectLineFeature, AspectLinePoint
-from ..ephemeris.tools.aspects import AspectType
+from extracted.systems.ephemeris_utils.tools.aspects import AspectType
 
 logger = logging.getLogger(__name__)
+if not logger.handlers: logging.basicConfig(level=logging.INFO)
 
 
 class VisualizationFramework(Enum):

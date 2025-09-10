@@ -95,7 +95,7 @@ def test_api_endpoint():
                 
                 # Parse response
                 try:
-                    data = response.json()
+                    data = response.model_dump_json()
                     
                     # Create output
                     output_data = {
@@ -138,7 +138,7 @@ def test_api_endpoint():
             elif response.status_code == 422:
                 print(f"✗ Validation error")
                 try:
-                    error_data = response.json()
+                    error_data = response.model_dump_json()
                     print(f"  Error details: {error_data}")
                 except:
                     print(f"  Raw error: {response.text[:500]}")
