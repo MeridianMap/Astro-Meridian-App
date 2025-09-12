@@ -1,0 +1,43 @@
+name: CI (contracts, imports, perf)
+
+on:
+  push:
+    branches: [ prp-phase1-extraction ]
+  pull_request:
+    branches: [ prp-phase1-extraction ]
+
+jobs:
+  test-and-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-prod.txt
+          pip install pytest
+
+      - name: Contract tests only
+        working-directory: backend
+        run: |
+          python -m pytest -q -m contract
+
+      - name: Validate authoritative imports
+        run: |
+          python scripts/authoritative_map_validate.py
+
+      - name: Measure perf (current)
+        run: |
+          python scripts/measure_perf.py > perf_current.json
+          cat perf_current.json
+
+      - name: Compare perf with baseline
+        run: |
+          python scripts/compare_perf_to_baseline.py perf_baseline.json perf_current.json --abs-ms 10 --rel 3.0
