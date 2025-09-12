@@ -1,0 +1,11 @@
+{
+  "baseline_version": 1,
+  "captured_at": "2025-09-12T00:00:00Z",
+  "notes": "Initial automatic baseline captured after stabilizing performance harness.",
+  "perf": [
+    {"name": "aspects", "cold_ms": 0.473, "warm_ms_mean": 0.29, "warm_ms_p95": 0.286, "warm_runs": 3},
+    {"name": "arabic_parts_core", "cold_ms": 0.851, "warm_ms_mean": 0.024, "warm_ms_p95": 0.02, "warm_runs": 3},
+    {"name": "arabic_parts_full", "cold_ms": 0.537, "warm_ms_mean": 0.034, "warm_ms_p95": 0.033, "warm_runs": 3},
+    {"name": "fixed_stars", "cold_ms": 0.434, "warm_ms_mean": 0.331, "warm_ms_p95": 0.327, "warm_runs": 3}
+  ]
+}

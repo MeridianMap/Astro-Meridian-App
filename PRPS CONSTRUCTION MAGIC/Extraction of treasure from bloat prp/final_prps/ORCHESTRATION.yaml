@@ -25,6 +25,13 @@ execution_order:
       - phase_2_advanced_calculation
     checkpoint: "Service layer optimized and integrated"
 
+  phase_4_cleanup:
+    sequence:
+      - PRP_WORKSPACE_CLEANUP
+    dependencies:
+      - phase_3_service_integration
+    checkpoint: "Legacy components removed, workspace clean"
+
 # Validation gates between phases
 validation_gates:
   after_phase_1:
@@ -41,6 +48,11 @@ validation_gates:
     command: "pytest tests/integration/test_full_stack.py -v"
     expect: "Full integration with response size <50KB validated"
     on_failure: "HALT - Service optimization failed"
+
+  after_phase_4:
+    command: "pytest tests/integration/test_clean_workspace.py -q"
+    expect: "Clean workspace verified: no legacy modules/imports, only extracted systems active"
+    on_failure: "WARNING - Manual cleanup may be required"
 
 # State management
 state_checkpoints:
